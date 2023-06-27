@@ -1,0 +1,14 @@
+/* Including parts. */
+@import "navmenu";
+// @import "elementor";
+@import "icons";
+@import "map";
+
+.do_flutterwave_submit {
+  line-height: initial;
+}
+.payment-status-content > .row {
+  @include mq($until: medium) {
+    flex-direction: row-reverse;
+  }
+}

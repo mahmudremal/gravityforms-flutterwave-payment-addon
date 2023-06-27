@@ -1,0 +1,426 @@
+<?php
+/**
+ * LoadmorePosts
+ *
+ * @package GravityformsFlutterwaveAddons
+ */
+namespace GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc;
+use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
+use \WP_Query;
+class Flutterwave {
+	use Singleton;
+	private $settings;
+	private $api_key; // Replace with your Flutterwave API key
+    private $base_url = 'https://api.flutterwave.com/v3';
+    private $is_test_mode;
+	
+	protected function __construct() {
+        $this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
+		$this->api_key  = $this->settings['secretkey'];
+        $this->is_test_mode = true;
+        global $FWPFlutterwave;$FWPFlutterwave = $this;
+
+		add_action( 'init', [ $this, 'setup_hooks' ], 1, 0 );
+
+        add_filter('gravityformsflutterwaveaddons/project/payment/getallsubaccounts', [$this, 'getAllSubAccounts'], 10, 0);
+	}
+	public function setup_hooks() {
+		global $wpdb;$this->theTable				= $wpdb->prefix . 'fwp_flutterwave_subscriptions';
+		$this->productID							= 'prod_NJlPpW2S6i75vM';
+		$this->lastResult							= false;$this->userInfo = false;
+		$this->successUrl							= site_url( 'payment/flutterwave/{CHECKOUT_SESSION_ID}/success' );
+		$this->cancelUrl							= site_url( 'payment/flutterwave/{CHECKOUT_SESSION_ID}/cancel' );
+		
+		
+		add_filter('gravityformsflutterwaveaddons/project/rewrite/rules', [ $this, 'rewriteRules' ], 10, 1);
+		add_filter('query_vars', [ $this, 'query_vars' ], 10, 1);
+		add_filter('template_include', [ $this, 'template_include' ], 10, 1);
+		// add_filter('gravityformsflutterwaveaddons/project/payment/stripe/handle/status', [$this, 'handleStatus'], 10, 3);
+		add_filter('gravityformsflutterwaveaddons/project/payment/flutterwave/verify', [$this, 'verify'], 10, 2);
+
+        // Add Flutterwave gateway to available payment gateways in WooCommerce
+        add_filter('woocommerce_payment_gateways', [$this, 'add_flutterwave_gateway']);
+        // Step 2: Display Flutterwave Payment Option on Checkout Page
+        add_filter('woocommerce_available_payment_gateways', [$this, 'add_flutterwave_payment_option']);
+        // Step 3: WooCommerce Settings Page Integration
+        // Add a new section to the WooCommerce settings page
+        add_filter('woocommerce_settings_tabs_array', [$this, 'add_flutterwave_settings_tab'], 50);
+        // Add settings fields to the Flutterwave settings tab
+        add_action('woocommerce_settings_tabs_flutterwave', [$this, 'output_flutterwave_settings']);
+
+	}
+	public function getToken() {
+        // Check if a token is already stored in the database or cache
+        $token = $this->getStoredToken();
+
+        // If no token is stored or token is expired, generate or refresh a new token
+        if (!$token || $this->isTokenExpired($token)) {
+            $token = $this->generateToken();
+        }
+
+        return $token;
+    }
+    private function getStoredToken() {
+        // Retrieve the stored token from the database or cache
+        // Replace with your own implementation based on your storage mechanism
+        $stored_token = null;
+		$stored_token = get_option('flutterwave_last_token', false );
+		$this->last_stored = $stored_token['time'];
+		$stored_token = $stored_token['token'];
+        // Retrieve the token and return it
+        return $stored_token;
+    }
+    private function isTokenExpired($token) {
+        // Check if the token has expired
+        // Replace with your own implementation based on token expiration logic
+        $expired = (strtotime('+24 hours', $this->last_stored) >= time());
+        // Perform the expiration check and return the result
+        return $expired;
+    }
+    private function generateToken() {
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "{$this->base_url}/token/create");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer {$this->api_key}"
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        print_r($response);
+
+        if ($err) {
+            // Handle error case
+            return null;
+        } else {
+            $token = json_decode($response, true);
+
+            // Store the token in the database or cache for future use
+            $this->storeToken($token);
+
+            return $token;
+        }
+    }
+    private function storeToken($token) {
+        // Store the token in the database or cache for future use
+        // Replace with your own implementation based on your storage mechanism
+		$token = ['time'=>time(), 'token'=> $token];
+		update_option('flutterwave_last_token', $token, true);
+    }
+
+
+	public function paymentStatus($transaction_id) {
+        $url = "{$this->base_url}/transactions/{$transaction_id}/verify";
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer {$this->api_key}"
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            return false;
+        } else {
+            $payment_status = json_decode($response, true);
+            // Process the payment status and return the result
+            return (isset($payment_status['data']) && isset($payment_status['data']['status']))?$payment_status['data']['status']:false;
+        }
+    }
+
+    public function createPayment($args) {
+        $args = wp_parse_args($args, [
+            'txref' => '',
+            'amount' => '',
+            'currency' => '',
+            'redirect_url' => site_url('/payment/flutterwave/'.$args['txref'].'/status/'),
+            'PBFPubKey' => $this->settings['publickey'],
+            'customer_info' => [
+                'email' => '',
+                // 'customer_email' => '',
+				'customer_name' => '',
+				'customer_phone' => ''
+            ]
+        ]);
+
+        $data = [
+            'tx_ref'        => $args['txref'],
+            'amount'        => $args['amount'],
+            'currency'      => $args['currency'],
+            'redirect_url'  => $args['redirect_url'],
+            'customer'      => $args['customer_info'],
+            'payment_options' => [
+                'card' => '1',
+                'mobile_money' => '1',
+                'bank_transfer' => '1',
+                'ussd' => '1',
+                'qr' => '1',
+                'barter' => '1',
+                'bank_account' => '1',
+                'credit' => '1',
+                'debit' => '1',
+                'transfer' => '1'
+            ]
+        ];
+        if(isset($args['subaccounts'])) {
+            $data['subaccounts'] = $args['subaccounts'];
+        }
+
+        $data_string = json_encode($data);
+
+        // print_r($data);
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, "{$this->base_url}/payments");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer {$this->api_key}" // $this->getToken()
+        ));
+
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($error) {
+            // Handle error case
+            return null;
+        } else {
+            $payment_request = json_decode($response, true);
+            if($payment_request['status']!=='success') {return false;}
+            // Process the payment request and return the result
+            return (isset($payment_request['data'])&& isset($payment_request['data']['link']))?$payment_request['data']['link']:false;
+        }
+    }
+    public function createSplitPayment($txref, $amount, $currency, $redirect_url, $customer_info, $sub_account_id, $sub_account_amount) {
+        $url = "{$this->base_url}/payments";
+    
+        $data = array(
+            "tx_ref" => $txref,// transaction reference
+            "amount" => $amount,
+            "currency" => $currency,
+            "redirect_url" => $redirect_url,
+            "customer" => $customer_info,
+            "subaccounts" => [
+                [
+                    "id" => $sub_account_id,
+                    "transaction_charge_type" => "flat_subaccount",
+                    "transaction_charge" => $sub_account_amount
+                ]
+            ]
+        );
+    
+        $data_string = json_encode($data);
+    
+        $curl = curl_init();
+    
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer {$this->api_key}"
+        ));
+    
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+    
+        curl_close($curl);
+    
+        if ($err) {
+            // Handle error case
+            return null;
+        } else {
+            $payment_request = json_decode($response, true);
+
+            // Process the payment request and return the result
+            return $payment_request;
+        }
+    }
+    public function processCardPayment($card_number, $card_expiry_month, $card_expiry_year, $card_cvv, $amount, $currency) {
+        $url = "{$this->base_url}/payments";
+    
+        $payload = array(
+            "token" => array(
+                "card_number" => $card_number,
+                "cvv" => $card_cvv,
+                "expiry_month" => $card_expiry_month,
+                "expiry_year" => $card_expiry_year
+            ),
+            "amount" => $amount,
+            "currency" => $currency
+        );
+    
+        $data_string = json_encode($payload);
+    
+        $curl = curl_init();
+    
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => $data_string,
+            CURLOPT_HTTPHEADER => array(
+                "Content-Type: application/json",
+                "Authorization: Bearer {$this->api_key}"
+            ),
+        ));
+    
+        $response = curl_exec($curl);
+        $error = curl_error($curl);
+    
+        curl_close($curl);
+    
+        if ($error) {
+            // Handle cURL error
+            return null;
+        } else {
+            $payment_response = json_decode($response);
+    
+            // Process the payment response and return the result
+            return $payment_response;
+        }
+    }
+
+    public function getAllSubAccounts() {
+        $url = "{$this->base_url}/subaccounts";
+        if(! $this->is_test_mode) {
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_HTTPHEADER => [
+                    "Content-Type: application/json",
+                    "Authorization: Bearer {$this->api_key}"
+                ]
+            ]);
+            $response = curl_exec($curl);
+            $error = curl_error($curl);
+            curl_close($curl);
+        } else {
+            $error = false;
+            $response = '{"status":"success","message":"Subaccounts fetched","meta":{"page_info":{"total":6,"current_page":1,"total_pages":1}},"data":[{"id":12121,"account_number":"0047826178","account_bank":"044","business_name":"Olusetire Mayowa","full_name":"OLUSETIRE JOHN OLUMAYOWA","created_at":"2020-05-18T16:39:32.000Z","meta":[{"swift_code":""}],"account_id":128989,"split_ratio":1,"split_type":"percentage","split_value":0.115,"subaccount_id":"RS_4283E678FFC8F333938A4F0D753B6DC0","bank_name":"ACCESS BANK NIGERIA","country":"NG"},{"id":6270,"account_number":"0000745342","account_bank":"058","business_name":"Association of Telecoms Companies of Nigeria","full_name":"ASS OF TELECOMM CO OF NIGERIA","created_at":"2020-02-21T14:09:21.000Z","meta":[{"swift_code":""}],"account_id":97479,"split_ratio":1,"split_type":"percentage","split_value":0.025,"subaccount_id":"RS_A66BD37EFD525CE91C5B5EF2F6404873","bank_name":"GTBANK PLC","country":"NG"},{"id":6269,"account_number":"0599948014","account_bank":"214","business_name":"Ikeja Golf Club Bar","full_name":"IKEJA GOLF CLUB","created_at":"2020-02-21T14:01:04.000Z","meta":[{"swift_code":""}],"account_id":97477,"split_ratio":1,"split_type":"percentage","split_value":0.025,"subaccount_id":"RS_8C5B213F80BFE1EF65279F2790C963FE","bank_name":"FIRST CITY MONUMENT BANK PLC","country":"NG"},{"id":6268,"account_number":"2122011891","account_bank":"050","business_name":"Ikeja Golf Club Office","full_name":"IKEJA GOLF CLUB","created_at":"2020-02-21T13:57:46.000Z","meta":[{"swift_code":""}],"account_id":97476,"split_ratio":1,"split_type":"percentage","split_value":0.025,"subaccount_id":"RS_1D3B547192398961C575B7885981553A","bank_name":"ECOBANK NIGERIA LIMITED","country":"NG"},{"id":6267,"account_number":"0007314334","account_bank":"058","business_name":"Howson Wright Estate","full_name":"HOWSON-WRIGHT EST.RESIDENT ASS","created_at":"2020-02-21T13:13:34.000Z","meta":[{"swift_code":""}],"account_id":97470,"split_ratio":1,"split_type":"percentage","split_value":0.025,"subaccount_id":"RS_21573CD8AA0F96BFFC3FECA2C04B9C2F","bank_name":"GTBANK PLC","country":"NG"},{"id":5493,"account_number":"9200181686","account_bank":"221","business_name":"DigiServe Paypoint","full_name":"OLANREWAJU PETER AJAYI","created_at":"2019-11-20T14:48:09.000Z","meta":[{"swift_code":""},{},{},{},{},{},{},{},{}],"account_id":87432,"split_ratio":1,"split_type":"percentage","split_value":0.035,"subaccount_id":"RS_53C41E2945EC5D2A8FA4DE1DD66C0509","bank_name":"STANBIC IBTC BANK PLC","country":"NG"}]}';
+        }
+
+        if ($error) {
+            // Handle cURL error
+            return null;
+        } else {
+            $data = json_decode($response, true);
+            // Process the sub-accounts and return the result
+            // print_r($data);
+            if(isset($data['status']) && $data['status']=='error') {
+                return false;
+            } else {
+                $sub_accounts = $data['data'];
+                return $sub_accounts;
+            }
+        }
+    }
+
+
+    public function refund($transaction_id, $amount) {
+        $url = "{$this->base_url}/transactions/{$transaction_id}/refund";
+
+        $data = array(
+            "amount" => $amount
+        );
+
+        $data_string = json_encode($data);
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            "Content-Type: application/json",
+            "Authorization: Bearer {$this->getToken()}"
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            // Handle error case
+            return null;
+        } else {
+            $refund_status = json_decode($response);
+
+            // Process the refund status and return the result
+            return $refund_status;
+        }
+    }
+
+	public function verify($transaction_id, $status) {
+		return ($this->paymentStatus($transaction_id) == $status);
+	}
+	
+	public function rewriteRules( $rules ) {
+		$rules[] = [ 'payment/flutterwave/([^/]*)/([^/]*)/?', 'index.php?transaction_id=$matches[1]&payment_status=$matches[2]', 'top' ];
+		return $rules;
+	}
+	public function query_vars( $query_vars ) {
+		$query_vars[] = 'status';
+		$query_vars[] = 'tx_ref';
+		$query_vars[] = 'transaction_id';
+		$query_vars[] = 'payment_status';
+    	return $query_vars;
+	}
+	public function template_include( $template ) {
+		$transaction_id		= (get_query_var('transaction_id') != '')?get_query_var('transaction_id'):get_query_var('tx_ref');
+		$payment_status		= (get_query_var('payment_status') != '')?get_query_var('payment_status'):get_query_var('status');
+		$file				= GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/cards/flutterwave.php';
+        
+        // return $template;
+        // $payment_status&&!empty($payment_status)&&
+		if($transaction_id && file_exists($file)&&!is_dir($file)) {
+			return $file;
+		} else {
+			return $template;
+		}
+	}
+	public function handleStatus($status, $transaction_id, $payment_status) {
+		return $status;
+	}
+	
+
+
+    public function add_flutterwave_gateway($gateways) {
+        $gateways[] = 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Woo_Flutter';
+        return $gateways;
+    }
+    public function add_flutterwave_payment_option($gateways) {
+        $gateways[] = 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Woo_Flutter';
+        return $gateways;
+    }
+    public function add_flutterwave_settings_tab($settings_tabs) {
+        $settings_tabs['flutterwave'] = 'Flutterwave';
+        return $settings_tabs;
+    }
+    public function output_flutterwave_settings() {
+        // Output the settings fields for the Flutterwave payment gateway
+        // Include fields for pausing, unpausing, and setting up the gateway options
+    }
+    
+}

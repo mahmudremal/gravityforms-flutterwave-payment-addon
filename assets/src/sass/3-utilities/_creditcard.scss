@@ -1,0 +1,285 @@
+// body {
+//     margin: 0;
+//     padding: 0;
+//     background-color: #f9f9f9;
+//     display: -webkit-box;
+//     display: -ms-flexbox;
+//     display: flex;
+//     -ms-flex-line-pack: center;
+//         align-content: center;
+//     -webkit-box-align: center;
+//         -ms-flex-align: center;
+//             align-items: center;
+//     -webkit-box-pack: center;
+//         -ms-flex-pack: center;
+//             justify-content: center;
+//     min-height: 100vh;
+//     -ms-flex-wrap: wrap;
+//         flex-wrap: wrap;
+//     font-family: 'Raleway';
+// }
+// .payment-title {
+//     width: 100%;
+//     text-align: center;
+// }
+// .fwp-body
+body {
+    /* CREDIT CARD IMAGE STYLING */
+    .flutterwaves_credit_card {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row-reverse;
+        width: auto;
+        margin: auto;
+        justify-content: flex-end;
+        align-items: center;
+        // &>div {}
+        .form-container {
+            display: grid;
+            grid-column-gap: 10px;
+            grid-template-columns: auto auto;
+            grid-template-rows: 90px 90px 90px;
+            grid-template-areas: "name name""number number""expiration security";
+            max-width: 400px;
+            padding: 20px;
+            color: #707070;
+            .field-container {
+                position: relative;
+                &:first-of-type {
+                    grid-area: name;
+                }
+                &:nth-of-type(2) {
+                    grid-area: number;
+                }
+                &:nth-of-type(3) {
+                    grid-area: expiration;
+                }
+                &:nth-of-type(4) {
+                    grid-area: security;
+                }
+                input {
+                    -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+                }
+        
+                label {
+                    padding-bottom: 5px;
+                    margin-bottom: unset;
+                    font-size: 13px;
+                }
+                input {
+                    margin-top: 3px;
+                    padding: 15px;
+                    font-size: 16px;
+                    width: 100%;
+                    border-radius: 3px;
+                    border: 1px solid #dcdcdc;
+                }
+                .ccicon {
+                    height: 38px;
+                    position: absolute;
+                    right: 6px;
+                    top: calc(50% - 5px);
+                    width: 60px;
+                }
+                #generatecard {
+                    cursor: pointer;
+                    float: right;
+                    font-size: 12px;
+                    color: #fff;
+                    padding: 2px 4px;
+                    background-color: #909090;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    float:right;
+                }
+            }
+        }
+        .creditcard_container {
+            width: 100%;
+            max-width: 400px;
+            max-height: 251px;
+            height: 54vw;
+            padding: 20px;
+            // display: none;
+            &.preload * {
+                -webkit-transition: none !important;
+                -moz-transition: none !important;
+                -ms-transition: none !important;
+                -o-transition: none !important;
+            }
+            .creditcard {
+                #ccsingle {
+                    position: absolute;
+                    right: 15px;
+                    top: 20px;
+                    svg {
+                        width: 100px;
+                        max-height: 60px;
+                    }
+                }
+                svg#cardfront, svg#cardback {
+                    width: 100%;
+                    -webkit-box-shadow: 1px 5px 6px 0px black;
+                    box-shadow: 1px 5px 6px 0px black;
+                    border-radius: 22px;
+                }
+            }
+        }
+
+        /* CHANGEABLE CARD ELEMENTS */
+        .creditcard {
+            .lightcolor, .darkcolor {
+                -webkit-transition: fill .5s;
+                transition: fill .5s;
+            }
+            .lightblue {fill: #03A9F4;}
+            .lightbluedark {fill: #0288D1;}
+            .red {fill: #ef5350;}
+            .reddark {fill: #d32f2f;}
+            .purple {fill: #ab47bc;}
+            .purpledark {fill: #7b1fa2;}
+            .cyan {fill: #26c6da;}
+            .cyandark {fill: #0097a7;}
+            .green {fill: #66bb6a;}
+            .greendark {fill: #388e3c;}
+            .lime {fill: #d4e157;}
+            .limedark {fill: #afb42b;}
+            .yellow {fill: #ffeb3b;}
+            .yellowdark {fill: #f9a825;}
+            .orange {fill: #ff9800;}
+            .orangedark {fill: #ef6c00;}
+            .grey {fill: #bdbdbd;}
+            .greydark {fill: #616161;}
+        }
+        
+        /* FRONT OF CARD */
+        #svgname {
+            text-transform: uppercase;
+        }
+        #cardfront {
+            .st2 {
+                fill: #FFFFFF;
+            }
+            .st3 {
+                font-family: 'Source Code Pro', monospace;
+                font-weight: 600;
+            }
+            .st4 {
+                font-size: 54.7817px;
+            }
+            .st5 {
+                font-family: 'Source Code Pro', monospace;
+                font-weight: 400;
+            }
+            .st6 {
+                font-size: 33.1112px;
+            }
+            .st7 {
+                opacity: 0.6;
+                fill: #FFFFFF;
+            }
+            .st8 {
+                font-size: 24px;
+            }
+            .st9 {
+                font-size: 36.5498px;
+            }
+            .st10 {
+                font-family: 'Source Code Pro', monospace;
+                font-weight: 300;
+            }
+            .st11 {
+                font-size: 16.1716px;
+            }
+            .st12 {
+                fill: #4C4C4C;
+            }
+        }
+        /* BACK OF CARD */
+        #cardback {
+            .st0 {
+                fill: none;
+                stroke: #0F0F0F;
+                stroke-miterlimit: 10;
+            }
+            .st2 {
+                fill: #111111;
+            }
+            .st3 {
+                fill: #F2F2F2;
+            }
+            .st4 {
+                fill: #D8D2DB;
+            }
+            .st5 {
+                fill: #C4C4C4;
+            }
+            .st6 {
+                font-family: 'Source Code Pro', monospace;
+                font-weight: 400;
+            }
+            .st7 {
+                font-size: 27px;
+            }
+            .st8 {
+                opacity: 0.6;
+            }
+            .st9 {
+                fill: #FFFFFF;
+            }
+            .st10 {
+                font-size: 24px;
+            }
+            .st11 {
+                fill: #EAEAEA;
+            }
+            .st12 {
+                font-family: 'Rock Salt', cursive;
+            }
+            .st13 {
+                font-size: 37.769px;
+            }
+        }
+        /* FLIP ANIMATION */
+        .creditcard_container {
+            perspective: 1000px;
+        }
+        .creditcard {
+            width: 100%;
+            max-width: 400px;
+            -webkit-transform-style: preserve-3d;
+            transform-style: preserve-3d;
+            transition: -webkit-transform 0.6s;
+            -webkit-transition: -webkit-transform 0.6s;
+            transition: transform 0.6s;
+            transition: transform 0.6s, -webkit-transform 0.6s;
+            cursor: pointer;
+        }
+        .creditcard .front,
+        .creditcard .back {
+            position: absolute;
+            width: 100%;
+            max-width: 400px;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            color: #47525d;
+        }
+        .creditcard .back {
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+        }
+        .creditcard.flipped {
+            -webkit-transform: rotateY(180deg);
+            transform: rotateY(180deg);
+        }
+    }
+    .do_flutterwave_submit {
+        border: 1px solid #c3c3c3;
+    }
+}
+
+
+
+
