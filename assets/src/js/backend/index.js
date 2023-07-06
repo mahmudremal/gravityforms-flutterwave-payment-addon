@@ -23,21 +23,18 @@ import Toastify from 'toastify-js';
 			var i18n = fwpSiteConfig?.i18n??{};
 			this.creditCard = creditCard;
 			this.config.buildPath = fwpSiteConfig?.buildPath??'';
-			this.i18n = {
-				i_confirm_it: 'Yes I confirm it',
-				...i18n
-			};
+			this.i18n = {i_confirm_it: 'Yes I confirm it',...i18n};
 			window.thisClass = this;
 			this.setup_hooks();
+			this.init_settings_field();
 			this.init_creditCard();
-			// this.init_tagInputs();
+			this.init_tagInputs();
 			this.init_bulkAction();
 			this.init_toast();
 
-			this.init_settings_field();
 		}
 		setup_hooks() {
-			const thisClass = this;var frame, element;
+			const thisClass = this;var frame, element, text;
 			document.body.addEventListener('reload-page', (event) => {location.reloadevent;});
 			document.body.addEventListener('reminder-sent', (event) => {
 				if(!thisClass.mailReminderBtn) {return;}
@@ -50,6 +47,44 @@ import Toastify from 'toastify-js';
 				frame.innerHTML = '<p>Browser does not support iframes.</p>';
 				element = document.querySelector('.popup_step.step_visible > fieldset');
 				element.parentElement.insertBefore(frame, element);
+			});
+			document.body.addEventListener('payment-link-updated', (event) => {
+				if(!thisClass.lastUpdateBtn) {return;}
+				thisClass.lastUpdateBtn.removeAttribute('disabled');
+				if((thisClass.lastJson?.payment_link??false)) {
+					element = thisClass.lastUpdateBtn.previousElementSibling;
+					if(element) {
+						element.title = thisClass.lastJson.payment_link;
+						element.dataset.text = thisClass.lastJson.payment_link;
+						text = element.innerHTML;element.innerHTML = thisClass.i18n?.updated??'Updated';
+						setTimeout(() => {element.innerHTML = text;}, 800);
+					}
+				}
+			});
+			document.body.addEventListener('payment-refunded-success', (event) => {
+				if(!thisClass.lastRefundBtn) {return;}
+				thisClass.lastRefundBtn.removeAttribute('disabled');
+				if((thisClass.lastJson?.payment_link??false)) {
+					element = thisClass.lastRefundBtn;
+					if(element) {
+						element.title = thisClass.lastJson.payment_link;
+						element.dataset.text = thisClass.lastJson.payment_link;
+						text = element.innerHTML;element.innerHTML = thisClass.i18n?.refunded??'Refunded';
+						setTimeout(() => {element.innerHTML = text;}, 1500);
+					}
+				}
+			});
+			document.body.addEventListener('payment-refunded-failed', (event) => {
+				if(!thisClass.lastRefundBtn) {return;}
+				thisClass.lastRefundBtn.removeAttribute('disabled');
+				if((thisClass.lastJson?.message??false)) {
+					element = thisClass.lastRefundBtn;
+					if(element) {
+						text = element.innerHTML;element.innerHTML = thisClass.i18n?.failed??'Failed';
+						element.style.borderColor = '#ff5c5c';element.style.color = '#ff5c5c';
+						setTimeout(() => {element.innerHTML = text;element.removeAttribute('style');}, 4500);
+					}
+				}
 			});
 		}
 		init_toast() {
@@ -311,30 +346,46 @@ import Toastify from 'toastify-js';
 		}
 
 		init_creditCard() {
-			const thisClass = this;var card;
+			const thisClass = this;var card, value;
 			card = document.querySelector('.flutterwaves_credit_card');
-			if(card) {
-				creditCard.init_creditCardForm(thisClass, card);
-			}
+			if(!card) {return;}
+			document.querySelectorAll('[type="radio"][name="flutterwave_method"]').forEach((el)=>{
+				el.addEventListener('change', (event)=>{
+					value = el.value;
+					card = document.querySelector('.flutterwaves_credit_card');
+					if(!card || !el.checked) {return;}
+					switch (value) {
+						case 'checkout':
+							card.style.display = 'none';
+							break;
+						default:
+							card.style.display = 'flex';
+							break;
+					}
+				});
+			});
+			creditCard.init_creditCardForm(thisClass, card);
 		}
 		init_tagInputs() {
-			var selectInput = document.querySelector('#subAccounts:not([data-handled])');
-			if(!selectInput) {return;}
-			selectInput.dataset.handled = true;
-			var selectize = $(selectInput).selectize({
-			delimiter: ',',
-			persist: false,
-			create: true,
-			render: {
-				option_create: function(data, escape) {
-				return '<div class="create">Add <strong>' + escape(data.input) + '</strong>&hellip;</div>';
-				}
-			},
-			onChange: function(value) {
-				// Handle changes in selected tags
-				console.log(value);
+			var input, select, values, label, options;
+			select = document.querySelector('#subAccounts');
+			if(!select) {return;}
+			input = document.createElement('input');
+			input.type = 'hidden';input.name = select.name;
+			select.removeAttribute('name');input.id=select.id;
+			select.removeAttribute('id');select.multiple = 1;
+			select.parentElement.insertBefore(input, select);
+			select.addEventListener('change', function() {
+				options = Array.from(select.selectedOptions);
+				values = options.map(option => option.value);
+				input.value = values.join(',');
+			});
+			if(true) {
+				values = input.value.split(',').map(value => value.trim());
+				Array.from(select.options).forEach(option => {
+					option.selected = values.includes(option.value);
+				});
 			}
-			})[0].selectize;
 		}
 
 		init_bulkAction() {
@@ -373,17 +424,37 @@ import Toastify from 'toastify-js';
 									<th>Payment Status</th>
 									<td>${(config.payment_status=='')?'Pending':config.payment_status}</td>
 								</tr>
+								${(config.payment_status=='successful')?`
+								<tr>
+									<th>Refunded Amount</th>
+									<td>
+										${(config.refunded)?config.refunded:'0.00'}
+									</td>
+								</tr>
+								<tr>
+									<th>Refund Payment</th>
+									<td>
+										${(config.transaction_id)?`<button class="btn button do_refund" type="button" data-text="${config.transaction_id}" title="${thisClass.i18n?.refund??'Refund'} ${config.transaction_id}"><span>Refund</span><div class="spinner-circular-tube"></button>`:'N/A'}
+									</td>
+								</tr>
+								`:`
 								<tr>
 									<th>Payment link</th>
-									<td>${(config.payable_link)?`<button class="btn button copy_link" type="button" data-text="${config.payable_link}" title="${config.payable_link}">Copy link</button>`:'N/A'}</td>
+									<td>
+										${(config.payable_link)?`<button class="btn button copy_link" type="button" data-text="${config.payable_link}" title="${config.payable_link}">Copy link</button>`:'N/A'}
+										<button class="btn button update_pay_link" type="button" data-entry="${config.id}" title="Update"><i class="dashicons-before dashicons-update-alt"></i></button>
+									</td>
 								</tr>
+								`}
 							</table>
+							${(config.payment_status=='successful')?``:`
 							<fieldset class="mt-2" style="background-image: url('${thisClass.config.buildPath}/icons/crm-crm (1).svg');">
 								<button class="btn btn-primary button send-email-reminder" type="button">
 								<span>Send Email Reminder</span>
 								<div class="spinner-circular-tube"></div>
 								</button>
 							</fieldset>
+							`}
 							</div>
 						</form>
 						<div class="popup_foot"></div>
@@ -397,7 +468,7 @@ import Toastify from 'toastify-js';
 						showCloseButton: true,
 						backdrop: `rgba(0,0,123,0.4)`,
 						showLoaderOnConfirm: true,
-						allowOutsideClick: false, // () => !Swal.isLoading(),
+						allowOutsideClick: () => !Swal.isLoading(),
 						didOpen: () => {
 							// thisClass.prompts.promptClass = 'col-sm-6 col-md-6 col-lg-6';
 							thisClass.init_popup_events();
@@ -436,6 +507,30 @@ import Toastify from 'toastify-js';
 					thisClass.copyToClipboard(el);
 				});
 			});
+			document.querySelectorAll('.do_refund:not([data-handled])').forEach((el) => {
+				el.dataset.handled = true;
+				el.addEventListener('click', (event) => {
+					event.preventDefault();
+					var text, amount;
+					thisClass.currentEntry.refunded = (thisClass.currentEntry.refunded)?thisClass.currentEntry.refunded:0.00;
+					text = `Enter the amount you want to refund. Until now you refunded ${thisClass.currentEntry.refunded} and you are able to refund ${(thisClass.currentEntry.payment_amount - thisClass.currentEntry.refunded)}.`;
+					amount = parseFloat(prompt(text));
+					if(amount && amount > 0) {
+						el.disabled = true;
+						thisClass.lastRefundBtn = el;
+						thisClass.refund_a_payment(amount);
+					}
+				});
+			});
+			document.querySelectorAll('.update_pay_link:not([data-handled])').forEach((el) => {
+				el.dataset.handled = true;
+				el.addEventListener('click', (event) => {
+					event.preventDefault();
+					el.disabled = true;
+					thisClass.lastUpdateBtn = el;
+					thisClass.update_pay_link(el);
+				});
+			});
 		}
 		copyToClipboard(element) {
 			const text = element.getAttribute('data-text');
@@ -455,9 +550,22 @@ import Toastify from 'toastify-js';
 		}
 		init_settings_field() {
 			const thisClass = this;
+
+			/**
+			 * Transfer text field to textarea field;
+			 */
 			document.querySelectorAll('#paymentReminder').forEach((el)=>{
 				el.value = thisClass.stripslashes(el.value);
+				var value = el.value;var parent = el.parentElement;
+				var textarea = document.createElement('textarea');
+				textarea.value = value;textarea.name = el.name;
+				textarea.id=el.id;el.id = el.id+'_';
+				textarea.placeholder = el.placeholder;
+				textarea.rows = 10;
+				parent.insertBefore(textarea, el);
+				el.remove();
 			});
+
 		}
 		stripslashes(str) {
 			// Replace occurrences of '\\'
@@ -480,7 +588,26 @@ import Toastify from 'toastify-js';
 			str = str.replace(/\\\\/g, '\\');
 			return str;
 		}
-		
+		update_pay_link(el) {
+			const thisClass = this;
+			var formdata = new FormData();
+			formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/updatelink');
+			formdata.append('entry', thisClass.currentEntry.id);
+			formdata.append('form_id', thisClass.currentEntry.form_id);
+			formdata.append('_nonce', thisClass.ajaxNonce);
+			thisClass.sendToServer(formdata);
+		}
+		refund_a_payment(amount) {
+			const thisClass = this;
+			var formdata = new FormData();
+			formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/refund');
+			formdata.append('transaction_id', thisClass.currentEntry.transaction_id);
+			formdata.append('form_id', thisClass.currentEntry.form_id);
+			formdata.append('entry', thisClass.currentEntry.id);
+			formdata.append('_nonce', thisClass.ajaxNonce);
+			formdata.append('amount', amount);
+			thisClass.sendToServer(formdata);
+		}
 	}
 	new FutureWordPress_Backend();
 } )( jQuery );

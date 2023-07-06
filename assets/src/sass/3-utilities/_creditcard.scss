@@ -76,11 +76,12 @@ body {
                     border: 1px solid #dcdcdc;
                 }
                 .ccicon {
+                    right: 6px;
+                    width: 60px;
                     height: 38px;
                     position: absolute;
-                    right: 6px;
-                    top: calc(50% - 5px);
-                    width: 60px;
+                    top: calc(50% - 18px);
+                    transform: translateY(14px);
                 }
                 #generatecard {
                     cursor: pointer;
@@ -88,10 +89,11 @@ body {
                     font-size: 12px;
                     color: #fff;
                     padding: 2px 4px;
-                    background-color: #909090;
                     border-radius: 4px;
                     cursor: pointer;
                     float:right;
+                    background-color: #909090;
+                    transform: translateY(5px);
                 }
             }
         }

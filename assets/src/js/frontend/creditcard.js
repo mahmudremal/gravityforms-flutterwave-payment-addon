@@ -1,5 +1,9 @@
+import CurrencyList from 'currency-list';
+import testCards from './testCards';
+
 const creditCard = {
     init_creditCardForm: (thisClass, card) => {
+        thisClass.CurrencyList = CurrencyList;
         const name = card.querySelector('#name');
         const cardnumber = card.querySelector('#cardnumber');
         const expirationdate = card.querySelector('#expirationdate');
@@ -13,7 +17,8 @@ const creditCard = {
         let cctype = null;
 
         //Mask the Credit Card Number Input
-        var cardnumber_mask = new IMask(cardnumber, {
+        var cardnumber_mask;
+        creditCard.cardnumber_mask = cardnumber_mask = new IMask(cardnumber, {
             mask: [
                 {
                     mask: '0000 000000 00000',
@@ -198,18 +203,21 @@ const creditCard = {
 
         //Generate random card number from list of known test numbers
         const randomCard = function () {
-            let testCards = [
-                '4000056655665556',
-                '5200828282828210',
-                '371449635398431',
-                '6011000990139424',
-                '30569309025904',
-                '3566002020360505',
-                '6200000000000005',
-                '6759649826438453',
-            ];
-            let randomNumber = Math.floor(Math.random() * testCards.length);
-            cardnumber_mask.unmaskedValue = testCards[randomNumber];
+            let testCardsNumber = testCards.map((card)=>card.number); // [ '4000056655665556', '5200828282828210', '371449635398431', '6011000990139424', '30569309025904', '3566002020360505', '6200000000000005', '6759649826438453', ];
+            let randomNumber = Math.floor(Math.random() * testCardsNumber.length);
+            cardnumber_mask.unmaskedValue = testCardsNumber[randomNumber];
+
+            creditCard.currentCard = testCards.find((card)=>card.number == testCardsNumber[randomNumber]);
+            if(creditCard.currentCard) {
+                name.value = creditCard.currentCard?.name??'Remal Mahmud';
+                cardnumber.value = creditCard.currentCard.number;
+                expirationdate.value = creditCard.currentCard.expiry;
+                securitycode.value = creditCard.currentCard.ccv;
+                cardnumber_mask.masked.currentMask.mask = creditCard.currentCard.number;
+                [name, cardnumber, expirationdate, securitycode].forEach((el)=>{
+                    el.dispatchEvent(new Event('input'));
+                });
+            }
         }
         generatecard.addEventListener('click', function () {
             randomCard();
@@ -272,6 +280,82 @@ const creditCard = {
                 card.querySelector('.creditcard').classList.add('flipped');
             });
         });
+        var card, value, submit, total;
+        card = document.querySelector('.flutterwaves_credit_card');
+        if(!card) {return;}
+        document.querySelectorAll('.flutterwave_method[type="radio"]').forEach((el)=>{
+            if(el.checked) {creditCard.switchCard(el.value);}
+            el.addEventListener('change', (event)=>{
+                value = el.value;
+                if(!card) {return;}
+                // console.log(value);
+                creditCard.switchCard(value);
+            });
+        });
+        submit = document.querySelector('#submitFlutterCard');
+        if(!submit) {return;}
+        submit.addEventListener('click', (event)=>{
+            var formdata = new FormData();
+            submit.disabled = true;
+            creditCard.lastSubmitBtn = submit;
+            formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken');
+            document.querySelectorAll('.flutterwaves_credit_card input').forEach((el)=>{
+                if(el.dataset.name == 'unique') {el.value = Math.round((new Date()).getTime()/1000);}
+                formdata.append(el.dataset.name, el.value);
+            });
+            jQuery(document.querySelector('.flutterwaves_credit_card')).parents('form').find('input[type="email"]').each((ei, el)=>{
+                formdata.append('email', el.value);
+            });
+            jQuery(document.querySelector('.flutterwaves_credit_card')).parents('form').find('.ginput_container_total input').each((ei, el)=>{
+                total = creditCard.extractCurrencyValue(el.value);
+                formdata.append('total', total.value);
+                formdata.append('currency', total.currency);
+            });
+            // formdata.append('entry', thisClass.currentEntry.id);
+            // formdata.append('form_id', thisClass.currentEntry.form_id);
+            formdata.append('_nonce', thisClass.ajaxNonce);
+            thisClass.sendToServer(formdata);
+        });
+        
+    },
+    switchCard: (value) => {
+        var form, card, live;
+        form = jQuery('.flutterwaves_credit_card').parents('form');
+        card = document.querySelector('.flutterwaves_credit_card');
+        live = document.querySelector('.flutterwaves_live_card');
+        console.log([card, live, value]);
+        switch (value) {
+            case 'checkout':
+                card.style.display = 'none';
+                live.style.display = 'flex';
+                form.removeClass('flutterwave_card');
+                break;
+            case 'credit':
+                card.style.display = 'flex';
+                live.style.display = 'none';
+                form.addClass('flutterwave_card');
+                break;
+            default:
+                break;
+        }
+    },
+    extractCurrencyValue: (currencyString) => {
+        var valueString = currencyString.replace(/[^0-9.-]+/g, "");
+        var allCurrencies = CurrencyList.getAll('en_US');
+        var currencyCode = 'NGN';
+        for(var i = 0; i < allCurrencies.length; i++) {
+          if(currencyString.includes(allCurrencies[i].symbol) || currencyString.includes(allCurrencies[i].symbol_native)) {
+            currencyCode = allCurrencies[i].code;
+            break;
+          }
+        }
+        if(window.gf_global && window.gf_global.gf_currency_config && window.gf_global.gf_currency_config.code) {
+            currencyCode = window.gf_global.gf_currency_config.code;
+        }
+        return {
+          value: parseFloat(valueString),
+          currency: currencyCode
+        };
     }
 };
 export default creditCard;

@@ -6,6 +6,12 @@
         margin-left: 140px;
       }
       #wpbody-content {
+        .flutterwaves_live_card {
+          // border: 1px solid #ddd;
+          .card {
+            margin-top: 0px;
+          }
+        }
         min-height: 100vh;
         > div {
           display: none;
@@ -64,7 +70,7 @@
   .dynamic_popup {
     padding: 3rem 0;
     margin: auto;
-    .send-email-reminder {
+    .send-email-reminder, .do_refund {
       gap: 10px;
       color: #fff;
       display: flex;
@@ -135,7 +141,18 @@
           background: #A46BF5;
         }
       }
-
+    }
+    button.do_refund.btn {
+      margin: auto;
+      color: unset;
+      padding: 5px 15px;
+      border: 1px solid #333;
+      box-shadow: unset !important;
+      background: unset !important;
+      .spinner-circular-tube {
+        border-width: 7px;
+        border-color: #868686;
+      }
     }
   }
 
@@ -145,7 +162,9 @@
     transform: rotate(360deg);
   }
 }
-
+#sidebar_field_info {
+  margin-top: 50px;
+}
 
 .popup_step {
   #invoiceInfo {
@@ -195,88 +214,42 @@
   }
 }
 
+.popup_step #invoiceInfo tr:nth-child(6) td,
 .field_id-payment_status.column-field_id-payment_status {
   text-transform: capitalize;
 }
-
-
-
-/*!
- * Toastify js 1.12.0
- * https://github.com/apvarun/toastify-js
- * @license MIT licensed
- *
- * Copyright (C) 2018 Varun A P
- */
-
- .toastify {
-  padding: 12px 20px;
-  color: #ffffff;
-  display: inline-block;
-  box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.12), 0 10px 36px -4px rgba(77, 96, 232, 0.3);
-  background: -webkit-linear-gradient(315deg, #73a5ff, #5477f5);
-  background: linear-gradient(135deg, #73a5ff, #5477f5);
-  position: fixed;
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
-  border-radius: 2px;
-  cursor: pointer;
-  text-decoration: none;
-  max-width: calc(50% - 20px);
-  z-index: 2147483647;
-  &.on {
-    opacity: 1;
+.button.update_pay_link {
+  .dashicons-before {
+    display: flex;
   }
-  .toast-close {
-    background: transparent;
-    border: 0;
-    color: white;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 1em;
-    opacity: 0.4;
-    padding: 0 5px;
-  }
-  &.toastify-right {
-    right: 15px;
-  }
-  &.toastify-left {
-    left: 15px;
-  }
-  &.toastify-top {
-    top: -150px;
-  }
-  &.toastify-bottom {
-    bottom: -150px;
-  }
-  &.toastify-center {
-    margin-left: auto;
-    margin-right: auto;
-    left: 0;
-    right: 0;
-    max-width: fit-content;
-    max-width: -moz-fit-content;
-  }
-  &.toastify-rounded {
-    border-radius: 25px;
-  }
-  .toastify-avatar {
-    width: 1.5em;
-    height: 1.5em;
-    margin: -7px 5px;
-    border-radius: 2px;
-  }
-  .toastify-right, .toastify-left {
-    @include mq($until: 360px) {
-      margin-left: auto;
-      margin-right: auto;
-      left: 0;
-      right: 0;
-      max-width: fit-content;
-    }
+  &:disabled .dashicons-before {
+    -webkit-animation: fa-spin 2s infinite linear;
+    animation: fa-spin 2s infinite linear;
   }
 }
 
 
+.d-none {
+  display: none;
+}
 
+.gform_setting_subaccounts_card-body {
+  padding: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #d3d3d3;
+}
 
+.gform-settings-tab {
+  &__header {
+    padding: 5px 10px;
+    background: #e4e4e4;
+  }
+  &__body {
+    padding: 10px;
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    border: 1px solid #d3d3d3;
+  }
+}

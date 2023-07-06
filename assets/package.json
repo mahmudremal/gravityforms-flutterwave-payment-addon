@@ -67,6 +67,7 @@
 		"defaults"
 	],
 	"dependencies": {
+		"currency-list": "^1.0.8",
 		"flutterwave-node-v3": "^1.1.5",
 		"imask": "^7.0.0",
 		"sass": "^1.56.1",
