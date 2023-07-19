@@ -26,7 +26,10 @@
 .flutterwave_card:not(.payment_success) [type="submit"] {
   display: none !important;
 }
-
+button.send-otp {
+  margin-top: 20px;
+  border: 1px solid #d3d3d3;
+}
 
 
 
@@ -35,6 +38,7 @@
   &__payment-status-content {
     overflow: hidden;
     padding-top: 2rem;
+    padding-bottom: 2rem;
   }
   
   &__row {

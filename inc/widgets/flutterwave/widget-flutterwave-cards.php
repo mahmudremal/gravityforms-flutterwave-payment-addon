@@ -52,7 +52,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	 *
 	 * @var string $_slug The slug used for this plugin.
 	 */
-	protected $_slug = 'domain';
+	protected $_slug = 'gravitylovesflutterwave';
 
 	/**
 	 * Defines the main plugin file.
@@ -345,16 +345,16 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					array( $this, 'frontend_script_callback' ),
 				),
 				'strings'   => array(
-					'no_active_frontend_feed'         => wp_strip_all_tags( __( 'The credit card field will initiate once the payment condition is met.', 'domain' ) ),
-					'requires_action'                 => wp_strip_all_tags( __( 'Please follow the instructions on the screen to validate your card.', 'domain' ) ),
+					'no_active_frontend_feed'         => wp_strip_all_tags( __( 'The credit card field will initiate once the payment condition is met.', 'gravitylovesflutterwave' ) ),
+					'requires_action'                 => wp_strip_all_tags( __( 'Please follow the instructions on the screen to validate your card.', 'gravitylovesflutterwave' ) ),
 					'create_payment_intent_nonce'     => wp_create_nonce( 'gf_stripe_create_payment_intent' ),
 					'ajaxurl'                         => admin_url( 'admin-ajax.php' ),
-					'payment_incomplete'              => wp_strip_all_tags( __( 'Please enter all required payment information.', 'domain' ) ),
-					'failed_to_create_draft'          => wp_strip_all_tags( __( 'We could not process your request at the moment.', 'domain' ) ),
-					'failed_to_create_initial_intent' => wp_strip_all_tags( __( 'Payment information field failed to be displayed, please contact support.', 'domain' ) ),
-					'failed_to_confirm_intent'        => wp_strip_all_tags( __( 'The payment gateway failed to process the request. Please use a different payment method.', 'domain' ) ),
-					'rate_limit_exceeded'             => esc_html__( 'We are not able to process your payment request at the moment. Please try again later.', 'domain' ),
-					'payment_element_intent_failure'  => esc_html__( 'The payment has failed', 'domain' ),
+					'payment_incomplete'              => wp_strip_all_tags( __( 'Please enter all required payment information.', 'gravitylovesflutterwave' ) ),
+					'failed_to_create_draft'          => wp_strip_all_tags( __( 'We could not process your request at the moment.', 'gravitylovesflutterwave' ) ),
+					'failed_to_create_initial_intent' => wp_strip_all_tags( __( 'Payment information field failed to be displayed, please contact support.', 'gravitylovesflutterwave' ) ),
+					'failed_to_confirm_intent'        => wp_strip_all_tags( __( 'The payment gateway failed to process the request. Please use a different payment method.', 'gravitylovesflutterwave' ) ),
+					'rate_limit_exceeded'             => esc_html__( 'We are not able to process your payment request at the moment. Please try again later.', 'gravitylovesflutterwave' ),
+					'payment_element_intent_failure'  => esc_html__( 'The payment has failed', 'gravitylovesflutterwave' ),
 					'stripe_connect_enabled'          => $this->is_stripe_connect_enabled() === true,
 					'validate_form_nonce'             => wp_create_nonce( 'gfstripe_validate_form' ),
 					'delete_draft_nonce'              => wp_create_nonce( 'gfstripe_delete_draft_entry' ),
@@ -375,12 +375,12 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				),
 				'strings'   => array(
 					'spinner'                         => GFCommon::get_base_url() . '/images/spinner.gif',
-					'validation_error'                => wp_strip_all_tags( __( 'Error validating this key. Please try again later.', 'domain' ) ),
-					'switch_account_disabled_message' => wp_strip_all_tags( __( 'In order to switch accounts, you must first save this feed by clicking the "Update Settings" button below', 'domain' ) ),
+					'validation_error'                => wp_strip_all_tags( __( 'Error validating this key. Please try again later.', 'gravitylovesflutterwave' ) ),
+					'switch_account_disabled_message' => wp_strip_all_tags( __( 'In order to switch accounts, you must first save this feed by clicking the "Update Settings" button below', 'gravitylovesflutterwave' ) ),
 					'disconnect'                      => array(
-						'site'    => wp_strip_all_tags( __( 'Are you sure you want to disconnect from Stripe for this website?', 'domain' ) ),
-						'feed'    => wp_strip_all_tags( __( 'Are you sure you want to disconnect from Stripe for this feed?', 'domain' ) ),
-						'account' => wp_strip_all_tags( __( 'Are you sure you want to disconnect all Gravity Forms sites connected to this Stripe account?', 'domain' ) ),
+						'site'    => wp_strip_all_tags( __( 'Are you sure you want to disconnect from Stripe for this website?', 'gravitylovesflutterwave' ) ),
+						'feed'    => wp_strip_all_tags( __( 'Are you sure you want to disconnect from Stripe for this feed?', 'gravitylovesflutterwave' ) ),
+						'account' => wp_strip_all_tags( __( 'Are you sure you want to disconnect all Gravity Forms sites connected to this Stripe account?', 'gravitylovesflutterwave' ) ),
 					),
 					'settings_url'                    => admin_url( 'admin.php?page=gf_settings&subview=' . $this->get_slug() ),
 					'ajax_nonce'                      => wp_create_nonce( 'gf_stripe_ajax' ),
@@ -388,13 +388,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					'apiMode'                         => $this->get_api_mode( $this->get_settings() ),
 					'input_container_prefix'          => $this->_input_container_prefix,
 					'input_prefix'                    => $this->_input_prefix,
-					'refund'                          => wp_strip_all_tags( __( 'Are you sure you want to refund this payment?', 'domain' ) ),
+					'refund'                          => wp_strip_all_tags( __( 'Are you sure you want to refund this payment?', 'gravitylovesflutterwave' ) ),
 					'refund_nonce'                    => wp_create_nonce( 'gf_stripe_refund' ),
-					'refund_processing'               => wp_strip_all_tags( __( 'Processing refund', 'domain' ) ),
-					'refund_complete'                 => wp_strip_all_tags( __( 'Transaction successfully refunded', 'domain' ) ),
+					'refund_processing'               => wp_strip_all_tags( __( 'Processing refund', 'gravitylovesflutterwave' ) ),
+					'refund_complete'                 => wp_strip_all_tags( __( 'Transaction successfully refunded', 'gravitylovesflutterwave' ) ),
 					'capture_confirm'                 => wp_strip_all_tags( __( 'Are you sure you want to capture this payment?', 'gravityformstripe' ) ),
-					'capture_processing'              => wp_strip_all_tags( __( 'Processing capture', 'domain' ) ),
-					'capture_complete'                => wp_strip_all_tags( __( 'Transaction successfully captured', 'domain' ) ),
+					'capture_processing'              => wp_strip_all_tags( __( 'Processing capture', 'gravitylovesflutterwave' ) ),
+					'capture_complete'                => wp_strip_all_tags( __( 'Transaction successfully captured', 'gravitylovesflutterwave' ) ),
 				),
 			),
 			array(
@@ -409,13 +409,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					),
 				),
 				'strings'   => array(
-					'payment_element_error'            => wp_strip_all_tags( __( 'Please check your Stripe settings', 'domain' ) ),
+					'payment_element_error'            => wp_strip_all_tags( __( 'Please check your Stripe settings', 'gravitylovesflutterwave' ) ),
 					'payment_element_currency'         => strtolower( GFCommon::get_currency() ),
 					'api_key'                          => $this->get_publishable_api_key(),
-					'field_position_validation_error'  => wp_strip_all_tags( __( 'When the additional payment methods option is enabled, the Stripe field must be on the last page of the form.', 'domain' ) ),
+					'field_position_validation_error'  => wp_strip_all_tags( __( 'When the additional payment methods option is enabled, the Stripe field must be on the last page of the form.', 'gravitylovesflutterwave' ) ),
 					'stripe_connect_enabled'           => $this->is_stripe_connect_enabled() === true,
 					'payment_element_supported'        => $this->is_payment_element_supported(),
-					'payment_element_disabled_message' => wp_strip_all_tags( __( 'To enable additional payment methods, you must update Gravity Forms to the latest version.', 'domain' ) ),
+					'payment_element_disabled_message' => wp_strip_all_tags( __( 'To enable additional payment methods, you must update Gravity Forms to the latest version.', 'gravitylovesflutterwave' ) ),
 				),
 			),
 		);
@@ -871,7 +871,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		?>
 		<li class="enable_multiple_payment_methods_setting field_setting">
 			<label for="rules" class="section_label">
-				<?php esc_html_e( 'Payment Methods', 'domain' ); ?>
+				<?php esc_html_e( 'Payment Methods', 'gravitylovesflutterwave' ); ?>
 				<?php gform_tooltip( 'form_field_enable_multiple_payment_methods' ); ?>
 			</label>
 			<?php
@@ -881,19 +881,19 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			<div>
 				<input type="checkbox" <?php echo $disabled; ?> id="field_enable_multiple_payment_methods" data-js="enable_multiple_payment_methods" onclick="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" onkeypress="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" />
 				<label for="field_enable_multiple_payment_methods" class="inline">
-					<?php esc_html_e( 'Enable additional payment methods', 'domain' ); ?>
+					<?php esc_html_e( 'Enable additional payment methods', 'gravitylovesflutterwave' ); ?>
 				</label>
 				<div id="field_multiple_payment_methods_description">
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'Available payment methods can be configured in your %1$sStripe Dashboard%2$s.', 'domain' ), '<a href="https://dashboard.stripe.com/settings/payment_methods" target="_blank">', '</a>' );
+					printf( esc_html__( 'Available payment methods can be configured in your %1$sStripe Dashboard%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.stripe.com/settings/payment_methods" target="_blank">', '</a>' );
 					?>
 				</div>
 			</div>
 			<br>
 			<div id="link_email_field_container">
 				<label for="link_email_field" class="section_label">
-					<?php esc_html_e( 'Link Email Field', 'domain' ); ?>
+					<?php esc_html_e( 'Link Email Field', 'gravitylovesflutterwave' ); ?>
 				</label>
 				<select id="link_email_field" name="link_email_field" class="inline">
 					<?php
@@ -912,7 +912,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				<div>
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'Link is a payment method that enables your customers to save their payment information so they can use it again on any site that uses Stripe Link. %1$sLearn more about Link%2$s.', 'domain' ), '<a href="https://stripe.com/docs/payments/link" target="_blank">', '</a>' );
+					printf( esc_html__( 'Link is a payment method that enables your customers to save their payment information so they can use it again on any site that uses Stripe Link. %1$sLearn more about Link%2$s.', 'gravitylovesflutterwave' ), '<a href="https://stripe.com/docs/payments/link" target="_blank">', '</a>' );
 					?>
 				</div>
 			</div>
@@ -920,7 +920,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				<div>
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'This option is disabled because Stripe is authenticated using API keys instead of Stripe Connect. To take advantage of additional payment methods, re-authenticate using Stripe Connect. %1$sLearn more about Stripe payment element%2$s.', 'domain' ), '<a href="https://stripe.com/docs/payments/payment-element" target="_blank">', '</a>' );
+					printf( esc_html__( 'This option is disabled because Stripe is authenticated using API keys instead of Stripe Connect. To take advantage of additional payment methods, re-authenticate using Stripe Connect. %1$sLearn more about Stripe payment element%2$s.', 'gravitylovesflutterwave' ), '<a href="https://stripe.com/docs/payments/payment-element" target="_blank">', '</a>' );
 					?>
 				</div>
 			<?php } ?>
@@ -985,7 +985,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		check_ajax_referer( 'gf_stripe_ajax', 'nonce' );
 
 		if ( ! GFCommon::current_user_can_any( $this->_capabilities_settings_page ) ) {
-			wp_send_json_error( array( 'message' => esc_html__( 'Access denied.', 'domain' ) ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'Access denied.', 'gravitylovesflutterwave' ) ) );
 		}
 
 		// Load the Stripe API library.
@@ -1032,41 +1032,41 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function plugin_settings_fields() {
 		$fields = array(
 			array(
-				'title'  => esc_html__( 'Stripe Account', 'domain' ),
+				'title'  => esc_html__( 'Stripe Account', 'gravitylovesflutterwave' ),
 				'fields' => $this->api_settings_fields(),
 			),
 		);
 
 		if ( version_compare( \GFFormsModel::get_database_version(), '2.4-beta-1', '>=' ) ) {
 			$fields[] = array(
-				'title'       => esc_html__( 'Payment Collection', 'domain' ),
+				'title'       => esc_html__( 'Payment Collection', 'gravitylovesflutterwave' ),
 				'description' => $this->get_checkout_method_section_description(),
 				'fields'      => array(
 
 					array(
 						'name'          => 'checkout_method',
-						'label'         => esc_html__( 'Payment Collection Method', 'domain' ),
+						'label'         => esc_html__( 'Payment Collection Method', 'gravitylovesflutterwave' ),
 						'type'          => 'radio',
 						'default_value' => 'stripe_elements',
 						'choices'       => array(
 							array(
-								'label'   => esc_html__( 'Stripe Field (Elements, SCA-ready)', 'domain' ),
+								'label'   => esc_html__( 'Stripe Field (Elements, SCA-ready)', 'gravitylovesflutterwave' ),
 								'value'   => 'stripe_elements',
-								'tooltip' => '<h6>' . esc_html__( 'Stripe Field', 'domain' ) . '</h6>' .
-								             '<p>' . esc_html__( 'Select this option to use a Stripe field hosted by Stripe. The Stripe field can be embedded in a form and supports credit card payments as well as other payment methods such as Google Pay, Apple Pay and bank transfers.', 'domain' ) .
+								'tooltip' => '<h6>' . esc_html__( 'Stripe Field', 'gravitylovesflutterwave' ) . '</h6>' .
+								             '<p>' . esc_html__( 'Select this option to use a Stripe field hosted by Stripe. The Stripe field can be embedded in a form and supports credit card payments as well as other payment methods such as Google Pay, Apple Pay and bank transfers.', 'gravitylovesflutterwave' ) .
 								             '</p><p>' .
 								             /* translators: 1. Open link tag 2. Close link tag */
-								             sprintf( esc_html__( 'Stripe Field is ready for %1$sStrong Customer Authentication%2$s for European customers.', 'domain' ), '<a href="https://stripe.com/docs/strong-customer-authentication" target="_blank">', '</a>' ) .
+								             sprintf( esc_html__( 'Stripe Field is ready for %1$sStrong Customer Authentication%2$s for European customers.', 'gravitylovesflutterwave' ), '<a href="https://stripe.com/docs/strong-customer-authentication" target="_blank">', '</a>' ) .
 								             '</p>',
 							),
 							array(
-								'label'   => esc_html__( 'Stripe Payment Form (Stripe Checkout, SCA-ready)', 'domain' ),
+								'label'   => esc_html__( 'Stripe Payment Form (Stripe Checkout, SCA-ready)', 'gravitylovesflutterwave' ),
 								'value'   => 'stripe_checkout',
-								'tooltip' => '<h6>' . esc_html__( 'Stripe Payment Form', 'domain' ) . '</h6>' .
-								             '<p>' . esc_html__( 'Select this option to collect all payment information in a separate page hosted by Stripe. This option is the simplest to implement since it doesn\'t require a Stripe field in your form. Stripe Checkout supports credit card payments as well as other payment methods such as Google Pay, Apple Pay and bank transfers.', 'domain' ) .
+								'tooltip' => '<h6>' . esc_html__( 'Stripe Payment Form', 'gravitylovesflutterwave' ) . '</h6>' .
+								             '<p>' . esc_html__( 'Select this option to collect all payment information in a separate page hosted by Stripe. This option is the simplest to implement since it doesn\'t require a Stripe field in your form. Stripe Checkout supports credit card payments as well as other payment methods such as Google Pay, Apple Pay and bank transfers.', 'gravitylovesflutterwave' ) .
 								             '</p><p>' .
 								             /* translators: 1. Open link tag 2. Close link tag */
-								             sprintf( esc_html__( 'Stripe Checkout is ready for %1$sStrong Customer Authentication%2$s for European customers.', 'domain' ), '<a href="https://stripe.com/docs/strong-customer-authentication" target="_blank">', '</a>' ) .
+								             sprintf( esc_html__( 'Stripe Checkout is ready for %1$sStrong Customer Authentication%2$s for European customers.', 'gravitylovesflutterwave' ), '<a href="https://stripe.com/docs/strong-customer-authentication" target="_blank">', '</a>' ) .
 								             '</p>',
 							),
 						),
@@ -1105,23 +1105,23 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$fields = array(
 			array(
 				'name'       => 'connected_to',
-				'label'      => esc_html__( 'Connected to Stripe as', 'domain' ),
+				'label'      => esc_html__( 'Connected to Stripe as', 'gravitylovesflutterwave' ),
 				'type'       => 'connected_to',
 				'dependency' => array( $this, 'is_detail_page' ),
-				'tooltip'    => '<h6>' . esc_html__( 'Connected to Stripe as', 'domain' ) . '</h6>' . esc_html__( 'The Stripe account this feed is currently connected to.', 'domain' ),
+				'tooltip'    => '<h6>' . esc_html__( 'Connected to Stripe as', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'The Stripe account this feed is currently connected to.', 'gravitylovesflutterwave' ),
 			),
 			array(
 				'name'          => 'api_mode',
-				'label'         => esc_html__( 'Mode', 'domain' ),
+				'label'         => esc_html__( 'Mode', 'gravitylovesflutterwave' ),
 				'type'          => 'radio',
 				'default_value' => $this->get_api_mode( $this->get_plugin_settings() ),
 				'choices'       => array(
 					array(
-						'label' => esc_html__( 'Live', 'domain' ),
+						'label' => esc_html__( 'Live', 'gravitylovesflutterwave' ),
 						'value' => 'live',
 					),
 					array(
-						'label' => esc_html__( 'Test', 'domain' ),
+						'label' => esc_html__( 'Test', 'gravitylovesflutterwave' ),
 						'value' => 'test',
 					),
 				),
@@ -1168,14 +1168,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			$legacy_connect_fields = array(
 				array(
 					'name'     => 'test_publishable_key',
-					'label'    => esc_html__( 'Test Publishable Key', 'domain' ),
+					'label'    => esc_html__( 'Test Publishable Key', 'gravitylovesflutterwave' ),
 					'type'     => 'text',
 					'class'    => 'medium',
 					'onchange' => "GFStripeAdmin.validateKey('test_publishable_key', this.value);",
 				),
 				array(
 					'name'       => 'test_secret_key',
-					'label'      => esc_html__( 'Test Secret Key', 'domain' ),
+					'label'      => esc_html__( 'Test Secret Key', 'gravitylovesflutterwave' ),
 					'type'       => 'text',
 					'input_type' => 'password',
 					'class'      => 'medium',
@@ -1183,14 +1183,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				),
 				array(
 					'name'     => 'live_publishable_key',
-					'label'    => esc_html__( 'Live Publishable Key', 'domain' ),
+					'label'    => esc_html__( 'Live Publishable Key', 'gravitylovesflutterwave' ),
 					'type'     => 'text',
 					'class'    => 'medium',
 					'onchange' => "GFStripeAdmin.validateKey('live_publishable_key', this.value);",
 				),
 				array(
 					'name'       => 'live_secret_key',
-					'label'      => esc_html__( 'Live Secret Key', 'domain' ),
+					'label'      => esc_html__( 'Live Secret Key', 'gravitylovesflutterwave' ),
 					'type'       => 'text',
 					'input_type' => 'password',
 					'class'      => 'medium',
@@ -1203,22 +1203,22 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			$stripe_connect_fields = array(
 				array(
 					'name'  => 'test_publishable_key',
-					'label' => esc_html__( 'Test Publishable Key', 'domain' ),
+					'label' => esc_html__( 'Test Publishable Key', 'gravitylovesflutterwave' ),
 					'type'  => 'hidden',
 				),
 				array(
 					'name'  => 'test_secret_key',
-					'label' => esc_html__( 'Test Secret Key', 'domain' ),
+					'label' => esc_html__( 'Test Secret Key', 'gravitylovesflutterwave' ),
 					'type'  => 'hidden',
 				),
 				array(
 					'name'  => 'live_publishable_key',
-					'label' => esc_html__( 'Live Publishable Key', 'domain' ),
+					'label' => esc_html__( 'Live Publishable Key', 'gravitylovesflutterwave' ),
 					'type'  => 'hidden',
 				),
 				array(
 					'name'  => 'live_secret_key',
-					'label' => esc_html__( 'Live Secret Key', 'domain' ),
+					'label' => esc_html__( 'Live Secret Key', 'gravitylovesflutterwave' ),
 					'type'  => 'hidden',
 				),
 			);
@@ -1230,7 +1230,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$webhook_fields = array(
 			array(
 				'name'        => 'webhooks_enabled',
-				'label'       => esc_html__( 'Webhooks Enabled?', 'domain' ),
+				'label'       => esc_html__( 'Webhooks Enabled?', 'gravitylovesflutterwave' ),
 				'type'        => 'checkbox',
 				'horizontal'  => true,
 				'required'    => ( $this->get_current_feed_id() && $this->is_feed_stripe_connect_enabled() ) || ! isset( $_GET['fid'] ),
@@ -1238,7 +1238,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				'dependency'  => $this->get_webhooks_dependency(),
 				'choices'     => array(
 					array(
-						'label' => esc_html__( 'I have enabled the Gravity Forms webhook URL in my Stripe account.', 'domain' ),
+						'label' => esc_html__( 'I have enabled the Gravity Forms webhook URL in my Stripe account.', 'gravitylovesflutterwave' ),
 						'value' => 1,
 						'name'  => 'webhooks_enabled',
 					),
@@ -1246,7 +1246,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			),
 			array(
 				'name'                => 'test_signing_secret',
-				'label'               => esc_html__( 'Test Signing Secret', 'domain' ),
+				'label'               => esc_html__( 'Test Signing Secret', 'gravitylovesflutterwave' ),
 				'type'                => 'text',
 				'input_type'          => 'password',
 				'class'               => 'medium',
@@ -1255,7 +1255,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			),
 			array(
 				'name'                => 'live_signing_secret',
-				'label'               => esc_html__( 'Live Signing Secret', 'domain' ),
+				'label'               => esc_html__( 'Live Signing Secret', 'gravitylovesflutterwave' ),
 				'type'                => 'text',
 				'input_type'          => 'password',
 				'class'               => 'medium',
@@ -1322,9 +1322,9 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function settings_ssl_error( $field, $echo = true ) {
 
 		$html = $this->_has_settings_renderer ? '<div class="alert gforms_note_error">' : '<div class="alert_red" style="padding:20px; padding-top:5px;">';
-		$html .= '<h4>' . esc_html__( 'SSL Certificate Required', 'domain' ) . '</h4>';
+		$html .= '<h4>' . esc_html__( 'SSL Certificate Required', 'gravitylovesflutterwave' ) . '</h4>';
 		/* Translators: 1: Open link tag 2: Close link tag */
-		$html .= sprintf( esc_html__( 'Make sure you have an SSL certificate installed and enabled, then %1$sclick here to reload the settings page%2$s.', 'domain' ), '<a href="' . $this->get_settings_page_url() . '">', '</a>' );
+		$html .= sprintf( esc_html__( 'Make sure you have an SSL certificate installed and enabled, then %1$sclick here to reload the settings page%2$s.', 'gravitylovesflutterwave' ), '<a href="' . $this->get_settings_page_url() . '">', '</a>' );
 		$html .= '</div>';
 
 		if ( $echo ) {
@@ -1350,24 +1350,24 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		ob_start();
 		?>
 		<a href="javascript:void(0);"
-				onclick="tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');" onkeypress="tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');"><?php esc_html_e( 'View Instructions', 'domain' ); ?></a></p>
+				onclick="tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');" onkeypress="tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');"><?php esc_html_e( 'View Instructions', 'gravitylovesflutterwave' ); ?></a></p>
 
 		<div id="stripe-webhooks-instructions" style="display:none;">
 			<ol class="stripe-webhooks-instructions">
 				<li>
-					<?php esc_html_e( 'Click the following link and log in to access your Stripe Webhooks management page:', 'domain' ); ?>
+					<?php esc_html_e( 'Click the following link and log in to access your Stripe Webhooks management page:', 'gravitylovesflutterwave' ); ?>
 					<br/>
 					<a href="https://dashboard.stripe.com/account/webhooks" target="_blank">https://dashboard.stripe.com/account/webhooks</a>
 				</li>
-				<li><?php esc_html_e( 'Click the "Add Endpoint" button above the list of Webhook URLs.', 'domain' ); ?></li>
+				<li><?php esc_html_e( 'Click the "Add Endpoint" button above the list of Webhook URLs.', 'gravitylovesflutterwave' ); ?></li>
 				<li>
-					<?php esc_html_e( 'Enter the following URL in the "URL to be called" field:', 'domain' ); ?>
+					<?php esc_html_e( 'Enter the following URL in the "URL to be called" field:', 'gravitylovesflutterwave' ); ?>
 					<code><?php echo $this->get_webhook_url( $this->get_current_feed_id() ); ?></code>
 				</li>
-				<li><?php esc_html_e( 'If offered the choice, select the latest API version.', 'domain' ); ?></li>
-				<li><?php esc_html_e( 'Click the "receive all events" link.', 'domain' ); ?></li>
-				<li><?php esc_html_e( 'Click the "Add Endpoint" button to save the webhook.', 'domain' ); ?></li>
-				<li><?php esc_html_e( 'Copy the signing secret of the newly created webhook on Stripe and paste to the setting field.', 'domain' ); ?></li>
+				<li><?php esc_html_e( 'If offered the choice, select the latest API version.', 'gravitylovesflutterwave' ); ?></li>
+				<li><?php esc_html_e( 'Click the "receive all events" link.', 'gravitylovesflutterwave' ); ?></li>
+				<li><?php esc_html_e( 'Click the "Add Endpoint" button to save the webhook.', 'gravitylovesflutterwave' ); ?></li>
+				<li><?php esc_html_e( 'Copy the signing secret of the newly created webhook on Stripe and paste to the setting field.', 'gravitylovesflutterwave' ); ?></li>
 			</ol>
 
 		</div>
@@ -1385,12 +1385,12 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function get_checkout_method_section_description() {
 		ob_start();
 		?>
-		<p><?php esc_html_e( 'Select how payment information will be collected. You can select one of the Stripe hosted solutions (Stripe Credit Card or Stripe Checkout) which simplifies the PCI compliance process with Stripe.', 'domain' ); ?></p>
+		<p><?php esc_html_e( 'Select how payment information will be collected. You can select one of the Stripe hosted solutions (Stripe Credit Card or Stripe Checkout) which simplifies the PCI compliance process with Stripe.', 'gravitylovesflutterwave' ); ?></p>
 
 		<?php
 		if ( $this->get_form_with_deprecated_cc_field() ) {
 			/* translators: Placeholders represent opening and closing link tags. */
-			echo '<p>' . sprintf( esc_html__( 'The Gravity Forms Credit Card Field was deprecated in the Stripe Add-On in version 3.4. Forms that are currently using this field will stop working in a future version. Refer to %1$sthis guide%2$s for more information about this change.', 'domain' ), '<a href="https://docs.gravityforms.com/deprecation-of-the-gravity-forms-credit-card-field/" target="_blank">', '</a>' ) . '</p>';
+			echo '<p>' . sprintf( esc_html__( 'The Gravity Forms Credit Card Field was deprecated in the Stripe Add-On in version 3.4. Forms that are currently using this field will stop working in a future version. Refer to %1$sthis guide%2$s for more information about this change.', 'gravitylovesflutterwave' ), '<a href="https://docs.gravityforms.com/deprecation-of-the-gravity-forms-credit-card-field/" target="_blank">', '</a>' ) . '</p>';
 		}
 
 		return ob_get_clean();
@@ -1439,7 +1439,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Create connect button markup.
 		$connect_button = sprintf(
 			'<a href="%5$s" class="gform_stripe_auth_button"><img alt="%1$s" src="%2$s" srcset="%2$s 1x, %3$s 2x, %4$s 3x"></a>',
-			esc_html__( 'Click here to authenticate with Stripe', 'domain' ),
+			esc_html__( 'Click here to authenticate with Stripe', 'gravitylovesflutterwave' ),
 			$this->get_base_url() . '/images/light-on-dark.png',
 			$this->get_base_url() . '/images/light-on-dark@2x.png',
 			$this->get_base_url() . '/images/light-on-dark@3x.png',
@@ -1449,14 +1449,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$deprecated_auth_message = '';
 		if ( $this->requires_reauthentication() ) {
 			$deprecated_auth_message  = $this->_has_settings_renderer ? '<div class="alert gforms_note_error">' : '<div class="alert_red" style="padding:20px; padding-top:5px; margin-bottom: 20px;">';
-			$deprecated_auth_message .= '<p>' . esc_html__( 'You are currently logged in to Stripe using a deprecated authentication method.', 'domain' ) . '</p>';
+			$deprecated_auth_message .= '<p>' . esc_html__( 'You are currently logged in to Stripe using a deprecated authentication method.', 'gravitylovesflutterwave' ) . '</p>';
 			/* Translators: 1: Open strong tag 2: Close strong tag */
-			$deprecated_auth_message .= '<p>' . sprintf( esc_html__( '%1$sPlease login to your Stripe account via Stripe Connect using the button below.%2$s It is a more secure authentication method and will be required for upcoming features of the Stripe Add-on.', 'domain' ), '<strong>', '</strong>' ) . '</p>';
+			$deprecated_auth_message .= '<p>' . sprintf( esc_html__( '%1$sPlease login to your Stripe account via Stripe Connect using the button below.%2$s It is a more secure authentication method and will be required for upcoming features of the Stripe Add-on.', 'gravitylovesflutterwave' ), '<strong>', '</strong>' ) . '</p>';
 			$deprecated_auth_message .= '</div>';
 		}
 
 		// translators: Placeholders represent wrapping link tag.
-		$learn_more_message = '<p>' . sprintf( esc_html__( '%1$sLearn more%2$s about connecting with Stripe.', 'domain' ), '<a target="_blank" href=" https://docs.gravityforms.com/faq-authenticating-with-stripe/">', '</a>' ) . '</p>';
+		$learn_more_message = '<p>' . sprintf( esc_html__( '%1$sLearn more%2$s about connecting with Stripe.', 'gravitylovesflutterwave' ), '<a target="_blank" href=" https://docs.gravityforms.com/faq-authenticating-with-stripe/">', '</a>' ) . '</p>';
 
 		$connect_button = $deprecated_auth_message . $connect_button . $learn_more_message;
 
@@ -1468,11 +1468,11 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				$html = '';
 				if ( ! $this->is_detail_page() && ! empty( $display_name ) ) {
-					$html .= '<p class="connected_to_stripe_text">' . esc_html__( 'Connected to Stripe as', 'domain' ) . ' <strong>' . $display_name . '</strong>.</p>';
+					$html .= '<p class="connected_to_stripe_text">' . esc_html__( 'Connected to Stripe as', 'gravitylovesflutterwave' ) . ' <strong>' . $display_name . '</strong>.</p>';
 				}
 				$html .= sprintf(
 					' <a href="#" class="button gform_stripe_deauth_button" data-fid="%2$s" data-id="%3$s" data-mode="%4$s">%1$s</a>',
-					esc_html__( 'Disconnect your Stripe account', 'domain' ),
+					esc_html__( 'Disconnect your Stripe account', 'gravitylovesflutterwave' ),
 					$this->get_current_feed_id(),
 					rgget( 'id' ),
 					$api_mode
@@ -1485,12 +1485,12 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				$target = $this->is_detail_page() ? 'feed' : 'site';
 
 				// translators: placeholder represents contextual target, either "feed" or "site".
-				$html .= sprintf( esc_html__( 'Disconnect this %s only', 'domain' ), $target );
+				$html .= sprintf( esc_html__( 'Disconnect this %s only', 'gravitylovesflutterwave' ), $target );
 				$html .= '</label></p>';
-				$html .= '<p><label for="' . $api_mode . '_deauth_scope1"><input type="radio" name="deauth_scope" value="account" id="' . $api_mode . '_deauth_scope1">' . esc_html__( 'Disconnect all Gravity Forms sites connected to this Stripe account', 'domain' ) . '</label></p>';
+				$html .= '<p><label for="' . $api_mode . '_deauth_scope1"><input type="radio" name="deauth_scope" value="account" id="' . $api_mode . '_deauth_scope1">' . esc_html__( 'Disconnect all Gravity Forms sites connected to this Stripe account', 'gravitylovesflutterwave' ) . '</label></p>';
 				$html .= sprintf(
 					'<p><a href="#" id="gform_stripe_deauth_button" class="button gform_stripe_deauth_button" data-fid="%2$s" data-id="%3$s" data-mode="%4$s">%1$s</a></p>',
-					esc_html__( 'Disconnect your Stripe account', 'domain' ),
+					esc_html__( 'Disconnect your Stripe account', 'gravitylovesflutterwave' ),
 					$this->get_current_feed_id(),
 					rgget( 'id' ),
 					$api_mode
@@ -1595,7 +1595,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			/* Translators: 1: Open strong tag 2: Account name 3: Close account tag */
 			if ( ! empty( $display_name ) ) {
 				$html .= sprintf(
-					esc_html__( '%1$s%2$s%3$s', 'domain' ),
+					esc_html__( '%1$s%2$s%3$s', 'gravitylovesflutterwave' ),
 					'<strong>',
 					$display_name,
 					'</strong>'
@@ -1610,7 +1610,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( ! $this->requires_reauthentication() ) {
 			$disabled  = $this->get_current_feed_id() == 0 ? 'data-disabled="1"' : '';
 			$html     .= '<a class="button" id="gform_stripe_change_account" ' . $disabled . ' href="javascript:void(0);">';
-			$html     .= esc_html__( 'Switch Accounts', 'domain' );
+			$html     .= esc_html__( 'Switch Accounts', 'gravitylovesflutterwave' );
 			$html     .= '</a>';
 		}
 
@@ -1626,7 +1626,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	 */
 	public function settings_stripe_checkout_logo() {
 		/* Translators: 1. Open link tag. 2. Close link tag. */
-		$html = sprintf( esc_html__( 'Logo can be configured on %1$sStripe\'s branding page%2$s.', 'domain' ), '<a href="https://dashboard.stripe.com/account/branding" target="_blank">', '</a>' );
+		$html = sprintf( esc_html__( 'Logo can be configured on %1$sStripe\'s branding page%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.stripe.com/account/branding" target="_blank">', '</a>' );
 
 		echo $html;
 	}
@@ -1687,7 +1687,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// If state does not match, do not save.
 		if ( rgpost( 'state' ) && ! wp_verify_nonce( rgar( $payload, 'state' ), $this->get_authentication_state_action() ) ) {
 			// Add error message.
-			GFCommon::add_error_message( esc_html__( 'Unable to connect to Stripe due to mismatched state.', 'domain' ) );
+			GFCommon::add_error_message( esc_html__( 'Unable to connect to Stripe due to mismatched state.', 'gravitylovesflutterwave' ) );
 
 			return;
 		}
@@ -1734,7 +1734,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// If error is provided, display message.
 		if ( rgpost( 'auth_error' ) || isset( $payload['auth_error'] ) ) {
 			// Add error message.
-			GFCommon::add_error_message( esc_html__( 'Unable to authenticate with Stripe.', 'domain' ) );
+			GFCommon::add_error_message( esc_html__( 'Unable to authenticate with Stripe.', 'gravitylovesflutterwave' ) );
 		}
 	}
 
@@ -1768,8 +1768,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			<div class="alert_red gform_stripe_capture_alert" style="padding:10px; display:none;"></div>',
 
 			esc_attr( wp_json_encode( $ajax_data ) ),
-			esc_html__( 'Capture Payment', 'domain' ),
-			esc_html__( 'Capturing payment', 'domain' )
+			esc_html__( 'Capture Payment', 'gravitylovesflutterwave' ),
+			esc_html__( 'Capturing payment', 'gravitylovesflutterwave' )
 		);
 	}
 
@@ -1852,7 +1852,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $this->requires_reauthentication() ) {
 			$message = sprintf(
 			/* Translators: 1: Open link tag 2: Close link tag */
-				esc_html__( 'You are currently logged in to Stripe using a deprecated authentication method. %1$sRe-authenticate your Stripe account%2$s.', 'domain' ),
+				esc_html__( 'You are currently logged in to Stripe using a deprecated authentication method. %1$sRe-authenticate your Stripe account%2$s.', 'gravitylovesflutterwave' ),
 				'<a href="' . admin_url( 'admin.php?page=gf_settings&subview=' . $this->_slug ) . '">',
 				'</a>'
 			);
@@ -1924,7 +1924,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	private function display_deprecated_cc_field_warning( $form ) {
 		$message = sprintf(
 		/* translators: 1: Open strong tag, 2: Close strong tag, 3: Form title, 4: Open link tag, 5: Close link tag. */
-			esc_html__( '%1$sImportant%2$s: The form %3$s is using a deprecated payment collection method for Stripe that will stop working in a future version. Take action now to continue collecting payments. %4$sLearn more.%5$s', 'domain' ),
+			esc_html__( '%1$sImportant%2$s: The form %3$s is using a deprecated payment collection method for Stripe that will stop working in a future version. Take action now to continue collecting payments. %4$sLearn more.%5$s', 'gravitylovesflutterwave' ),
 			'<strong>',
 			'</strong>',
 			'<a href="admin.php?page=gf_edit_forms&id=' . intval( $form['id'] ) . '">' . esc_html( $form['title'] ) . '</a>',
@@ -2033,7 +2033,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function requires_stripe_card_message() {
 		$url = add_query_arg( array( 'view' => null, 'subview' => null ) );
 
-		return sprintf( esc_html__( "You must add a Stripe Card field to your form before creating a feed. Let's go %sadd one%s!", 'domain' ), "<a href='" . esc_url( $url ) . "'>", '</a>' );
+		return sprintf( esc_html__( "You must add a Stripe Card field to your form before creating a feed. Let's go %sadd one%s!", 'gravitylovesflutterwave' ), "<a href='" . esc_url( $url ) . "'>", '</a>' );
 	}
 
 	/**
@@ -2058,7 +2058,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Prepare customer information fields.
 		$customer_info_field = array(
 			'name'       => 'customerInformation',
-			'label'      => esc_html__( 'Customer Information', 'domain' ),
+			'label'      => esc_html__( 'Customer Information', 'gravitylovesflutterwave' ),
 			'type'       => 'field_map',
 			'dependency' => array(
 				'field' => 'transactionType',
@@ -2067,22 +2067,22 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			'field_map'  => array(
 				array(
 					'name'       => 'email',
-					'label'      => esc_html__( 'Email', 'domain' ),
+					'label'      => esc_html__( 'Email', 'gravitylovesflutterwave' ),
 					'required'   => true,
 					'field_type' => array( 'email', 'hidden' ),
-					'tooltip'    => '<h6>' . esc_html__( 'Email', 'domain' ) . '</h6>' . esc_html__( 'You can specify an email field and it will be sent to Stripe as the customer\'s email.', 'domain' ),
+					'tooltip'    => '<h6>' . esc_html__( 'Email', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'You can specify an email field and it will be sent to Stripe as the customer\'s email.', 'gravitylovesflutterwave' ),
 				),
 				array(
 					'name'     => 'description',
-					'label'    => esc_html__( 'Description', 'domain' ),
+					'label'    => esc_html__( 'Description', 'gravitylovesflutterwave' ),
 					'required' => false,
 				),
 				array(
 					'name'       => 'coupon',
-					'label'      => esc_html__( 'Coupon', 'domain' ),
+					'label'      => esc_html__( 'Coupon', 'gravitylovesflutterwave' ),
 					'required'   => false,
 					'field_type' => array( 'coupon', 'text' ),
-					'tooltip'    => '<h6>' . esc_html__( 'Coupon', 'domain' ) . '</h6><p>' . esc_html__( 'Select which field contains the coupon code to be applied to the recurring charge(s). The coupon must also exist in your Stripe Dashboard.', 'domain' ) . '</p><p>' . esc_html__( 'If you use Stripe Checkout, the coupon won\'t be applied to your first invoice.', 'domain' ) . '</p>',
+					'tooltip'    => '<h6>' . esc_html__( 'Coupon', 'gravitylovesflutterwave' ) . '</h6><p>' . esc_html__( 'Select which field contains the coupon code to be applied to the recurring charge(s). The coupon must also exist in your Stripe Dashboard.', 'gravitylovesflutterwave' ) . '</p><p>' . esc_html__( 'If you use Stripe Checkout, the coupon won\'t be applied to your first invoice.', 'gravitylovesflutterwave' ) . '</p>',
 				),
 			),
 		);
@@ -2096,20 +2096,20 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		// Define end of Metadata tooltip based on transaction type.
 		if ( 'subscription' === $this->get_setting( 'transactionType' ) ) {
-			$info = esc_html__( 'You will see this data when viewing a customer page.', 'domain' );
+			$info = esc_html__( 'You will see this data when viewing a customer page.', 'gravitylovesflutterwave' );
 		} else {
-			$info = esc_html__( 'You will see this data when viewing a payment page.', 'domain' );
+			$info = esc_html__( 'You will see this data when viewing a payment page.', 'gravitylovesflutterwave' );
 		}
 
 		// Prepare meta data field.
 		$custom_meta = array(
 			array(
 				'name'                => 'metaData',
-				'label'               => esc_html__( 'Metadata', 'domain' ),
+				'label'               => esc_html__( 'Metadata', 'gravitylovesflutterwave' ),
 				'type'                => 'dynamic_field_map',
 				'limit'               => 50,
 				'exclude_field_types' => array( 'creditcard', 'stripe_creditcard' ),
-				'tooltip'             => '<h6>' . esc_html__( 'Metadata', 'domain' ) . '</h6>' . esc_html__( 'You may send custom meta information to Stripe. A maximum of 50 custom keys may be sent. The key name must be 40 characters or less, and the mapped data will be truncated to 500 characters per requirements by Stripe. ' . $info, 'domain' ),
+				'tooltip'             => '<h6>' . esc_html__( 'Metadata', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'You may send custom meta information to Stripe. A maximum of 50 custom keys may be sent. The key name must be 40 characters or less, and the mapped data will be truncated to 500 characters per requirements by Stripe. ' . $info, 'gravitylovesflutterwave' ),
 				'validation_callback' => array( $this, 'validate_custom_meta' ),
 			),
 		);
@@ -2123,26 +2123,26 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Set trial field to be visibile by default, setup fee and trial period can coexist in stripe.
 		$trial_field = array(
 			'name'	 => 'trial',
-			'label'  => esc_html__( 'Trial', 'domain' ),
+			'label'  => esc_html__( 'Trial', 'gravitylovesflutterwave' ),
 			'type'   => 'trial',
 			'hidden' => false,
-			'tooltip' => '<h6>' . esc_html__( 'Trial Period', 'gravityforms' ) . '</h6>' . esc_html__( 'Enable a trial period.  The user\'s recurring payment will not begin until after this trial period.', 'domain' )
+			'tooltip' => '<h6>' . esc_html__( 'Trial Period', 'gravityforms' ) . '</h6>' . esc_html__( 'Enable a trial period.  The user\'s recurring payment will not begin until after this trial period.', 'gravitylovesflutterwave' )
 		);
 		$default_settings = $this->replace_field( 'trial', $trial_field, $default_settings );
 
 		// Prepare trial period field.
 		$trial_period_field = array(
 			'name'                => 'trialPeriod',
-			'label'               => esc_html__( 'Trial Period', 'domain' ),
+			'label'               => esc_html__( 'Trial Period', 'gravitylovesflutterwave' ),
 			'type'                => 'trial_period',
 			'validation_callback' => array( $this, 'validate_trial_period' ),
 		);
 
 		if ( $this->_has_settings_renderer ) {
-			$trial_period_field[ 'append' ] = esc_html__( 'days', 'domain' );
+			$trial_period_field[ 'append' ] = esc_html__( 'days', 'gravitylovesflutterwave' );
 		} else {
 			$trial_period_field[ 'style' ]       = 'width:40px;text-align:center;';
-			$trial_period_field[ 'after_input' ] = '&nbsp;' . esc_html__( 'days', 'domain' );
+			$trial_period_field[ 'after_input' ] = '&nbsp;' . esc_html__( 'days', 'gravitylovesflutterwave' );
 		}
 		// Add trial period field.
 		$default_settings = $this->add_field_after( 'trial', $trial_period_field, $default_settings );
@@ -2150,10 +2150,10 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Add subscription name field.
 		$subscription_name_field = array(
 			'name'    => 'subscription_name',
-			'label'   => esc_html__( 'Subscription Name', 'domain' ),
+			'label'   => esc_html__( 'Subscription Name', 'gravitylovesflutterwave' ),
 			'type'    => 'text',
 			'class'   => 'medium merge-tag-support mt-hide_all_fields mt-position-right mt-exclude-creditcard-stripe_creditcard',
-			'tooltip' => '<h6>' . esc_html__( 'Subscription Name', 'domain' ) . '</h6>' . esc_html__( 'Enter a name for the subscription. It will be displayed on the payment form as well as the Stripe dashboard.', 'domain' ),
+			'tooltip' => '<h6>' . esc_html__( 'Subscription Name', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'Enter a name for the subscription. It will be displayed on the payment form as well as the Stripe dashboard.', 'gravitylovesflutterwave' ),
 		);
 		$default_settings        = $this->add_field_before( 'recurringAmount', $subscription_name_field, $default_settings );
 
@@ -2163,7 +2163,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		if ( $this->has_stripe_card_field() ) {
 			$default_settings[ $section_index ] = array(
-				'title'      => esc_html__( 'Stripe Credit Card Field Settings', 'domain' ),
+				'title'      => esc_html__( 'Stripe Credit Card Field Settings', 'gravitylovesflutterwave' ),
 				'dependency' => array(
 					'field'  => 'transactionType',
 					'values' => array( 'subscription', 'product', 'donation' ),
@@ -2171,8 +2171,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				'fields'     => array(
 					array(
 						'name'      => 'billingInformation',
-						'label'     => esc_html__( 'Billing Information', 'domain' ),
-						'tooltip'   => '<h6>' . esc_html__( 'Billing Information', 'domain' ) . '</h6>' . esc_html__( 'Map your Form Fields to the available listed fields. The address information will be sent to Stripe.', 'domain' ),
+						'label'     => esc_html__( 'Billing Information', 'gravitylovesflutterwave' ),
+						'tooltip'   => '<h6>' . esc_html__( 'Billing Information', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'Map your Form Fields to the available listed fields. The address information will be sent to Stripe.', 'gravitylovesflutterwave' ),
 						'type'      => 'field_map',
 						'field_map' => $this->billing_info_fields(),
 					),
@@ -2184,8 +2184,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		} elseif ( $this->is_stripe_checkout_enabled() ) {
 			$default_settings[ $section_index ] = array(
-				'title'       => esc_html__( 'Stripe Payment Form Settings', 'domain' ),
-				'description' => esc_html__( 'The following settings control information displayed on the Stripe hosted payment page that is displayed after the form is submitted.', 'domain' ),
+				'title'       => esc_html__( 'Stripe Payment Form Settings', 'gravitylovesflutterwave' ),
+				'description' => esc_html__( 'The following settings control information displayed on the Stripe hosted payment page that is displayed after the form is submitted.', 'gravitylovesflutterwave' ),
 				'dependency'  => array(
 					'field'  => 'transactionType',
 					'values' => array( 'subscription', 'product', 'donation' ),
@@ -2202,9 +2202,9 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 			$receipt_settings = array(
 				'name'    => 'receipt',
-				'label'   => esc_html__( 'Stripe Receipt', 'domain' ),
+				'label'   => esc_html__( 'Stripe Receipt', 'gravitylovesflutterwave' ),
 				'type'    => 'receipt',
-				'tooltip' => '<h6>' . esc_html__( 'Stripe Receipt', 'domain' ) . '</h6>' . esc_html__( 'Stripe can send a receipt via email upon payment. Select an email field to enable this feature.', 'domain' ),
+				'tooltip' => '<h6>' . esc_html__( 'Stripe Receipt', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'Stripe can send a receipt via email upon payment. Select an email field to enable this feature.', 'gravitylovesflutterwave' ),
 			);
 
 			$default_settings = $this->add_field_before( 'conditionalLogic', $receipt_settings, $default_settings );
@@ -2214,7 +2214,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $this->is_stripe_connect_enabled() ) {
 			// Add Stripe Account section if stripe connect is enabled.
 			$default_settings[] = array(
-				'title'      => esc_html__( 'Stripe Account', 'domain' ),
+				'title'      => esc_html__( 'Stripe Account', 'gravitylovesflutterwave' ),
 				'fields'     => $this->api_settings_fields(),
 				'dependency' => array(
 					'field'  => 'transactionType',
@@ -2238,32 +2238,32 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$settings = array(
 			array(
 				'name'  => 'logo',
-				'label' => esc_html__( 'Logo', 'domain' ),
+				'label' => esc_html__( 'Logo', 'gravitylovesflutterwave' ),
 				'type'  => 'stripe_checkout_logo',
 			),
 			array(
 				'name'       => 'customer_email',
-				'label'      => esc_html__( 'Customer Email', 'domain' ),
+				'label'      => esc_html__( 'Customer Email', 'gravitylovesflutterwave' ),
 				'type'       => 'receipt',
 				'dependency' => array(
 					'field'  => 'transactionType',
 					'values' => array( 'product' ),
 				),
-				'tooltip'    => '<h6>' . esc_html__( 'Customer Email', 'domain' ) . '</h6>' . esc_html__( 'You can specify an email field and it will be sent to Stripe as the customer\'s email.', 'domain' ),
+				'tooltip'    => '<h6>' . esc_html__( 'Customer Email', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'You can specify an email field and it will be sent to Stripe as the customer\'s email.', 'gravitylovesflutterwave' ),
 			),
 			array(
 				'name'          => 'billingAddress',
-				'label'         => esc_html__( 'Billing Address', 'domain' ),
+				'label'         => esc_html__( 'Billing Address', 'gravitylovesflutterwave' ),
 				'type'          => 'radio',
-				'tooltip'       => '<h6>' . esc_html__( 'Billing Address', 'domain' ) . '</h6>' . esc_html__( 'When enabled, Stripe Checkout will collect the customer\'s billing address for you.', 'domain' ),
+				'tooltip'       => '<h6>' . esc_html__( 'Billing Address', 'gravitylovesflutterwave' ) . '</h6>' . esc_html__( 'When enabled, Stripe Checkout will collect the customer\'s billing address for you.', 'gravitylovesflutterwave' ),
 				'horizontal'    => true,
 				'choices'       => array(
 					array(
-						'label' => esc_html__( 'Enabled', 'domain' ),
+						'label' => esc_html__( 'Enabled', 'gravitylovesflutterwave' ),
 						'value' => 1,
 					),
 					array(
-						'label' => esc_html__( 'Disabled', 'domain' ),
+						'label' => esc_html__( 'Disabled', 'gravitylovesflutterwave' ),
 						'value' => 0,
 					),
 				),
@@ -2385,13 +2385,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $field['name'] === 'receipt' ) {
 			// Prepare first field choice and get form fields as choices.
 			$first_choice = array(
-				'label' => esc_html__( 'Do not send receipt', 'domain' ),
+				'label' => esc_html__( 'Do not send receipt', 'gravitylovesflutterwave' ),
 				'value' => '',
 			);
 		} elseif ( $field['name'] === 'customer_email' ) {
 			// Prepare first field choice and get form fields as choices.
 			$first_choice = array(
-				'label' => esc_html__( 'Do not set customer email', 'domain' ),
+				'label' => esc_html__( 'Do not set customer email', 'gravitylovesflutterwave' ),
 				'value' => '',
 			);
 
@@ -2452,7 +2452,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			'horizontal' => true,
 			'choices'    => array(
 				array(
-					'label'    => esc_html__( 'Enabled', 'domain' ),
+					'label'    => esc_html__( 'Enabled', 'gravitylovesflutterwave' ),
 					'name'     => $field['name'] . '_enabled',
 					'value'    => '1',
 					'onchange' => "if(jQuery(this).prop('checked')){
@@ -2518,7 +2518,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			'horizontal' => true,
 			'choices'    => array(
 				array(
-					'label'    => esc_html__( 'Enabled', 'domain' ),
+					'label'    => esc_html__( 'Enabled', 'gravitylovesflutterwave' ),
 					'name'     => $field['name'] . '_enabled',
 					'value'    => '1',
 					'onchange' => "if(jQuery(this).prop('checked')){
@@ -2608,7 +2608,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		// If trial period is not numeric, set field error.
 		if ( $settings['trial_enabled'] && ( empty( $settings['trialPeriod'] ) || ! ctype_digit( $settings['trialPeriod'] ) ) ) {
-			$this->set_field_error( $field, esc_html__( 'Please enter a valid number of days.', 'domain' ) );
+			$this->set_field_error( $field, esc_html__( 'Please enter a valid number of days.', 'gravitylovesflutterwave' ) );
 		}
 
 	}
@@ -2653,7 +2653,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		// If there are more than 50 metadata keys, set field error.
 		if ( $meta_count > 50 ) {
-			$meta_count_error = array( esc_html__( 'You may only have 50 custom keys.' ), 'domain' );
+			$meta_count_error = array( esc_html__( 'You may only have 50 custom keys.' ), 'gravitylovesflutterwave' );
 			$this->set_field_error( $meta_count_error );
 			return;
 		}
@@ -2662,10 +2662,10 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Loop through metadata and check the key name length (custom_key).
 		foreach ( $meta_data as $meta ) {
 			if ( empty( $meta['custom_key'] ) && ! empty( $meta['value'] ) ) {
-				$this->set_field_error( $custom_meta_field, esc_html__( "A field has been mapped to a custom key without a name. Please enter a name for the custom key, remove the metadata item, or return the corresponding drop down to 'Select a Field'.", 'domain' ) );
+				$this->set_field_error( $custom_meta_field, esc_html__( "A field has been mapped to a custom key without a name. Please enter a name for the custom key, remove the metadata item, or return the corresponding drop down to 'Select a Field'.", 'gravitylovesflutterwave' ) );
 				break;
 			} else if ( strlen( $meta['custom_key'] ) > 40 ) {
-				$this->set_field_error( $custom_meta_field, sprintf( esc_html__( 'The name of custom key %s is too long. Please shorten this to 40 characters or less.', 'domain' ), $meta['custom_key'] ) );
+				$this->set_field_error( $custom_meta_field, sprintf( esc_html__( 'The name of custom key %s is too long. Please shorten this to 40 characters or less.', 'gravitylovesflutterwave' ), $meta['custom_key'] ) );
 				break;
 			}
 		}
@@ -2683,7 +2683,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function validate_webhook_signing_secret( $field, $field_setting ) {
 
 		if ( ! empty( $field_setting ) && strpos( $field_setting, 'whsec_' ) === false ) {
-			$this->set_field_error( $field, esc_html__( 'Please use the correct webhook signing secret, which should start with "whsec_".', 'domain' ) );
+			$this->set_field_error( $field, esc_html__( 'Please use the correct webhook signing secret, which should start with "whsec_".', 'gravitylovesflutterwave' ) );
 		}
 	}
 
@@ -2700,10 +2700,10 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function supported_billing_intervals() {
 
 		return array(
-			'day'   => array( 'label' => esc_html__( 'day(s)', 'domain' ), 'min' => 1, 'max' => 365 ),
-			'week'  => array( 'label' => esc_html__( 'week(s)', 'domain' ), 'min' => 1, 'max' => 12 ),
-			'month' => array( 'label' => esc_html__( 'month(s)', 'domain' ), 'min' => 1, 'max' => 12 ),
-			'year'  => array( 'label' => esc_html__( 'year(s)', 'domain' ), 'min' => 1, 'max' => 1 ),
+			'day'   => array( 'label' => esc_html__( 'day(s)', 'gravitylovesflutterwave' ), 'min' => 1, 'max' => 365 ),
+			'week'  => array( 'label' => esc_html__( 'week(s)', 'gravitylovesflutterwave' ), 'min' => 1, 'max' => 12 ),
+			'month' => array( 'label' => esc_html__( 'month(s)', 'gravitylovesflutterwave' ), 'min' => 1, 'max' => 12 ),
+			'year'  => array( 'label' => esc_html__( 'year(s)', 'gravitylovesflutterwave' ), 'min' => 1, 'max' => 1 ),
 		);
 
 	}
@@ -2748,13 +2748,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		// Return Stripe notification events.
 		return array(
-			'complete_payment'          => esc_html__( 'Payment Completed', 'domain' ),
-			'refund_payment'            => esc_html__( 'Payment Refunded', 'domain' ),
-			'fail_payment'              => esc_html__( 'Payment Failed', 'domain' ),
-			'create_subscription'       => esc_html__( 'Subscription Created', 'domain' ),
-			'cancel_subscription'       => esc_html__( 'Subscription Canceled', 'domain' ),
-			'add_subscription_payment'  => esc_html__( 'Subscription Payment Added', 'domain' ),
-			'fail_subscription_payment' => esc_html__( 'Subscription Payment Failed', 'domain' ),
+			'complete_payment'          => esc_html__( 'Payment Completed', 'gravitylovesflutterwave' ),
+			'refund_payment'            => esc_html__( 'Payment Refunded', 'gravitylovesflutterwave' ),
+			'fail_payment'              => esc_html__( 'Payment Failed', 'gravitylovesflutterwave' ),
+			'create_subscription'       => esc_html__( 'Subscription Created', 'gravitylovesflutterwave' ),
+			'cancel_subscription'       => esc_html__( 'Subscription Canceled', 'gravitylovesflutterwave' ),
+			'add_subscription_payment'  => esc_html__( 'Subscription Payment Added', 'gravitylovesflutterwave' ),
+			'fail_subscription_payment' => esc_html__( 'Subscription Payment Failed', 'gravitylovesflutterwave' ),
 		);
 
 	}
@@ -3187,7 +3187,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			// Get card type.
 			$card_type = rgpost( 'stripe_credit_card_type' );
 			if ( ! $card_type || $card_type === 'false' ) {
-				$card_type = __( 'Unknown', 'domain' );
+				$card_type = __( 'Unknown', 'gravitylovesflutterwave' );
 			}
 
 			// Get card slug.
@@ -3196,7 +3196,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			// If credit card type is not supported, mark field as invalid.
 			if ( $field->type == 'creditcard' && ! $field->is_card_supported( $card_slug ) ) {
 				$result['is_valid'] = false;
-				$result['message']  = sprintf( esc_html__( 'Card type (%s) is not supported. Please enter one of the supported credit cards.', 'domain' ), $card_type );
+				$result['message']  = sprintf( esc_html__( 'Card type (%s) is not supported. Please enter one of the supported credit cards.', 'gravitylovesflutterwave' ), $card_type );
 			} else {
 				$result['is_valid'] = true;
 				$result['message']  = '';
@@ -3303,7 +3303,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			// Get card type.
 			$card_type = rgpost( 'stripe_credit_card_type' );
 			if ( ! $card_type || 'false' === $card_type ) {
-				$card_type = __( 'Unknown', 'domain' );
+				$card_type = __( 'Unknown', 'gravitylovesflutterwave' );
 			}
 
 			// Get card slug.
@@ -3344,11 +3344,11 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function card_type_validation_message( $validation_message, $form ) {
 		$card_type = rgpost( 'stripe_credit_card_type' );
 		if ( ! $card_type || 'false' === $card_type ) {
-			$card_type = __( 'Unknown', 'domain' );
+			$card_type = __( 'Unknown', 'gravitylovesflutterwave' );
 		}
 
 		// Translators: 1. Type of credit card.
-		$message = sprintf( esc_html__( 'Card type (%1$s) is not supported. Please enter one of the supported credit cards.', 'domain' ), $card_type );
+		$message = sprintf( esc_html__( 'Card type (%1$s) is not supported. Please enter one of the supported credit cards.', 'gravitylovesflutterwave' ), $card_type );
 
 		return $validation_message .= $this->get_validation_error_markup( $message, $form );
 	}
@@ -3366,7 +3366,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	 */
 	public function stripe_checkout_error_message( $validation_message = '', $form = array() ) {
 		return $this->get_validation_error_markup(
-			esc_html__( 'There was a problem with your submission.', 'domain' ) . ' ' . $this->get_authorization_error_message(),
+			esc_html__( 'There was a problem with your submission.', 'gravitylovesflutterwave' ) . ' ' . $this->get_authorization_error_message(),
 			$form
 		);
 	}
@@ -3383,7 +3383,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	 */
 	public function stripe_elements_requires_action_message( $validation_message = '', $form = array() ) {
 		return $this->get_validation_error_markup(
-			esc_html__( 'There was a problem with your submission:', 'domain' ) . ' ' .  $this->get_authorization_error_message(),
+			esc_html__( 'There was a problem with your submission:', 'gravitylovesflutterwave' ) . ' ' .  $this->get_authorization_error_message(),
 			$form
 		);
 	}
@@ -3404,11 +3404,11 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$message = $this->get_authorization_error_message();
 
 		if ( ! $message ) {
-			return esc_html__( 'There was a problem with your submission. Please try again later.', 'domain' );
+			return esc_html__( 'There was a problem with your submission. Please try again later.', 'gravitylovesflutterwave' );
 		}
 
 		return $this->get_validation_error_markup(
-			esc_html__( 'There was a problem with your submission:', 'domain' ) . ' ' . $message,
+			esc_html__( 'There was a problem with your submission:', 'gravitylovesflutterwave' ) . ' ' . $message,
 			$form
 		);
 	}
@@ -3531,7 +3531,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					// Clear the response so a new PI will be created on the next submission attempt.
 					$_POST['stripe_response'] = '';
 
-					return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'domain' ) );
+					return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravitylovesflutterwave' ) );
 				}
 
 				// Add customer, receipt_email and metadata.
@@ -3569,14 +3569,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			// if status = requires_action, return validation error so we can do dynamic authentication on the front end.
 			if ( ! $payment_element_enabled && $result->status === 'requires_action' ) {
 
-				$error = $this->authorization_error( esc_html__( '3D Secure authentication is required for this payment. Please follow the instructions on the page to continue.', 'domain' ) );
+				$error = $this->authorization_error( esc_html__( '3D Secure authentication is required for this payment. Please follow the instructions on the page to continue.', 'gravitylovesflutterwave' ) );
 
 				return array_merge( $error, array( 'requires_action' => true ) );
 
 			} elseif ( $result->status === 'requires_payment_method' ) {
-				return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'domain' ) );
+				return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravitylovesflutterwave' ) );
 			} elseif ( $result->status === 'canceled' ) {
-				return $this->authorization_error( esc_html__( 'The payment has been canceled', 'domain' ) );
+				return $this->authorization_error( esc_html__( 'The payment has been canceled', 'gravitylovesflutterwave' ) );
 			} else {
 				$this->log_debug( __METHOD__ . '(): PaymentIntent status: ' . $result->status );
 				return array(
@@ -3731,7 +3731,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				 * @param array  $form            The form object currently being processed.
 				 * @param array  $entry           The entry object currently being processed.
 				 */
-				$line_items_name = apply_filters( 'gform_stripe_discounted_line_items_name', esc_html__( 'Payment with Discounts', 'domain' ), $feed, $submission_data, $form, $entry );
+				$line_items_name = apply_filters( 'gform_stripe_discounted_line_items_name', esc_html__( 'Payment with Discounts', 'gravitylovesflutterwave' ), $feed, $submission_data, $form, $entry );
 
 				$session_data['line_items'][] = array(
 					'quantity'   => 1,
@@ -3803,7 +3803,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 							'unit_amount'  => $this->get_amount_export( $single_payment_amount, $currency ),
 							'currency'     => $currency,
 							'product_data' => array(
-								'name' => esc_html__( 'Setup Fee', 'domain' ),
+								'name' => esc_html__( 'Setup Fee', 'gravitylovesflutterwave' ),
 							),
 						),
 					),
@@ -3890,7 +3890,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		$this->log_error( __METHOD__ . '(): Unable to create Stripe Checkout session; ' . $session->get_error_message() );
 
-		return $this->authorization_error( esc_html__( 'Unable to create Stripe Checkout session.', 'domain' ) );
+		return $this->authorization_error( esc_html__( 'Unable to create Stripe Checkout session.', 'gravitylovesflutterwave' ) );
 	}
 
 	/**
@@ -4233,7 +4233,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				return array(
 					'is_success'    => false,
-					'error_message' => esc_html__( 'Cannot get payment intent data.', 'domain' ),
+					'error_message' => esc_html__( 'Cannot get payment intent data.', 'gravitylovesflutterwave' ),
 				);
 			}
 
@@ -4251,7 +4251,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				return array(
 					'is_success'    => false,
-					'error_message' => esc_html__( 'Cannot update payment intent data.', 'domain' ),
+					'error_message' => esc_html__( 'Cannot update payment intent data.', 'gravitylovesflutterwave' ),
 				);
 			}
 
@@ -4286,13 +4286,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 					return array(
 						'is_success'    => false,
-						'error_message' => esc_html__( 'Cannot capture payment intent data.', 'domain' ),
+						'error_message' => esc_html__( 'Cannot capture payment intent data.', 'gravitylovesflutterwave' ),
 					);
 				}
 			}
 
 			if ( $intent->status !== 'succeeded' ) {
-				$payment = $this->authorization_error( esc_html__( 'Cannot capture the payment; the payment intent status is ', 'domain' ) . $intent->status );
+				$payment = $this->authorization_error( esc_html__( 'Cannot capture the payment; the payment intent status is ', 'gravitylovesflutterwave' ) . $intent->status );
 			} else {
 				$payment = array(
 					'is_success'     => true,
@@ -4309,7 +4309,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				return array(
 					'is_success'    => false,
-					'error_message' => esc_html__( 'Unable to capture the charge.', 'domain' ),
+					'error_message' => esc_html__( 'Unable to capture the charge.', 'gravitylovesflutterwave' ),
 				);
 			}
 
@@ -4328,7 +4328,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				return array(
 					'is_success'    => false,
-					'error_message' => esc_html__( 'Unable to save the charge.', 'domain' ),
+					'error_message' => esc_html__( 'Unable to save the charge.', 'gravitylovesflutterwave' ),
 				);
 			}
 
@@ -4344,7 +4344,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 				return array(
 					'is_success'    => false,
-					'error_message' => esc_html__( 'Unable to capture the charge.', 'domain' ),
+					'error_message' => esc_html__( 'Unable to capture the charge.', 'gravitylovesflutterwave' ),
 				);
 			}
 
@@ -4398,7 +4398,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			gform_update_meta( $entry['id'], 'stripe_customer_id', $customer_id );
 		} else {
 			// No customer ID, setup the subscription error message.
-			$authorization['subscription']['error_message'] = esc_html__( 'Failed to get the customer ID from Stripe.', 'domain' );
+			$authorization['subscription']['error_message'] = esc_html__( 'Failed to get the customer ID from Stripe.', 'gravitylovesflutterwave' );
 		}
 
 		if ( $this->is_stripe_checkout_enabled() ) {
@@ -4619,7 +4619,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 						return $this->authorization_error( $result->get_error_message() );
 					} else {
-						return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'domain' ) );
+						return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravitylovesflutterwave' ) );
 					}
 				}
 			}
@@ -4913,7 +4913,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				}
 
 				$amount_formatted = GFCommon::to_money( $action['amount'], $entry['currency'] );
-				$action['note']   .= sprintf( __( 'Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'domain' ), $amount_formatted, $action['subscription_id'] );
+				$action['note']   .= sprintf( __( 'Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'gravitylovesflutterwave' ), $amount_formatted, $action['subscription_id'] );
 
 				if ( rgar( $subscription, 'status' ) === 'active' ) {
 					// Run gform_stripe_fulfillment hook for supporting delayed payments.
@@ -5453,7 +5453,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			$stripe_response = $this->get_stripe_js_response();
 
 			if ( rgar( $payment_intent, 'status' ) === 'requires_payment_method' ) {
-				return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'domain' ) );
+				return $this->authorization_error( esc_html__( 'Your payment attempt has failed. Please enter your card details and try again.', 'gravitylovesflutterwave' ) );
 			} elseif ( rgar( $payment_intent, 'status' ) === 'requires_action' ) {
 				$_POST['stripe_response'] = json_encode(
 					array(
@@ -5464,7 +5464,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					)
 				);
 
-				$error = $this->authorization_error( esc_html__( '3D Secure authentication is required for this payment. Please follow the instructions on the page to continue.', 'domain' ) );
+				$error = $this->authorization_error( esc_html__( '3D Secure authentication is required for this payment. Please follow the instructions on the page to continue.', 'gravitylovesflutterwave' ) );
 
 				return array_merge( $error, array( 'requires_action' => true ) );
 			}
@@ -5623,7 +5623,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( isset( $response->error ) ) {
 			return $response->error->message;
 		} elseif ( empty( $response->id ) && ! $this->is_stripe_checkout_enabled() ) {
-			return esc_html__( 'Unable to authorize card. No response from Stripe.js.', 'domain' );
+			return esc_html__( 'Unable to authorize card. No response from Stripe.js.', 'gravitylovesflutterwave' );
 		}
 
 		return false;
@@ -5934,7 +5934,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			case 'invoice.payment_succeeded':
 				$subscription = $this->get_subscription_line_item( $event );
 				if ( ! $subscription ) {
-					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'domain' ) ) );
+					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'gravitylovesflutterwave' ) ) );
 				}
 
 				$action['subscription_id'] = rgar( $subscription, 'subscription' );
@@ -5972,7 +5972,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 					}
 
 					$amount_formatted = GFCommon::to_money( $action['amount'], $entry['currency'] );
-					$action['note']  .= sprintf( __( 'Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'domain' ), $amount_formatted, $action['subscription_id'] );
+					$action['note']  .= sprintf( __( 'Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'gravitylovesflutterwave' ), $amount_formatted, $action['subscription_id'] );
 
 					// Detect the 0002 invoice for subscriptions with trial just ended.
 					if ( $this->is_stripe_checkout_enabled() && rgar( $entry, 'payment_status' ) === 'Active' && $number[1] === '0002' ) {
@@ -6008,7 +6008,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			case 'invoice.payment_failed':
 				$subscription = $this->get_subscription_line_item( $event );
 				if ( ! $subscription ) {
-					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'domain' ) ) );
+					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'gravitylovesflutterwave' ) ) );
 				}
 
 				$action['subscription_id'] = rgar( $subscription, 'subscription' );
@@ -6037,7 +6037,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				if ( is_wp_error( $session ) ) {
 					$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $session->get_error_message() );
 
-					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'domain' ) . ': ' . $session->get_error_message() );
+					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'gravitylovesflutterwave' ) . ': ' . $session->get_error_message() );
 				}
 
 				// Getting entry associated with this Stripe Session.
@@ -6065,7 +6065,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 				if ( is_wp_error( $session ) ) {
 					$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $session->get_error_message() );
 
-					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'domain' ) . ': ' . $session->get_error_message() );
+					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'gravitylovesflutterwave' ) . ': ' . $session->get_error_message() );
 				}
 
 				$entry = $this->get_entry_by_session_id( $session_id, $action, $event );
@@ -6236,7 +6236,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	public function get_wrong_feed_wp_error( $entry_id ) {
 		return new WP_Error(
 			'wrong_feed_for_entry',
-			sprintf( __( 'Entry %d was not processed by feed %d. Webhook cannot be processed.', 'domain' ), $entry_id, $_GET['fid'] ),
+			sprintf( __( 'Entry %d was not processed by feed %d. Webhook cannot be processed.', 'gravitylovesflutterwave' ), $entry_id, $_GET['fid'] ),
 			array( 'status_header' => 200 )
 		);
 	}
@@ -6253,7 +6253,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	 * @return WP_Error
 	 */
 	public function get_entry_not_found_wp_error( $type, $action, $event ) {
-		$message     = sprintf( __( 'Entry for %s id: %s was not found. Webhook cannot be processed.', 'domain' ), $type, rgar( $action, $type . '_id' ) );
+		$message     = sprintf( __( 'Entry for %s id: %s was not found. Webhook cannot be processed.', 'gravitylovesflutterwave' ), $type, rgar( $action, $type . '_id' ) );
 		$status_code = 200;
 
 		/**
@@ -6317,13 +6317,13 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		if ( $error_message ) {
 			$this->log_error( __METHOD__ . '(): Unable to retrieve Stripe Event object. ' . $error_message );
-			$message = __( 'Invalid request. Webhook could not be processed.', 'domain' ) . ' ' . $error_message;
+			$message = __( 'Invalid request. Webhook could not be processed.', 'gravitylovesflutterwave' ) . ' ' . $error_message;
 
 			return new WP_Error( 'invalid_request', $message, array( 'status_header' => 400 ) );
 		}
 
 		if ( $is_test_event ) {
-			return new WP_Error( 'test_webhook_succeeded', __( 'Test webhook succeeded. Your Stripe Account and Stripe Add-On are configured correctly to process webhooks.', 'domain' ), array( 'status_header' => 200 ) );
+			return new WP_Error( 'test_webhook_succeeded', __( 'Test webhook succeeded. Your Stripe Account and Stripe Add-On are configured correctly to process webhooks.', 'gravitylovesflutterwave' ), array( 'status_header' => 200 ) );
 		}
 
 		return $event;
@@ -6772,7 +6772,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		check_ajax_referer( 'gf_stripe_ajax', 'nonce' );
 
 		if ( ! GFCommon::current_user_can_any( $this->_capabilities_settings_page ) ) {
-			wp_send_json_error( array( 'message' => esc_html__( 'Access denied.', 'domain' ) ) );
+			wp_send_json_error( array( 'message' => esc_html__( 'Access denied.', 'gravitylovesflutterwave' ) ) );
 		}
 
 		$feed_id  = intval( rgpost( 'fid' ) );
@@ -6852,9 +6852,9 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		// Define note based on if setup fee is enabled.
 		if ( rgars( $feed, 'meta/setupFee_enabled' ) ) {
-			$note = esc_html__( 'Setup fee has been paid.', 'domain' );
+			$note = esc_html__( 'Setup fee has been paid.', 'gravitylovesflutterwave' );
 		} else {
-			$note = esc_html__( 'Trial has been paid.', 'domain' );
+			$note = esc_html__( 'Trial has been paid.', 'gravitylovesflutterwave' );
 		}
 
 		return $note;
@@ -7056,7 +7056,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			?>
 			<script src="https://js.stripe.com/v3"></script>
 			<div class="GF_AJAX_POSTBACK">
-				<p class="gform_stripe_checkout_message"><?php esc_html_e( 'You\'re being redirected to the hosted Checkout page on Stripe...', 'domain' ); ?></p>
+				<p class="gform_stripe_checkout_message"><?php esc_html_e( 'You\'re being redirected to the hosted Checkout page on Stripe...', 'gravitylovesflutterwave' ); ?></p>
 				<script>
                     var stripe = Stripe("<?php echo $this->get_publishable_api_key( $settings ); ?>");
 
@@ -7119,11 +7119,11 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$strings = array();
 
 		if ( $entry['id'] ) {
-			$strings['entry_id'] = sprintf( esc_html__( 'Entry ID: %d', 'domain' ), $entry['id'] );
+			$strings['entry_id'] = sprintf( esc_html__( 'Entry ID: %d', 'gravitylovesflutterwave' ), $entry['id'] );
 		}
 
 		$strings['products'] = sprintf(
-			_n( 'Product: %s', 'Products: %s', count( $submission_data['line_items'] ), 'domain' ),
+			_n( 'Product: %s', 'Products: %s', count( $submission_data['line_items'] ), 'gravitylovesflutterwave' ),
 			implode( ', ', wp_list_pluck( $submission_data['line_items'], 'name' ) )
 		);
 
@@ -7289,37 +7289,37 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		$fields = array(
 			array(
 				'name'       => 'address_line1',
-				'label'      => __( 'Address', 'domain' ),
+				'label'      => __( 'Address', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
 			array(
 				'name'       => 'address_line2',
-				'label'      => __( 'Address 2', 'domain' ),
+				'label'      => __( 'Address 2', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
 			array(
 				'name'       => 'address_city',
-				'label'      => __( 'City', 'domain' ),
+				'label'      => __( 'City', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
 			array(
 				'name'       => 'address_state',
-				'label'      => __( 'State', 'domain' ),
+				'label'      => __( 'State', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
 			array(
 				'name'       => 'address_zip',
-				'label'      => __( 'Zip', 'domain' ),
+				'label'      => __( 'Zip', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
 			array(
 				'name'       => 'address_country',
-				'label'      => __( 'Country', 'domain' ),
+				'label'      => __( 'Country', 'gravitylovesflutterwave' ),
 				'required'   => false,
 				'field_type' => array( 'address' ),
 			),
@@ -7446,7 +7446,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $checkout_method === 'stripe_checkout' ) {
 			// let users know they are SCA compliant because they use Checkout.
 			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Stripe has changed Stripe Checkout from a modal display to a full page, and we have altered some existing Stripe hooks. Carefully review %5$sthis guide%6$s to see if your setup may be affected.%7$s', 'domain' ),
+				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Stripe has changed Stripe Checkout from a modal display to a full page, and we have altered some existing Stripe hooks. Carefully review %5$sthis guide%6$s to see if your setup may be affected.%7$s', 'gravitylovesflutterwave' ),
 				'<p>',
 				'</p>',
 				'<p><b>',
@@ -7459,7 +7459,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		} else {
 			// Remind people to switch to Checkout for SCA.
 			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Apple Pay and SCA are only supported by the Stripe Checkout payment collection method. Refer to %5$sthis guide%6$s for more information on payment methods and SCA.%7$s', 'domain' ),
+				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Apple Pay and SCA are only supported by the Stripe Checkout payment collection method. Refer to %5$sthis guide%6$s for more information on payment methods and SCA.%7$s', 'gravitylovesflutterwave' ),
 				'<p>',
 				'</p>',
 				'<p><b>',
@@ -7549,7 +7549,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $checkout_method === 'stripe_elements' ) {
 			// let users know they are SCA compliant because they use Elements.
 			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and now supports Strong Customer Authentication (SCA/PSD2).%2$s%3$sRefer to %4$sthis guide%5$s for more information on payment methods and SCA.%6$s', 'domain' ),
+				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and now supports Strong Customer Authentication (SCA/PSD2).%2$s%3$sRefer to %4$sthis guide%5$s for more information on payment methods and SCA.%6$s', 'gravitylovesflutterwave' ),
 				'<p>',
 				'</p>',
 				'<p>',
@@ -7560,7 +7560,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		} elseif ( $checkout_method === 'credit_card' ) {
 			// let users know the Credit Card payment method has been deprecated.
 			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and it no longer supports the Gravity Forms Credit Card Field in new forms (current integrations can still work as usual).%2$s%3$sRefer to %4$sthis guide%5$s for more information about this change.%6$s', 'domain' ),
+				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and it no longer supports the Gravity Forms Credit Card Field in new forms (current integrations can still work as usual).%2$s%3$sRefer to %4$sthis guide%5$s for more information about this change.%6$s', 'gravitylovesflutterwave' ),
 				'<p>',
 				'</p>',
 				'<p>',
@@ -7651,7 +7651,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			);
 		} else {
 			/* translators: PaymentIntent status. */
-			$error = sprintf( esc_html__( 'PaymentIntent status: %s is invalid.', 'domain' ), $intent->status );
+			$error = sprintf( esc_html__( 'PaymentIntent status: %s is invalid.', 'gravitylovesflutterwave' ), $intent->status );
 			wp_send_json_error( array( 'message' => $error ) );
 		}
 	}
@@ -7696,7 +7696,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			);
 		} else {
 			/* translators: PaymentIntent status. */
-			$error = sprintf( esc_html__( 'PaymentIntent status: %s is invalid.', 'domain' ), $intent->status );
+			$error = sprintf( esc_html__( 'PaymentIntent status: %s is invalid.', 'gravitylovesflutterwave' ), $intent->status );
 			wp_send_json_error( array( 'message' => $error ) );
 		}
 	}
@@ -7716,20 +7716,20 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Make sure we have the right entry.
 		$entry = GFAPI::get_entry( $entry_id );
 		if ( is_wp_error( $entry ) ) {
-			wp_send_json_error( esc_html__( 'Unable to find entry.', 'domain' ) );
+			wp_send_json_error( esc_html__( 'Unable to find entry.', 'gravitylovesflutterwave' ) );
 		}
 
 		// Make sure we have a payment feed.
 		$form = GFAPI::get_form( $entry['form_id'] );
 		$feed = $this->get_payment_feed( $entry, $form );
 		if ( is_wp_error( $feed ) ) {
-			wp_send_json_error( esc_html__( 'Unable to find payment feed.', 'domain' ) );
+			wp_send_json_error( esc_html__( 'Unable to find payment feed.', 'gravitylovesflutterwave' ) );
 		}
 
 		// Including Stripe API.
 		$result = $this->include_stripe_api_for_entry( $entry_id );
 		if ( is_wp_error( $result ) ) {
-			wp_send_json_error( esc_html__( 'Could not initialize Stripe API.', 'domain' ) . ' ' . $result->get_error_message() );
+			wp_send_json_error( esc_html__( 'Could not initialize Stripe API.', 'gravitylovesflutterwave' ) . ' ' . $result->get_error_message() );
 			return;
 		}
 
@@ -7801,14 +7801,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		// Make sure we have the right entry.
 		$entry    = GFAPI::get_entry( $entry_id );
 		if ( is_wp_error( $entry ) ) {
-			wp_send_json_error( array( 'message' => __( 'Unable to find entry.', 'domain' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Unable to find entry.', 'gravitylovesflutterwave' ) ) );
 		}
 
 		// Make sure we have a payment feed.
 		$form = GFAPI::get_form( $entry['form_id'] );
 		$feed = $this->get_payment_feed( $entry, $form );
 		if ( is_wp_error( $feed ) ) {
-			wp_send_json_error( array( 'message' => __( 'Unable to find payment feed.', 'domain' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Unable to find payment feed.', 'gravitylovesflutterwave' ) ) );
 		}
 
 		// Load the Stripe API library.
@@ -7826,7 +7826,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		}
 
 		if ( ! $payment ) {
-			wp_send_json_error( array( 'message' => __( 'Unable to find payment on Stripe', 'domain' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Unable to find payment on Stripe', 'gravitylovesflutterwave' ) ) );
 		}
 
 		// Send the refund to Stripe.
@@ -8000,7 +8000,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			$this->log_debug( __METHOD__ . '(): The current IP has hit the error rate limit. Block payments from it for an hour' );
 
 			return array(
-				'error_message' => esc_html__( 'We are not able to process your payment request at the moment. Please try again later.', 'domain' ),
+				'error_message' => esc_html__( 'We are not able to process your payment request at the moment. Please try again later.', 'gravitylovesflutterwave' ),
 				'is_success'    => false,
 				'is_authorized' => false,
 			);
@@ -8034,7 +8034,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 	private function get_stripe_display_name( $stripe_account ) {
 		$display_name = rgars( $stripe_account, 'settings/dashboard/display_name' );
 		// in some cases it is possible to have an account with any empty display name, stripe call it unnamed account.
-		return ! empty( $display_name ) ? $display_name : esc_html__( 'Unnamed account', 'domain' );
+		return ! empty( $display_name ) ? $display_name : esc_html__( 'Unnamed account', 'gravitylovesflutterwave' );
 	}
 
 	/**
@@ -8059,7 +8059,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 			return array(
 				'is_captured' => false,
-				'message'     => esc_html__( 'Could not retrieve payment information from Stripe.', 'domain' ),
+				'message'     => esc_html__( 'Could not retrieve payment information from Stripe.', 'gravitylovesflutterwave' ),
 			);
 		}
 
@@ -8067,7 +8067,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( $this->is_payment_captured( $payment_object ) ) {
 			return array(
 				'is_captured'     => true,
-				'message'         => esc_html__( 'Payment has already been captured.', 'domain' ),
+				'message'         => esc_html__( 'Payment has already been captured.', 'gravitylovesflutterwave' ),
 				'amount'          => $this->get_captured_amount( $payment_object ),
 			);
 		}
@@ -8078,7 +8078,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		if ( is_wp_error( $captured_payment_object ) || ! $this->is_payment_captured( $captured_payment_object ) ) {
 
-			$wp_error = is_wp_error( $captured_payment_object ) ? $captured_payment_object : new WP_Error( 'could_not_capture', esc_html__( 'Unable to capture payment', 'domain' ) );
+			$wp_error = is_wp_error( $captured_payment_object ) ? $captured_payment_object : new WP_Error( 'could_not_capture', esc_html__( 'Unable to capture payment', 'gravitylovesflutterwave' ) );
 			$this->log_error( __METHOD__ . '(): Cannot capture ' . $object_label . '. transaction_id: ' . $transaction_id . '. error: ' . $wp_error->get_error_message() );
 
 			return array(
@@ -8089,7 +8089,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 
 		return array(
 			'is_captured'    => true,
-			'message'        => esc_html__( 'Payment captured successfully.', 'domain' ),
+			'message'        => esc_html__( 'Payment captured successfully.', 'gravitylovesflutterwave' ),
 			'amount'         => $this->get_captured_amount( $captured_payment_object ),
 		);
 	}
@@ -8136,7 +8136,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 		if ( empty( $feed_ids ) ) {
 			$this->log_error( __METHOD__ . '(): Cannot retrieve Stripe feed for entry_id:  ' . $entry_id );
 
-			return new WP_Error( 'feed_not_found', esc_html__( 'Feed associated with entry could not be found.', 'domain' ) );
+			return new WP_Error( 'feed_not_found', esc_html__( 'Feed associated with entry could not be found.', 'gravitylovesflutterwave' ) );
 		}
 		$feed_id = $feed_ids[0];
 
@@ -8171,8 +8171,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GFPaymentAddOn {
 			esc_attr( $entry['payment_amount'] ),
 			esc_attr( $entry['currency'] ),
 			esc_attr( $entry['id'] ),
-			esc_html__( 'Refund Payment', 'domain' ),
-			esc_html__( 'Sending refund request', 'domain' )
+			esc_html__( 'Refund Payment', 'gravitylovesflutterwave' ),
+			esc_html__( 'Sending refund request', 'gravitylovesflutterwave' )
 		);
 	}
 

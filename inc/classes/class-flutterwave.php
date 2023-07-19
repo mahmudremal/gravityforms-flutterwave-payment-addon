@@ -300,92 +300,49 @@ class Flutterwave {
         }
     }
     public function processCardPayment($args) {
-        if($this->is_test_mode) {
-            return json_decode('{
-                "status": "success",
-                "message": "Charge initiated",
-                "data": {
-                  "id": 288192886,
-                  "tx_ref": "sample_ref",
-                  "flw_ref": "FLW275389391",
-                  "device_fingerprint": "N/A",
-                  "amount": 100,
-                  "charged_amount": 100,
-                  "app_fee": 1.4,
-                  "merchant_fee": 0,
-                  "processor_response": "Kindly enter the OTP sent to *******0328",
-                  "auth_model": "PIN",
-                  "currency": "NGN",
-                  "ip": "::ffff:10.7.214.204",
-                  "narration": "Sample Card Transaction",
-                  "status": "pending",
-                  "auth_url": "N/A",
-                  "payment_type": "card",
-                  "fraud_status": "ok",
-                  "charge_type": "normal",
-                  "created_at": "2020-07-15T14:06:55.000Z",
-                  "account_id": 17321,
-                  "customer": {
-                    "id": 216517630,
-                    "phone_number": null,
-                    "name": "Yolande Aglaé Colbert",
-                    "email": "user@example.com",
-                    "created_at": "2020-07-15T14:06:55.000Z"
-                  },
-                  "card": {
-                    "first_6digits": "123456",
-                    "last_4digits": "2343",
-                    "issuer": "MASTERCARD GUARANTY TRUST BANK Mastercard Naira Debit Card",
-                    "country": "NG",
-                    "type": "MASTERCARD",
-                    "expiry": "08/22"
-                  }
-                },
-                "meta": {
-                  "authorization": {
-                    "mode": "otp",
-                    "endpoint": "/v3/validate-charge"
-                  }
-                }
-              }
-            ', true);
+        if(!isset($args['client']) || empty($args['client'])) {
+            $args = wp_parse_args($args, [
+                'tx_ref'            => '',
+                'name'              => 'N/A',
+                'amount'            => '',
+                'currency'          => 'NGN',
+                'customer_email'    => get_bloginfo('admin_email'),
+                'redirect_url'      => site_url('/payment/flutterwave/'.$args['tx_ref'].'/status/'),
+                
+                'card_number'      => '',
+                'expiry_month'     => '',
+                'expiry_year'      => '',
+                'cvv'              => '',
+                'otp'              => '',
+                'subaccounts'       => [],
+            ]);
+        
+            $chargeData = [
+                "tx_ref" => $args['tx_ref'],
+                "amount" => $args['amount'],
+                "currency" => $args['currency'],
+                "email" => $args['customer_email'],
+                "fullname" => $args['name'],
+
+                "card_number" => $args['card_number'],
+                "cvv" => $args['cvv'],
+                "expiry_month" => $args['expiry_month'],
+                "expiry_year" => $args['expiry_year'],
+
+                "redirect_url" => $args['redirect_url']
+            ];
+            if(isset($args['subaccounts']) &&count($args['subaccounts'])>=1) {
+                $chargeData['subaccounts'] = $args['subaccounts'];
+            }
         }
-        $args = wp_parse_args($args, [
-            'name'                  => 'N/A',
-            'amount'                => '',
-            'currency'              => '',
-            'customer_email'        => get_bloginfo('admin_email'),
-            'redirect_url'			=> site_url('/payment/flutterwave/'.$args['tx_ref'].'/status/'),
-            
-            'card_number'      => '',
-            'expiry_month'     => '',
-            'expiry_year'      => '',
-            'cvv'              => '',
-            'otp'              => '',
-        ]);
-    
         // Step 1: Charge the card to get the OTP prompt
         $chargeUrl = "{$this->base_url}/charges?type=card";
-        $chargeData = array(
-            "tx_ref" => $args['tx_ref'],
-            "amount" => $args['amount'],
-            "currency" => $args['currency'],
-            "email" => $args['customer_email'],
-            "fullname" => $args['name'],
-
-            "card_number" => $args['card_number'],
-            "cvv" => $args['cvv'],
-            "expiry_month" => $args['expiry_month'],
-            "expiry_year" => $args['expiry_year'],
-
-            "redirect_url" => $args['redirect_url']
-        );
-    
         $chargeHeaders = [
             "Content-Type: application/json",
             "Authorization: Bearer {$this->api_key}"
         ];
-        $chargePayload = $this->encryptPayload(json_encode($chargePayload));
+        // $chargePayload = $this->encryptPayload(json_encode($chargeData));
+        $chargePayload = ['client' => $args['client']];
         $chargeCh = curl_init();
         curl_setopt($chargeCh, CURLOPT_URL, $chargeUrl);
         curl_setopt($chargeCh, CURLOPT_POST, true);
@@ -394,10 +351,13 @@ class Flutterwave {
         curl_setopt($chargeCh, CURLOPT_HTTPHEADER, $chargeHeaders);
         $chargeResult = curl_exec($chargeCh);
         curl_close($chargeCh);
+
+        // print_r($chargeResult);wp_die();
+        
         if(curl_errno($chargeCh)) {throw new \Exception('Communication Error: ' . curl_error($chargeCh));}
         // if(curl_getinfo($chargeCh, CURLINFO_HTTP_CODE) !== 200) {throw new \Exception($chargeResult);}
         $chargeResponse = json_decode($chargeResult, true);
-        if(isset($chargeResponse['error_id'])) {throw new \Exception('Flutterwave error: ' . $chargeResponse['message']);}
+        if(isset($chargeResponse['error_id'])) {throw new \Exception('Flutterwave ' . $chargeResponse['message']);}
         if($chargeResponse['status'] == 'success') {
             return $chargeResponse;
         } else {
@@ -428,6 +388,19 @@ class Flutterwave {
         // if(curl_getinfo($otpCh, CURLINFO_HTTP_CODE) !== 200) {throw new \Exception('Payment Failed: ' . $otpResult);}
         $otpResult = json_decode($otpResult, true);
         if($otpResult['status'] == 'error') {throw new \Exception($otpResult['message']);}
+        // if($otpResult['status'] == 'success') {
+        //     $otpUrl = "{$this->base_url}/transactions/{$otpResult['data']['transaction_id']}/verify";
+        //     $otpData = ["transaction_id" => $otpResult['data']['transaction_id']];
+        //     $otpPayload = json_encode($otpData);
+        //     $otpCh = curl_init();
+        //     curl_setopt($otpCh, CURLOPT_URL, $otpUrl);
+        //     curl_setopt($otpCh, CURLOPT_POST, true);
+        //     curl_setopt($otpCh, CURLOPT_POSTFIELDS, $otpPayload);
+        //     curl_setopt($otpCh, CURLOPT_RETURNTRANSFER, true);
+        //     curl_setopt($otpCh, CURLOPT_HTTPHEADER, $otpHeaders);
+        //     $otpResult = curl_exec($otpCh);
+        //     curl_close($otpCh);
+        // }
         return $otpResult;
     }
     public function encryptPayload($payload) {
@@ -457,7 +430,7 @@ class Flutterwave {
             $result = json_decode($response, true);
 
             if (curl_errno($curl)) {throw new \Exception('Communication Error: '.curl_error($curl));}
-            if(isset($result['status']) && $result['status']=='error') {throw new \Exception('Flutterwave error: '. $result['message']);}
+            if(isset($result['status']) && $result['status']=='error') {throw new \Exception('Flutterwave '. $result['message']);}
             
             if($result && isset($result['data']) && isset($result['status']) && $result['status'] == 'success') {
                 return $result['data'];
@@ -499,7 +472,7 @@ class Flutterwave {
         // if(curl_getinfo($curl, CURLINFO_HTTP_CODE) !== 200) {throw new \Exception('Payment Failed: ' . $response);}
         $refund_status = json_decode($response, true);
         if($refund_status['status'] === 'error') {
-            throw new \Exception('Flutterwave error: '. $refund_status['message']);
+            throw new \Exception('Flutterwave '. $refund_status['message']);
         } else {
             return $refund_status;
         }

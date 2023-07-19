@@ -35,7 +35,7 @@ class Bulks {
 				['key' => 'status', 'operator' => 'is', 'value' => 'pending_payment']
 			],
 			'count' => $pending_count,
-			'label' => esc_html__('Pending payment', 'domain'),
+			'label' => esc_html__('Pending payment', 'gravitylovesflutterwave'),
 		];
 		return $filter_links;
 	}

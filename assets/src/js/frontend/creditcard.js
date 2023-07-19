@@ -1,4 +1,4 @@
-import CurrencyList from 'currency-list';
+// import CurrencyList from 'currency-list';
 import testCards from './testCards';
 
 const creditCard = {
@@ -280,7 +280,7 @@ const creditCard = {
                 card.querySelector('.creditcard').classList.add('flipped');
             });
         });
-        var card, value, submit, total;
+        var card, value, submit, total, cardData;
         card = document.querySelector('.flutterwaves_credit_card');
         if(!card) {return;}
         document.querySelectorAll('.flutterwave_method[type="radio"]').forEach((el)=>{
@@ -296,24 +296,51 @@ const creditCard = {
         if(!submit) {return;}
         submit.addEventListener('click', (event)=>{
             var formdata = new FormData();
-            submit.disabled = true;
+            submit.disabled = true;cardData = {};
             creditCard.lastSubmitBtn = submit;
             formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken');
             document.querySelectorAll('.flutterwaves_credit_card input').forEach((el)=>{
-                if(el.dataset.name == 'unique') {el.value = Math.round((new Date()).getTime()/1000);}
-                formdata.append(el.dataset.name, el.value);
+                if(el.dataset.name == 'unique') {
+                    el.value = Math.round((new Date()).getTime()/1000);
+                    cardData['meta'] = [];cardData['meta'][el.dataset.name] = el.value;
+                    // formdata.append('tx_ref', el.value);
+                } else if(el.dataset.name == 'expire') {
+                    var expire = el.value;expire = expire.split('/');
+                    cardData['expiry_month'] = parseInt(expire[0]);
+                    cardData['expiry_year'] = parseInt(expire[1]);
+                    // formdata.append('expiry_month', parseInt(expire[0]));
+                    // formdata.append('expiry_year', parseInt(expire[1]));
+                } else if(el.dataset.name == 'card_number') {
+                    cardData['card_number'] = parseInt(el.value.replaceAll(' ', ''));
+                    // formdata.append(el.dataset.name, parseInt(el.value.replaceAll(' ', '')));
+                } else {
+                    cardData[el.dataset.name] = el.value;
+                    // formdata.append(el.dataset.name, el.value);
+                }
             });
             jQuery(document.querySelector('.flutterwaves_credit_card')).parents('form').find('input[type="email"]').each((ei, el)=>{
-                formdata.append('email', el.value);
+                cardData['email'] = el.value;
+                // formdata.append('email', total.value);
             });
             jQuery(document.querySelector('.flutterwaves_credit_card')).parents('form').find('.ginput_container_total input').each((ei, el)=>{
                 total = creditCard.extractCurrencyValue(el.value);
-                formdata.append('total', total.value);
-                formdata.append('currency', total.currency);
+                cardData['amount'] = total.value;
+                cardData['currency'] = total.currency;
+                // formdata.append('amount', total.value);
+                // formdata.append('currency', total.currency);
             });
-            // formdata.append('entry', thisClass.currentEntry.id);
+            cardData['currency'] = total.currency;
+            
+            formdata.append('form_id', parseInt(jQuery(submit).parents('form').attr('id').replace('gform_', '')));
+            cardData['tx_ref'] = Math.round((new Date()).getTime()/1000)+'.gf'+formdata.get('form_id');
+            cardData['redirect_url'] = (thisClass.config?.siteUrl??location.origin)+'/payment/flutterwave/gfrm.'+cardData['tx_ref']+'/status';
+            // console.log(cardData);
+            thisClass.lastCardData = cardData;
+            formdata.append('client', creditCard.encrypt(thisClass, cardData));
             // formdata.append('form_id', thisClass.currentEntry.form_id);
             formdata.append('_nonce', thisClass.ajaxNonce);
+            // console.log(formdata.get('client'));
+            // console.log(creditCard.decrypt(thisClass, formdata.get('client')));
             thisClass.sendToServer(formdata);
         });
         
@@ -323,7 +350,7 @@ const creditCard = {
         form = jQuery('.flutterwaves_credit_card').parents('form');
         card = document.querySelector('.flutterwaves_credit_card');
         live = document.querySelector('.flutterwaves_live_card');
-        console.log([card, live, value]);
+        // console.log([card, live, value]);
         switch (value) {
             case 'checkout':
                 card.style.display = 'none';
@@ -340,6 +367,7 @@ const creditCard = {
         }
     },
     extractCurrencyValue: (currencyString) => {
+        if(typeof CurrencyList === 'undefined') {return;}
         var valueString = currencyString.replace(/[^0-9.-]+/g, "");
         var allCurrencies = CurrencyList.getAll('en_US');
         var currencyCode = 'NGN';
@@ -356,6 +384,36 @@ const creditCard = {
           value: parseFloat(valueString),
           currency: currencyCode
         };
+    },
+    encrypt__: (thisClass, payload) => {
+        const text = JSON.stringify(payload);
+        const cipher = forge.cipher.createCipher("3DES-ECB", forge.util.createBuffer(thisClass.config?.encryptionKey??'adsad'));
+        cipher.start({ iv: "" });
+        cipher.update(forge.util.createBuffer(text, "utf-8"));
+        cipher.finish();
+        const encrypted = cipher.output;
+        console.log(encrypted, text);
+        return forge.util.encode64(encrypted.getBytes());
+    },
+    encrypt: (thisClass, payload) => {
+        const text = JSON.stringify(payload);
+        // const forge = require("node-forge");
+        const cipher = forge.cipher.createCipher(
+            "3DES-ECB", forge.util.createBuffer(thisClass.config?.encryptionKey??'')
+        );
+        cipher.start({iv: ""});
+        cipher.update(forge.util.createBuffer(text, "utf-8"));
+        cipher.finish();
+        const encrypted = cipher.output;
+        return forge.util.encode64(encrypted.getBytes());
+    },
+    decrypt: (thisClass, encrypted) => {
+        const decipher = forge.cipher.createDecipher("3DES-ECB", forge.util.createBuffer(thisClass.config?.encryptionKey??''));
+        decipher.start({ iv: "" });
+        decipher.update(forge.util.createBuffer(forge.util.decode64(encrypted)));
+        decipher.finish();
+        const decrypted = decipher.output;
+        return decrypted.toString();
     }
 };
 export default creditCard;

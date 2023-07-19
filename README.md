@@ -27,7 +27,7 @@ Take your online business to new heights with Gravityforms Flutterwave Payment A
 ### Hi, I'm Remal Mahmud, currently working on something freelance projects 😉
 ### Connect with me:
 
-[<img src="https://img.shields.io/badge/Upwork-14a800?&style=for-the-badge&logo=upwork&logoColor=white" height="25" alt="Remal Mahmud">](https://www.upwork.com/freelancers/~01e8b599b6a5efc0f7?s=general)
+[<img src="https://img.shields.io/badge/Upwork-14a800?&style=for-the-badge&logo=upwork&logoColor=white" height="25" alt="Remal Mahmud">](https://www.upwork.com/freelancers/~01446594f65128aede?s=general)
 [<img src="https://img.shields.io/badge/Fiverr-1dbf73?&style=for-the-badge&logo=fiverr&logoColor=white" height="25" alt="Remal Mahmud">](https://www.fiverr.com/mahmud_remal)
 [<img src="https://img.shields.io/badge/Twitter-1d9bf0?&style=for-the-badge&logo=twitter&logoColor=white" height="25" alt="Remal Mahmud">](https://twitter.com/mahmud_remal/)
 [<img src="https://img.shields.io/badge/Linkedin-0b66c3?&style=for-the-badge&logo=linkedin&logoColor=white" height="25" alt="Remal Mahmud">](https://www.linkedin.com/in/mahmudremal/)

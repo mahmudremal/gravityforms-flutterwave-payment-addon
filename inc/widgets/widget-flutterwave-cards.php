@@ -9,7 +9,7 @@ namespace GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc;
 class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
     public $type = 'flutterwave_credit_card';
     public $label = 'Flutterwave';
-    public $description = 'Secure payments though Flutterwave payment gateway.';
+    public $description = ''; // 'Secure payments though Flutterwave payment gateway.';
 
     // public function init_admin() {
 	// 	parent::init_admin();
@@ -26,7 +26,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
         return $icon;
 	}
     public function get_form_editor_field_description() {
-		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'domain' );
+        return '';
+		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'gravitylovesflutterwave' );
 	}
 
     public function get_form_editor_field_settings() {
@@ -59,8 +60,8 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
         // Render the credit card input fields here
         do_action('gravityformsflutterwaveaddons/project/assets/register_styles');
         do_action('gravityformsflutterwaveaddons/project/assets/register_scripts');
-        wp_enqueue_style('GravityformsFlutterwaveAddons');
-        wp_enqueue_script('imask');
+        wp_enqueue_style('GravityformsFlutterwaveAddons');wp_enqueue_script('forge');
+        wp_enqueue_script('imask');wp_enqueue_script('checkout-flutterwave');
         wp_enqueue_script('GravityformsFlutterwaveAddons');
 
         // unset($form['fields']);
@@ -75,14 +76,14 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
         ?>
         <div class="">
             <?php if($this->enableCardPaymentMethod): ?>
-                <!-- <label class="form-label"><?php esc_html_e('Payment Method', 'domain'); ?></label> -->
+                <!-- <label class="form-label"><?php esc_html_e('Payment Method', 'gravitylovesflutterwave'); ?></label> -->
                 <div class="form-check">
                     <input class="form-check-input flutterwave_method" type="radio" name="input_<?php echo esc_attr($this->id).'.6'; ?>" id="flutterwave-credit" value="credit" <?php echo esc_attr(($this->flutterwaveDefaultModeCard == true)?'checked':''); ?>>
-                    <label class="form-check-label" for="flutterwave-credit"><?php esc_html_e('Credit Card', 'domain'); ?></label>
+                    <label class="form-check-label" for="flutterwave-credit"><?php esc_html_e('Credit Card', 'gravitylovesflutterwave'); ?></label>
                 </div>
                 <div class="form-check">
                     <input class="form-check-input flutterwave_method" type="radio" name="input_<?php echo esc_attr($this->id).'.6'; ?>" id="flutterwave-checkout" value="checkout" <?php echo esc_attr(($this->flutterwaveDefaultModeCard == true)?'':'checked'); ?>>
-                    <label class="form-check-label" for="flutterwave-checkout"><?php esc_html_e('Flutterwave', 'domain'); ?></label>
+                    <label class="form-check-label" for="flutterwave-checkout"><?php esc_html_e('Flutterwave', 'gravitylovesflutterwave'); ?></label>
                 </div>
             <?php endif; ?>
         </div>
@@ -109,39 +110,41 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
                 </div>
                 <div class="form-container">
                     <div class="field-container">
-                        <label for="name"><?php esc_html_e('Name', 'domain'); ?></label>
-                        <input id="name" maxlength="20" type="text" name="input_<?php echo esc_attr($this->id).'.5'; ?>" data-name="name" required>
+                        <label for="name"><?php esc_html_e('Name', 'gravitylovesflutterwave'); ?></label>
+                        <input id="name" maxlength="20" type="text" name="input_<?php echo esc_attr($this->id).'.5'; ?>" data-name="fullname" required>
                     </div>
                     <div class="field-container">
-                        <label for="cardnumber"><?php esc_html_e('Card Number', 'domain'); ?></label>
-                        <span id="generatecard" class="<?php echo esc_attr(GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE?'':'d-none'); ?>"><?php esc_html_e('generate random', 'domain'); ?></span>
-                        <input id="cardnumber" type="text" name="input_<?php echo esc_attr($this->id).'.1'; ?>" pattern="[0-9]*" inputmode="numeric" data-name="number" required>
+                        <label for="cardnumber"><?php esc_html_e('Card Number', 'gravitylovesflutterwave'); ?></label>
+                        <span id="generatecard" class="<?php echo esc_attr(GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE?'':'d-none'); ?>"><?php esc_html_e('generate random', 'gravitylovesflutterwave'); ?></span>
+                        <input id="cardnumber" type="text" name="input_<?php echo esc_attr($this->id).'.1'; ?>" pattern="[0-9]*" inputmode="numeric" data-name="card_number" required>
                         <svg id="ccicon" class="ccicon" width="750" height="471" viewBox="0 0 750 471" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"></svg>
                     </div>
                     <div class="field-container">
-                        <label for="expirationdate"><?php esc_html_e('Expiration (mm/yy)', 'domain'); ?></label>
+                        <label for="expirationdate"><?php esc_html_e('Expiration (mm/yy)', 'gravitylovesflutterwave'); ?></label>
                         <input id="expirationdate" type="text" name="input_<?php echo esc_attr($this->id).'.2_month'; ?>" pattern="[0-9]*" inputmode="numeric" data-name="expire" required>
                     </div>
                     <div class="field-container">
-                        <label for="securitycode"><?php esc_html_e('Security Code', 'domain'); ?></label>
-                        <input id="securitycode" type="text" name="input_<?php echo esc_attr($this->id).'.3'; ?>" pattern="[0-9]*" inputmode="numeric" data-name="code" required>
+                        <label for="securitycode"><?php esc_html_e('Security Code', 'gravitylovesflutterwave'); ?></label>
+                        <input id="securitycode" type="text" name="input_<?php echo esc_attr($this->id).'.3'; ?>" pattern="[0-9]*" inputmode="numeric" data-name="cvv" required>
                     </div>
                     <div class="field-container my-3">
                         <input type="hidden" name="input_<?php echo esc_attr($this->id).'.7'; ?>" data-name="unique" value="">
                         <button id="submitFlutterCard" type="button">
-                            <?php echo esc_html(empty($this->submitBtnText)?__('Continue to pay', 'domain'):$this->submitBtnText); ?>
+                            <?php echo esc_html(empty($this->submitBtnText)?__('Continue to pay', 'gravitylovesflutterwave'):$this->submitBtnText); ?>
                         </button>
                     </div>
                 </div>
             </div>
         <?php endif; ?>
-        <div class="flutterwaves_live_card" style="<?php echo esc_attr(($this->flutterwaveDefaultModeCard == true)?'display: none;':'display: flex;'); ?>">
+        <div class="flutterwaves_live_card" style="<?php echo esc_attr(($this->flutterwaveDefaultModeCard == true)?(
+            ($this->enableCardPaymentMethod == true)?'display: none;':'display: flex;'
+        ):'display: flex;'); ?>">
             <div class="card p-2">
                 <p>
                     <?php echo esc_html(($this->enableCardPaymentMethod)?(
-                        empty($this->fluttercardMessage)?__('Upon selecting the payment method as "Flutterwave," you will be redirected to a secure payment link. Please note that your form submission will remain pending until you complete the payment process successfully.', 'domain'):$this->fluttercardMessage
+                        empty($this->fluttercardMessage)?__('You will be redirected to a secure payment page.', 'gravitylovesflutterwave'):$this->fluttercardMessage
                         ):(
-                            empty($this->fluttercardMessage)?__('You will be redirected to a secure payment link. Please note that your form submission will remain pending until you complete the payment process successfully.', 'domain'):$this->fluttercardMessage
+                            empty($this->fluttercardMessage)?__('You will be redirected to a secure payment page.', 'gravitylovesflutterwave'):$this->fluttercardMessage
                         )); ?>
                 </p>
             </div>
@@ -170,7 +173,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
             if (rgblank($flutterwaveFieldValue)) {
                 // Set the validation message for the Flutterwave Payment field
                 $form['fields'][$flutterwaveFieldId]->failed_validation = true;
-                $form['fields'][$flutterwaveFieldId]->validation_message = esc_html__('Flutterwave Payment: This field is required. Please fix it.', 'domain');
+                $form['fields'][$flutterwaveFieldId]->validation_message = esc_html__('Flutterwave Payment: This field is required. Please fix it.', 'gravitylovesflutterwave');
             } else {
                 // Retrieve the selected payment method
                 $flutterwaveMethod = rgpost('flutterwave_method');
@@ -390,7 +393,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
 		?>
 		<li class="enable_multiple_payment_methods_setting field_setting">
 			<label for="rules" class="section_label">
-				<?php esc_html_e( 'Payment Methods', 'domain' ); ?>
+				<?php esc_html_e( 'Payment Methods', 'gravitylovesflutterwave' ); ?>
 				<?php gform_tooltip( 'form_field_enable_card_payment_method' ); ?>
 			</label>
 			<?php
@@ -399,20 +402,20 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
                 <div>
                     <input type="checkbox" id="field_enable_card_payment_method" data-js="enable_multiple_payment_methods" onclick="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" onkeypress="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" />
                     <label for="field_enable_card_payment_method" class="inline">
-                        <?php esc_html_e( 'Enable multiple payment methods', 'domain' ); ?>
+                        <?php esc_html_e( 'Enable multiple payment methods', 'gravitylovesflutterwave' ); ?>
                         <?php gform_tooltip( 'form_field_enable_card_payment_method' ); ?>
                     </label>
-                    <div id="field_multiple_payment_methods_description">
+                    <!-- <div id="field_multiple_payment_methods_description">
                         <?php
                         // translators: variables are the markup to generate a link.
-                        printf( esc_html__( 'Available payment methods can be configured in your %1$sFlutterwave Dashboard%2$s.', 'domain' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
+                        // sprintf( esc_html__( 'Available payment methods can be configured in your %1$sFlutterwave Dashboard%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
                         ?>
-                    </div>
+                    </div> -->
                 </div>
                 <br>
                 <div id="link_email_field_container">
                     <label for="link_email_field" class="section_label">
-                        <?php esc_html_e( 'Link Email Field', 'domain' ); ?>
+                        <?php esc_html_e( 'Link Email Field', 'gravitylovesflutterwave' ); ?>
                     </label>
                     <select id="link_email_field" name="link_email_field" class="inline">
                         <?php
@@ -431,7 +434,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
                     <div>
                         <?php
                         // translators: variables are the markup to generate a link.
-                        printf( esc_html__( 'Link is a payment method that enables your customers to save their payment information so they can use it again on any site that uses Stripe Link. %1$sLearn more about Link%2$s.', 'domain' ), '<a href="https://stripe.com/docs/payments/link" target="_blank">', '</a>' );
+                        // sprintf( esc_html__( 'Link is a payment method that enables your customers to save their payment information so they can use it again on any site that uses Stripe Link. %1$sLearn more about Link%2$s.', 'gravitylovesflutterwave' ), '<a href="https://stripe.com/docs/payments/link" target="_blank">', '</a>' );
                         ?>
                     </div>
                 </div>
@@ -441,7 +444,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
 				<div>
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'This option is disabled because Flutterwave Secret keys not provided on settings or the key expired ot your account is in live mode but the secret key you provided is in test mode. %1$sDo a reCheck over Flutterwave dashboard%2$s.', 'domain' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
+					printf( esc_html__( 'This option is disabled because Flutterwave Secret keys not provided on settings or the key expired ot your account is in live mode but the secret key you provided is in test mode. %1$sDo a reCheck over Flutterwave dashboard%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
 					?>
 				</div>
 			<?php } ?>

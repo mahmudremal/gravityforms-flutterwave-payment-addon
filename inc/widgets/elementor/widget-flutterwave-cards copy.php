@@ -18,7 +18,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
         return $icon;
 	}
     public function get_form_editor_field_description() {
-		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'domain' );
+		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'gravitylovesflutterwave' );
 	}
 
     public function get_form_editor_field_settings() {

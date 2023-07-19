@@ -21,9 +21,11 @@ import Toastify from 'toastify-js';
 			this.profile = fwpSiteConfig?.profile??false;
 			this.lastAjax = false;this.noToast = true;
 			var i18n = fwpSiteConfig?.i18n??{};
-			this.creditCard = creditCard;
+			this.creditCard = creditCard;this.comissionAccounts = false;
 			this.config.buildPath = fwpSiteConfig?.buildPath??'';
 			this.i18n = {i_confirm_it: 'Yes I confirm it',...i18n};
+			this.pendingRequestofComissionAccounts = false;
+			window.matchComissionAccount = this.matchComissionAccount;
 			window.thisClass = this;
 			this.setup_hooks();
 			this.init_settings_field();
@@ -31,7 +33,8 @@ import Toastify from 'toastify-js';
 			this.init_tagInputs();
 			this.init_bulkAction();
 			this.init_toast();
-
+			this.init_fieldSettings();
+			this.loadComissionAccount();
 		}
 		setup_hooks() {
 			const thisClass = this;var frame, element, text;
@@ -85,6 +88,22 @@ import Toastify from 'toastify-js';
 						setTimeout(() => {element.innerHTML = text;element.removeAttribute('style');}, 4500);
 					}
 				}
+			});
+			document.body.addEventListener('card_subac_recieved', () => {
+				thisClass.comissionAccounts = thisClass.lastJson.subaccounts;
+				// if(thisClass.lastJson.subaccounts && thisClass.lastMatchComissionAccountEL) {
+				// 	thisClass.matchComissionAccount(thisClass.lastMatchComissionAccountEL, thisClass.lastMatchComissionAccountEL.value);
+				// }
+				var fieldsAccessed = false;
+				var theInterval = setInterval(() => {
+					['partner', 'client', 'staff'].forEach((id) => {
+						document.querySelectorAll('input#subaccounts-'+id).forEach((el) => {
+							if(el.value != '' && el.value.length >= 5) {thisClass.matchComissionAccount(el, el.value);}
+							fieldsAccessed = true;
+						});
+					});
+					if(fieldsAccessed) {clearInterval(theInterval);}
+				}, 1000);
 			});
 		}
 		init_toast() {
@@ -387,6 +406,13 @@ import Toastify from 'toastify-js';
 				});
 			}
 		}
+		init_fieldSettings() {
+			setInterval(() => {
+				document.querySelectorAll('#gform-settings-section-flutterwave-payment select:not([data-fetched])').forEach((el)=>{
+					el.dataset.fetched = true;SetFieldProperty(el.id, el.value);
+				});
+			}, 1500);
+		}
 
 		init_bulkAction() {
 			const thisClass = this;var html, config;
@@ -607,6 +633,35 @@ import Toastify from 'toastify-js';
 			formdata.append('_nonce', thisClass.ajaxNonce);
 			formdata.append('amount', amount);
 			thisClass.sendToServer(formdata);
+		}
+
+		matchComissionAccount(el, value) {
+			const thisClass = window.thisClass;
+			if(el.nextElementSibling && el.nextElementSibling.nodeName == 'SMALL') {el.nextElementSibling.remove()}
+			if(thisClass.comissionAccounts) {
+				var account = thisClass.comissionAccounts.find((row)=>(row.subaccount_id==value || row.id == value));
+				if(account) {
+					var node = document.createElement('small');node.innerHTML = account.full_name+' ('+account.business_name+')';
+					el.parentElement.appendChild(node);
+				}
+			}
+		}
+		loadComissionAccount() {
+			const thisClass = this;
+			var loadComissionAccountInterval = setInterval(() => {
+				console.log('loadComissionAccount...');
+				if(typeof gforms_original_json !== 'undefined') {
+					console.log('loading.... loadComissionAccount...');
+					var formdata = new FormData();
+					formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac');
+					formdata.append('form_id', parseInt(JSON.parse(gforms_original_json).id));
+					formdata.append('get_all', true);
+					formdata.append('no_message', true);
+					formdata.append('_nonce', thisClass.ajaxNonce);
+					thisClass.sendToServer(formdata);
+					clearInterval(loadComissionAccountInterval);
+				}
+			}, 1000);
 		}
 	}
 	new FutureWordPress_Backend();

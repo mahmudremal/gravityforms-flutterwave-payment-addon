@@ -17,7 +17,7 @@ class GF_FlutterWave_Credit_Card_Field extends \GF_Field {
         return file_get_contents(GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_PATH . '/icons/money-business-and-finance-svgrepo-com.svg');
 	}
     public function get_form_editor_field_description() {
-		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'domain' );
+		return esc_attr__( 'Secure payments though Flutterwave payment gateway.', 'gravitylovesflutterwave' );
 	}
     public function get_form_editor_inline_script_on_page_render() {
 		$multiple_payment_methods_enabled = ('gf_stripe()->is_payment_element_supported()') ? 'true' : 'false';

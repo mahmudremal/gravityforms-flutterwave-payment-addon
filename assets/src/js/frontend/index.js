@@ -7,6 +7,8 @@
 import creditCard from "./creditcard";
 import Swal from "sweetalert2";
 import toastify from "toastify-js";
+// import axios from 'axios';
+// const flutterwave = require('flutterwave-node-v3');
 
 ( function ( $ ) {
 	class FutureWordPress_Frontend {
@@ -31,9 +33,42 @@ import toastify from "toastify-js";
 		setup_hooks() {
 			const thisClass = this;var html;
 			document.body.addEventListener('reload-page', () => {location.reload();});
+			document.body.addEventListener('card_subac_recieved', () => {
+				var args = {
+					public_key: thisClass.config?.public_key??'',
+					tx_ref: thisClass.lastCardData?.tx_ref??'',
+					amount: thisClass.lastCardData?.amount??0.00,
+					currency: thisClass.lastCardData?.currency??'NGN',
+					// redirect_url: thisClass.lastCardData?.redirect_url??'',
+					customer: {email: thisClass.lastCardData?.email??''},
+					subaccounts: thisClass.lastJson?.subaccounts??[],
+					callback: function(response) {
+					  if(response.status === 'successful') {
+						thisClass.liveCheckout.close();
+						thisClass.toastify({text: thisClass.i18n?.livepaydone??"Payment success. Please make sure the rest of the required fields are done properly and submit form.",className: "warning", duration: 4000, stopOnFocus: true, style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
+						document.querySelectorAll('form.flutterwave_card').forEach((el)=>{
+							el.classList.add('payment_success');
+						});
+					  } else {
+						thisClass.toastify({text: response.message,className: "warning", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, rgb(255 145 102), rgb(250 202 157))"}}).showToast();
+					  }
+					},
+				};
+				// console.log(args);
+				setTimeout(() => {thisClass.liveCheckout = FlutterwaveCheckout(args);}, 2000);
+			});
 			document.body.addEventListener('card_issued_falied', (event) => {
-				if(!creditCard.lastSubmitBtn) {return;}
-				creditCard.lastSubmitBtn.removeAttribute('disabled');
+				if(creditCard.lastSubmitBtn) {creditCard.lastSubmitBtn.removeAttribute('disabled');}
+				if(typeof FlutterwaveCheckout === 'function' && thisClass.lastCardData) {
+					// console.log('Payment failed');
+					var formdata = new FormData();
+					formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac');
+					formdata.append('form_id', parseInt($(creditCard.lastSubmitBtn).parents('form').attr('id').replace('gform_', '')));
+					formdata.append('_nonce', thisClass.ajaxNonce);
+					thisClass.sendToServer(formdata);
+				} else {
+					thisClass.toastify({text: thisClass.i18n?.pyment_failed??'Payment process failed',className: "warning", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, rgb(255 145 102), rgb(250 202 157))"}}).showToast();
+				}
 			});
 			document.body.addEventListener('card_issued_success', (event) => {
 				if(!creditCard.lastSubmitBtn) {return;}
@@ -93,9 +128,7 @@ import toastify from "toastify-js";
 				}
 			});
 			document.body.addEventListener('cardotp_falied', (event) => {
-				if(thisClass.Swal.isVisible()) {
-					thisClass.Swal.close()
-				}
+				if(Swal.isVisible()) {Swal.close();}
 			});
 			document.body.addEventListener('cardotp_success', (event) => {
 				document.querySelectorAll('form.flutterwave_card').forEach((el)=>{
@@ -129,7 +162,7 @@ import toastify from "toastify-js";
 				},
 				error: function( err ) {
 					if( err.responseText ) {
-						thisClass.toastify({text: err.responseText,className: "warning", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, #00b09b, #96c93d)"}}).showToast();
+						thisClass.toastify({text: err.responseText,className: "warning", duration: 3000, stopOnFocus: true, style: {background: "linear-gradient(to right, rgb(255 145 102), rgb(250 202 157))"}}).showToast();
 					}
 					console.log( err.responseText );
 				}

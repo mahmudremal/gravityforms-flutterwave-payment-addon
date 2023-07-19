@@ -94,6 +94,8 @@ class Gravityforms {
 		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
 		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
 		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
+		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
+		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
 	}
@@ -398,7 +400,7 @@ class Gravityforms {
 			'title'							=> __( 'General', 'gravitylovesflutterwave' ),
 			'description'				=> sprintf(
 				__('Gravity Forms integration with FlutterWave payments will work on both Gravity Forms and WooCommerce plugins. A secret key is mostly required to connect with FlutterWave. If you don\'t have this API key, you can %sfollow this link.%s', 'gravitylovesflutterwave' ),
-				'<a href="https://flutterwave.com/" target="_blank">', '</a>'
+				'<a href="https://app.flutterwave.com/dashboard/settings/apis/live/" target="_blank">', '</a>'
 			),
 			'fields'						=> [
 				[
@@ -445,14 +447,14 @@ class Gravityforms {
 					'label'					=> __( 'Success status', 'gravitylovesflutterwave' ),
 					'description'			=> __( 'Give here a long success message that will be display on payment success page. With the confirmation message that the form submitted successfully.', 'gravitylovesflutterwave' ),
 					'type'					=> 'text',
-					'default_value'			=> "Congratulations! Your payment was successful. Thank you for your trust and support. We're delighted to inform you that your form submission has been received and processed successfully. Your payment has been successfully completed, and we appreciate your valuable contribution. We're grateful for your business and look forward to serving you again in the future. If you have any questions or need further assistance, please don't hesitate to reach out to our support team. Once again, thank you for choosing us, and have a wonderful day!"
+					'default_value'			=> "Congratulations! Your payment was successful and your form was submitted."
 				],
 				[
 					'id' 						=> 'paymentFailed',
 					'label'					=> __( 'Failed status', 'gravitylovesflutterwave' ),
 					'description'		=> __( "Give here a long error message that will be display on payment failed/cancelled/denaid status. With the confirmation message that the form didn't submitted.", 'gravitylovesflutterwave' ),
 					'type'					=> 'text',
-					'default_value'			=> "We apologize for the inconvenience. Unfortunately, your payment was not successful. We understand that this may be disappointing. Please note that your form submission was not completed successfully. If you encountered any issues or have any questions regarding the payment or form submission process, please feel free to contact our support team. We're here to assist you and resolve any concerns you may have. We value your interest and hope to have the opportunity to serve you better in the future. Thank you for your understanding."
+					'default_value'			=> "Your payment was not successful and your form was not submitted. Ensure  you enter the correct information and try again. If the situation persists, please contact your bank."
 				],
 				[
 					'id' 					=> 'paymentReminderSubject',
@@ -471,8 +473,23 @@ class Gravityforms {
 					),
 					'default_value'			=> ''
 				],
+
 			]
 		];
+		$args['fields'][] = [
+			'id' 						=> 'title-subaccounts',
+			'label'					=> __('Default value for sub accounts commission', 'gravitylovesflutterwave'),
+			'type'					=> 'template'
+		];
+		foreach(['client', 'partner', 'staff'] as $for) {
+			$args['fields'][] = [
+				'id' 						=> 'defaultComission-'.$for,
+				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst($for)),
+				'type'					=> 'number',
+				'default'				=> true,
+				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.'
+			];
+		}
 		return $args;
 	}
 	public function display_field( $args ) {
@@ -513,6 +530,9 @@ class Gravityforms {
 				$checked = ($data&&'on'==$data)?'checked="checked"':'';
 				$this->settings[$field['id']] = isset($this->settings[$field['id']])?$this->settings[$field['id']]:false;
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="on" '.$this->attributes($field).' '.esc_attr(($this->settings[$field['id']]=='on')?'checked':'').'/>' . "\n";
+			break;
+			case 'template':
+				$html .= '<h4>'.esc_attr($field['label']).'</h4>'."\n";
 			break;
 			case 'checkbox_multi':
 				foreach( $field['options'] as $k => $v ) {
@@ -669,13 +689,40 @@ class Gravityforms {
 		$tooltips['form_alsocard'] = sprintf(
 			__('%s Enable Card Payment %s Check this option to enable Credit card Payment through flutterwave for this form. This will apear a choice of both credit card or secure payment.', 'gravitylovesflutterwave'),
 			'<strong>', '</strong>'
-		) . sprintf(esc_html__('Available payment methods can be configured in your %s Flutterwave Dashboard%s.', 'domain'), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>');
+		) . sprintf(esc_html__('Available payment methods can be configured in your %s Flutterwave Dashboard%s.', 'gravitylovesflutterwave'), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>');
+		
+		$tooltips['form_field_flutterwave_default_mode'] = sprintf(
+			__('%s Credit Card Default %s Check this option to set default payment method Credit card. User will be able to change direct checkout method as well.', 'gravitylovesflutterwave'),
+			'<strong>', '</strong>'
+		);
+		$tooltips['form_field_enable_card_preview'] = sprintf(
+			__('%s Credit Card Preview %s Enable to apear a preview credit card that could be iconic instruction.', 'gravitylovesflutterwave'),
+			'<strong>', '</strong>'
+		);
+		
+		$tooltips['form_accountidinput'] = sprintf(
+			__("%s Account ID %s Give here the Account ID that will be included on splitting payment.%s", 'gravitylovesflutterwave'),
+			'<strong>', '</strong>',
+			sprintf(
+				__('%sHere are the instructions.%s%s%s', 'gravitylovesflutterwave'),
+				'<br/>', '<ul style="text-align: left;font-size: 12px;line-height: 13px;margin-top: 10px;border-top: 1px solid #d3d3d3;padding-top: 10px;">',
+				sprintf(
+					__('%sGo to %sFlutterwave subaccount list.%s%sClick over a subaccount and open detailed view.%s%sFollow the URL. Here should be an ID at the endpoint of the URL%s', 'gravitylovesflutterwave'),
+					'<li>', '<a href="https://app.flutterwave.com/dashboard/subaccounts/list" target="_blank">', '</a></li>',
+					'<li>', '</li>', '<li>', '</li>',
+				), '</ul>'
+			)
+		);
+		$tooltips['form_accountidselect'] = sprintf(
+			__("%s Select Account %s Select each account only once on each form. Else it might effect our transaction.", 'gravitylovesflutterwave'),
+			'<strong>', '</strong>'
+		);
 		$tooltips['form_comissiontype'] = sprintf(
 			__("%s Comission Type %s Choose a commission type: percentage or flat rate. If you select 'percentage,' the plugin will calculate a commission amount based on the percentage of the total payment. If you choose 'flat rate,' the plugin will deduct the specified flat amount from the total payment if the total exceeds that amount.", 'gravitylovesflutterwave'),
 			'<strong>', '</strong>'
 		);
 		$tooltips['form_comissionamount'] = sprintf(
-			__("%s Comission Percent %s Give here a percentage of amount of comission for sub accounts.", 'gravitylovesflutterwave'),
+			__("%s Commission %s Give here a percentage of amount of comission for sub accounts.", 'gravitylovesflutterwave'),
 			'<strong>', '</strong>'
 		);
 		$tooltips['form_comissionflat'] = sprintf(
@@ -683,15 +730,15 @@ class Gravityforms {
 			'<strong>', '</strong>'
 		);
 		$tooltips['form_subaccounts'] = sprintf(
-			__("%s Sub Accounts %s Select sub accounts for serving comissions. Flat amount or percentage, both will be prioritize on ascending order.", 'gravitylovesflutterwave'),
-			'<strong>', '</strong>'
+			__("%s Sub Accounts %s Select sub accounts for serving comissions. Flat amount or percentage, both will be prioritize on ascending order. Make sure the total calculated value is less then or equal to %s if total amount.", 'gravitylovesflutterwave'),
+			'<strong>', '</strong>', number_format_i18n(GRAVITYFORMS_FLUTTERWAVE_ADDONS_MAX_COMISSION, 2)
 		);
 		$tooltips['form_submittext'] = sprintf(
 			__("%s Submit Button Text %s You can setup a submit button text here. E.g. Pay, Register, Submit.", 'gravitylovesflutterwave'),
 			'<strong>', '</strong>'
 		);
 		$tooltips['form_statusBtnLink'] = sprintf(
-			__("%s Button Link %s Payment returned status page button link. Set homepage to setup Back to home like, site homepage link. Selecting form will set button link form entry screen link.", 'gravitylovesflutterwave'),
+			__("%s Success page link %s Payment returned status page button link. Set homepage to setup Back to home like, site homepage link. Selecting form will set button link form entry screen link.", 'gravitylovesflutterwave'),
 			'<strong>', '</strong>'
 		);
 		$tooltips['form_fluttercard_message'] = sprintf(
@@ -719,7 +766,7 @@ class Gravityforms {
 					'type'    => 'toggle',
 					'label'   => esc_html__( 'Enable Card Payment', 'gravitylovesflutterwave' ),
 					'tooltip' => gform_tooltip( 'form_alsocard', '', true ),
-					'description' => __('Enable credit card payment as well.', 'domain'),
+					'description' => __('Enable credit card payment as well.', 'gravitylovesflutterwave'),
 					'dependency' => [
 						'live'   => true,
 						'fields' => [
@@ -733,8 +780,8 @@ class Gravityforms {
 					'label'   => esc_html__( 'Comission type', 'gravitylovesflutterwave' ),
 					'tooltip' => gform_tooltip( 'form_comissiontype', '', true ),
 					'choices' => [
-						['label' => esc_html__( 'Percentage', 'domain' ), 'value' => 'percentage'],
-						['label' => esc_html__( 'Flat amount', 'domain' ), 'value' => 'flatamount'],
+						['label' => esc_html__( 'Percentage', 'gravitylovesflutterwave' ), 'value' => 'percentage'],
+						['label' => esc_html__( 'Flat amount', 'gravitylovesflutterwave' ), 'value' => 'flatamount'],
 					],
 					'dependency' => [
 						'live'   => true,
@@ -746,7 +793,7 @@ class Gravityforms {
 				[
 					'name'    => 'percentageAmount',
 					'type'    => 'text',
-					'label'   => esc_html__( 'Comission Percent', 'gravitylovesflutterwave' ),
+					'label'   => esc_html__( 'Commission', 'gravitylovesflutterwave' ),
 					'tooltip' => gform_tooltip( 'form_comissionamount', '', true ),
 					'dependency' => [
 						'live'   => true,
@@ -821,7 +868,7 @@ class Gravityforms {
 		$icon = (file_exists($icon)&&!is_dir($icon))?file_get_contents($icon):'gform-icon gform-icon--api';
 		$setting_tabs['60'] = [
 			'name'         => 'flutterwave',
-			'label'        => __( 'Flutterwave', 'domain' ),
+			'label'        => __( 'Flutterwave', 'gravitylovesflutterwave' ),
 			'icon'         => $icon,
 			'query'        => ['nid' => null],
 			'capabilities' => ['gravityforms_edit_forms']
@@ -829,7 +876,7 @@ class Gravityforms {
 		return $setting_tabs;
 	}
 	public function gform_form_settings_page_flutterwave($subview) {
-		// \GFFormSettings::page_header( __( 'Flutterwave Gateway', 'domain' ) );
+		// \GFFormSettings::page_header( __( 'Flutterwave Gateway', 'gravitylovesflutterwave' ) );
 		\GFFormSettings::page_header();
 		$form_id = absint(rgget('id'));
 		
@@ -841,7 +888,7 @@ class Gravityforms {
 		global $FWPFlutterwave;
 		// $subaccounts = [];
 		// for ($i=1; $i <= 6; $i++) {
-		// 	$subaccounts[] = ['name' => 'account '.$i, 'label' => esc_html__( 'Sub account '.$i, 'domain' ), 'value' => 'flatamount'];
+		// 	$subaccounts[] = ['name' => 'account '.$i, 'label' => esc_html__( 'Sub account '.$i, 'gravitylovesflutterwave' ), 'value' => 'flatamount'];
 		// }
 		// $subaccounts = (array) apply_filters('gravityformsflutterwaveaddons/project/payment/getallsubaccounts',[], false);
 		try {
@@ -898,29 +945,13 @@ class Gravityforms {
 	public function createPayLinkandGo($entry, $form, $go = true) {
 		global $FWPFlutterwave;
 		
-		$paymentField = false;$subaccounts = [];
+		$paymentField = false;
 		foreach($form['fields'] as $i => $field) {
 			if($field->type == 'flutterwave_credit_card') {
-				$paymentField = $field;
-				foreach($field as $key => $val) {
-					if(strpos($key, 'comissionAccount-') !== false) {
-						$agent = str_replace(['comissionAccount-'], [''], $key);
-						if(
-						in_array($agent, ['client', 'partner', 'stuff']) &&
-						!empty($val) && isset($field['comissionType-'.$agent]) && !empty($field['comissionType-'.$agent]) && isset($field['comissionAmount-'.$agent]) && !empty($field['comissionAmount-'.$agent])
-						) {
-							$subaccounts[] = [
-								'id'						=> (int) $val,
-								'transaction_charge_type'	=> ($field['comissionType-'.$agent]=='percentage')?'percentage_subaccount':'flat_subaccount',
-								'transaction_charge'		=> (int) $field['comissionAmount-'.$agent]
-							];
-						}
-					} else {}
-				}
-				break;
+				$paymentField = $field;break;
 			}
 		}
-		// print_r([$subaccounts]);wp_die('Hi there');
+		$subaccounts = $this->getSubAccountData($form);
 
 		// Perform your payment processing logic here
 		// Assuming the payment is successful, update the entry status to "Pending Payment"
@@ -933,7 +964,8 @@ class Gravityforms {
 		
 		$user_id = get_current_user_id();
 
-		$payment_amount = (isset($entry['payment_amount']) && $entry['payment_amount']!==null && (int) $entry['payment_amount'] > 0)?(int) $entry['payment_amount']:(isset($formDate['total'])?(int)$formDate['total']:1);
+		$payment_amount = (isset($entry['payment_amount']) && $entry['payment_amount']!==null && (float) $entry['payment_amount'] > 0)?(float) $entry['payment_amount']:(isset($formDate['total'])?(float)$formDate['total']:1);
+		if($payment_amount <= 50) {wp_die(__('You must calculate at least 50', 'gravitylovesflutterwave').' '.(isset($entry['currency'])?$entry['currency']:'NGN'));}
 
 		$entry['transaction_id'] = $txref;
 		$entry['payment_status'] = 'pending';
@@ -950,31 +982,27 @@ class Gravityforms {
 		$args = [
 			'txref' => $txref,
             'amount' => $payment_amount,
-            'currency' => isset($entry['currency'])?$entry['currency']:'USD',
+            'currency' => isset($entry['currency'])?$entry['currency']:'NGN',
             'customer_info' => [
 				'email' => isset($formDate['email'])?$formDate['email']:get_bloginfo('admin_email'),
 				'customer_name' => join(' ', isset($formDate['name'])?[$formDate['name']['first'], $formDate['name']['last']]:['N/A']),
-				'customer_phone' => isset($formDate['phone'])?$formDate['phone']:0
+				// 'customer_phone' => isset($formDate['phone'])?$formDate['phone']:0
 			],
 			'subaccounts'	=> []
 		];
+		if(isset($formDate['phone'])) {
+			$args['customer_info']['customer_phone'] = $formDate['phone'];
+		}
+
 
 		try {
 			// $form['subAccounts'] = $subAccounts;
+			$getAllSubAccounts = $FWPFlutterwave->getAllSubAccounts();
+			foreach($subaccounts as $i => $account) {
+				$subaccounts[$i]['id'] = $this->search4ID($subaccounts[$i]['id'], $getAllSubAccounts);
+			}
 			if(count($subaccounts)>=1) {
 				$args['subaccounts'] = $subaccounts;
-			} elseif(false && count($subaccounts)>=1) {
-				$getAllSubAccounts = $FWPFlutterwave->getAllSubAccounts();
-				foreach($getAllSubAccounts as $i => $subAC) {
-					if(in_array($subAC['id'], $subaccounts)) {
-						$args['subaccounts'] = isset($args['subaccounts'])?$args['subaccounts']:[];
-						$args['subaccounts'][] = [
-							'id'						=> $subAC['id'],
-							'transaction_charge_type'	=> ($paymentField['comissionType']=='percentage')?'percentage_subaccount':'flat_subaccount',
-							'transaction_charge'		=> (int) $paymentField['comissionAmount']
-						];
-					}
-				}
 			} else {}
 		} catch (\Exception $e) {}
 		
@@ -997,14 +1025,22 @@ class Gravityforms {
 				// 	'customer_name'		=> $args['customer_info']['customer_name'],
 				// 	'customer_phone'	=> $args['customer_info']['customer_phone'],
 				// ],
-				// 'subaccounts'			=> $args['subaccounts'],
+				'subaccounts'			=> $args['subaccounts'],
 				'tx_ref'				=> $args['txref'],
 			];
-			if(isset($argv['subaccounts'])) {$args['subaccounts'] = $argv['subaccounts'];}
-			
-			if(!is_array($args['subaccounts']) || count($args['subaccounts']) <= 0) {unset($args['subaccounts']);}
+			if(count($args['subaccounts']) <= 0) {unset($args['subaccounts']);}
+
+			\GFAPI::update_entry_property($entry['id'], 'status', 'active');
 			return true;
 		} else {
+			// $args['subaccounts'] = $this->getSubAccountData($form);
+			if(count($args['subaccounts']) <= 0) {unset($args['subaccounts']);} else {
+				if(!$this->preventSubAccountComission($args, $form)) {
+					wp_die(__('Payment comission splitting is not properly initiated. Please contact with the administrative.', 'gravitylovesflutterwave'));
+				}
+			}
+			$args = $this->convertPercentage2CalculatedAmount($args, $form);
+			// print_r([$link, $args]);wp_die();
 			$link = $FWPFlutterwave->createPayment($args);
 		}
 		if($link) {
@@ -1013,8 +1049,8 @@ class Gravityforms {
 		} else {
 			if($go) {
 				wp_die(
-					__('Can\'t create payment link. Please contact with administrative.', 'domain'),
-					__('Error happening on creating payment.', 'domain')
+					__('Can\'t create payment link. Please contact with administrative.', 'gravitylovesflutterwave'),
+					__('Error happening on creating payment.', 'gravitylovesflutterwave')
 				);exit;
 			} else {
 				return false;
@@ -1022,24 +1058,59 @@ class Gravityforms {
 			
 		}
 	}
+	public function preventSubAccountComission($args, $form) {
+		$theTotalComission = 0;
+		foreach($args['subaccounts'] as $i => $account) {
+			$theTotalComission = ($theTotalComission + (
+				in_array($account['transaction_charge_type'], ['percentage_subaccount', 'percentage'])?($args['amount'] * ($account['transaction_charge']/100)):$account['transaction_charge']
+			));
+		}
+		return ($theTotalComission <= ($args['amount'] * GRAVITYFORMS_FLUTTERWAVE_ADDONS_MAX_COMISSION));
+	}
+	public function convertPercentage2CalculatedAmount($args, $form) {
+		if(isset($args['subaccounts'])) {
+			foreach($args['subaccounts'] as $i => $row) {
+				if($row['transaction_charge_type'] == 'percentage_subaccount') {
+					$args['subaccounts'][$i]['transaction_charge_type'] = 'flat_subaccount';
+					$args['subaccounts'][$i]['transaction_charge'] = (
+						($row['transaction_charge'] / 100) * $args['amount']
+					);
+				}
+			}
+		}
+		return $args;
+	}
 	public function approve_entry_and_trigger_notifications($entry, $payment_result) {
 		// Approve the entry
-		\GFAPI::update_entry_property($entry['id'], 'is_approved', true);
+		// \GFAPI::update_entry_property($entry['id'], 'is_approved', true);
+		\GFAPI::update_entry_property($entry['id'], 'status', 'active');
 		// Trigger notifications
-		\GFCommon::send_notifications($entry, $form);
+		$notifications = [];
+		\GFCommon::send_notifications($notifications, $entry, $form);
 	}
 	// Assuming you have a function to handle the payment success webhook
 	public function handle_payment_success_webhook($payment_data) {
 		$entry_id = $payment_data['entry_id']; // Assuming the entry ID is passed in the payment data
 
 		// Approve the entry
-		\GFAPI::update_entry_property($entry_id, 'is_approved', true);
+		\GFAPI::update_entry_property($entry_id, 'status', 'active');
 
 		// Get the entry object
 		$entry = \GFAPI::get_entry($entry_id);
 
 		// Trigger notifications
-		\GFCommon::send_notifications($entry, $entry['form_id']);
+		$notifications = [];
+		\GFCommon::send_notifications($notifications, $entry, $form);
+	}
+
+	public function search4ID($id, $all) {
+		return $id;
+		foreach($all as $ac) {
+			if($ac['subaccount_id'] == $id || $ac['account_id'] == $id) {
+				return $ac['id'];
+			}
+		}
+		return $id;
 	}
 
 	
@@ -1057,7 +1128,7 @@ class Gravityforms {
 		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
 		$args = [];
 		$args['hooks'] = ['payment-link-updated'];
-		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'domain');
+		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'gravitylovesflutterwave');
 		$entry = (\GFAPI::entry_exists((int)$_POST['entry']))?\GFAPI::get_entry((int)$_POST['entry']):false;
 		if(!$entry && !is_wp_error($entry)) {wp_send_json_error($args);}
 		$form = (\GFAPI::form_id_exists((int)$_POST['form_id']))?\GFAPI::get_form((int)$_POST['form_id']):false;
@@ -1066,11 +1137,11 @@ class Gravityforms {
 		$payment_link = $this->createPayLinkandGo($entry, $form, false);
 
 		if($payment_link) {
-			$args['message'] = __('Payment link updated successfully!', 'domain');
+			$args['message'] = __('Payment link updated successfully!', 'gravitylovesflutterwave');
 			$args['payment_link'] = $payment_link;
 			wp_send_json_success($args);
 		} else {
-			$args['message'] = __('Something went wrong. We can\'t update payment link.', 'domain');
+			$args['message'] = __('Something went wrong. We can\'t update payment link.', 'gravitylovesflutterwave');
 			wp_send_json_error($args);
 		}
 	}
@@ -1078,7 +1149,7 @@ class Gravityforms {
 		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
 		global $FWPFlutterwave;$request = $_POST;$args = [];
 		$args['hooks'] = ['payment-refunded-failed'];$refund_amount = $request['amount'];
-		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'domain');
+		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'gravitylovesflutterwave');
 		$entry = (\GFAPI::entry_exists((int)$_POST['entry']))?\GFAPI::get_entry((int)$_POST['entry']):false;
 		if(!$entry && !is_wp_error($entry)) {wp_send_json_error($args);}
 		$form = (\GFAPI::form_id_exists((int)$_POST['form_id']))?\GFAPI::get_form((int)$_POST['form_id']):false;
@@ -1087,7 +1158,7 @@ class Gravityforms {
 		$refunded = gform_get_meta($entry['id'], '_paymentrefunded');
 		if(!$refunded || empty($refunded)) {$refunded = 0;}
 		if(($refunded + $refund_amount) > $entry['payment_amount']) {
-			$args['message'] = sprintf(__('You can\'t refund more then %s.', 'domain'), ($entry['payment_amount'] - $refunded).' '.$entry['currency']);
+			$args['message'] = sprintf(__('You can\'t refund more then %s.', 'gravitylovesflutterwave'), ($entry['payment_amount'] - $refunded).' '.$entry['currency']);
 			wp_send_json_error($args);
 		}
 		$refundable = ($refunded + $refund_amount);
@@ -1096,12 +1167,12 @@ class Gravityforms {
 			$RefundedPayment = $FWPFlutterwave->refund($entry['transaction_id'], $request['amount']);
 			if($RefundedPayment) {
 				$refunded = gform_update_meta($entry['id'], '_paymentrefunded', $refundable);
-				$args['message'] = __('Payment refunded successfully!', 'domain');
+				$args['message'] = __('Payment refunded successfully!', 'gravitylovesflutterwave');
 				$args['hooks'] = ['payment-refunded-success'];
 				$args['refund'] = $RefundedPayment;
 				wp_send_json_success($args);
 			} else {
-				$args['message'] = __('Something went wrong. Please try again later.', 'domain');
+				$args['message'] = __('Something went wrong. Please try again later.', 'gravitylovesflutterwave');
 				wp_send_json_error($args);
 			}
 		} catch (\Exception $e) {
@@ -1114,14 +1185,14 @@ class Gravityforms {
 		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
 		$args = [];
 		$args['hooks'] = ['reminder-sent'];
-		$args['message'] = __('Payment reminder mail sent successfully!', 'domain');
+		$args['message'] = __('Payment reminder mail sent successfully!', 'gravitylovesflutterwave');
 		$template = $this->replaceMagicWords(stripslashes(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['paymentReminder']), ['entry'=>$_POST['entry'],'form_id'=>$_POST['form_id']]);
 		// $args['template'] = $template;
 
 		if($template) {
 			wp_send_json_success($args);
 		} else {
-			$args['message'] = __('Mail didn\'t properly sent. Entry ID or customer mail address not found!', 'domain');
+			$args['message'] = __('Mail didn\'t properly sent. Entry ID or customer mail address not found!', 'gravitylovesflutterwave');
 			wp_send_json_error($args);
 		}
 	}
@@ -1174,32 +1245,32 @@ class Gravityforms {
 			if (!field.label)
 				var ccNumber, ccExpirationMonth, ccExpirationYear, ccSecruityCode, ccCardType, ccName, enableCardPaymentMethod, flutterwaveDefaultModeCard, enablePreviewField, statusBtnLink;
 				
-				field.label = <?php echo json_encode(esc_html__('Flutterwave Payment', 'domain')); ?>;
+				field.label = <?php echo json_encode(esc_html__('Payment', 'gravitylovesflutterwave')); ?>;
 				var inputs = field.inputs || [];
 	
-				ccNumber = new Input(field.id + ".1", <?php echo json_encode(gf_apply_filters(array('gform_card_number', rgget('id')), esc_html__('Card Number', 'domain'), rgget('id'))); ?>);
-				ccExpirationMonth = new Input(field.id + ".month", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Month', 'domain'), rgget('id'))); ?>);
-				ccExpirationMonth.defaultLabel = <?php echo json_encode(esc_html__('Expiration Date', 'domain')); ?>;
-				ccExpirationYear = new Input(field.id + ".year", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Year', 'domain'), rgget('id'))); ?>);
-				ccSecruityCode = new Input(field.id + ".3", <?php echo json_encode(gf_apply_filters(array('gform_card_security_code', rgget('id')), esc_html__('Security Code', 'domain'), rgget('id'))); ?>);
-				ccCardType = new Input(field.id + ".4", <?php echo json_encode(gf_apply_filters(array('gform_card_type', rgget('id')), __( 'Card Type', 'domain'), rgget('id'))); ?>);
-				ccName = new Input(field.id + ".5", <?php echo json_encode(gf_apply_filters(array('gform_card_name', rgget('id')), esc_html__('Cardholder Name', 'domain'), rgget('id'))); ?>);
+				ccNumber = new Input(field.id + ".1", <?php echo json_encode(gf_apply_filters(array('gform_card_number', rgget('id')), esc_html__('Card Number', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				ccExpirationMonth = new Input(field.id + ".month", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Month', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				ccExpirationMonth.defaultLabel = <?php echo json_encode(esc_html__('Expiration Date', 'gravitylovesflutterwave')); ?>;
+				ccExpirationYear = new Input(field.id + ".year", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Year', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				ccSecruityCode = new Input(field.id + ".3", <?php echo json_encode(gf_apply_filters(array('gform_card_security_code', rgget('id')), esc_html__('Security Code', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				ccCardType = new Input(field.id + ".4", <?php echo json_encode(gf_apply_filters(array('gform_card_type', rgget('id')), __( 'Card Type', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				ccName = new Input(field.id + ".5", <?php echo json_encode(gf_apply_filters(array('gform_card_name', rgget('id')), esc_html__('Cardholder Name', 'gravitylovesflutterwave'), rgget('id'))); ?>);
 				
-				enableCardPaymentMethod = new Input(field.id + ".enableCardPaymentMethod", <?php echo json_encode(gf_apply_filters(array('gform_enable_card_payment_method', rgget('id')), esc_html__('Enable multiple payment methods', 'domain'), rgget('id'))); ?>);
-				flutterwaveDefaultModeCard = new Input(field.id + ".flutterwaveDefaultModeCard", <?php echo json_encode(gf_apply_filters(array('gform_flutterwave_default_mode_card', rgget('id')), esc_html__('Enable multiple payment methods', 'domain'), rgget('id'))); ?>);
+				enableCardPaymentMethod = new Input(field.id + ".enableCardPaymentMethod", <?php echo json_encode(gf_apply_filters(array('gform_enable_card_payment_method', rgget('id')), esc_html__('Enable multiple payment methods', 'gravitylovesflutterwave'), rgget('id'))); ?>);
+				flutterwaveDefaultModeCard = new Input(field.id + ".flutterwaveDefaultModeCard", <?php echo json_encode(gf_apply_filters(array('gform_flutterwave_default_mode_card', rgget('id')), esc_html__('Enable multiple payment methods', 'gravitylovesflutterwave'), rgget('id'))); ?>);
 	
-				enablePreviewField = new Input(field.id + ".enablePreviewField", <?php echo json_encode(gf_apply_filters(array('gform_enable_preview_field', rgget('id')), esc_html__('Show preview card', 'domain'), rgget('id'))); ?>);
+				enablePreviewField = new Input(field.id + ".enablePreviewField", <?php echo json_encode(gf_apply_filters(array('gform_enable_preview_field', rgget('id')), esc_html__('Show preview card', 'gravitylovesflutterwave'), rgget('id'))); ?>);
 	
-				submitBtnText = new Input(field.id + ".submitBtnText", <?php echo json_encode(esc_html__('Submit', 'domain')); ?>);
-				statusBtnLink = new Input(field.id + ".statusBtnLink", <?php echo json_encode(esc_html__('Button Link', 'domain')); ?>);
+				submitBtnText = new Input(field.id + ".submitBtnText", <?php echo json_encode(esc_html__('Submit', 'gravitylovesflutterwave')); ?>);
+				statusBtnLink = new Input(field.id + ".statusBtnLink", <?php echo json_encode(esc_html__('Button Link', 'gravitylovesflutterwave')); ?>);
 
 				inputs.push(ccNumber, ccExpirationMonth, ccExpirationYear, ccSecruityCode, ccCardType, ccName, enableCardPaymentMethod, flutterwaveDefaultModeCard, enablePreviewField, statusBtnLink);
 				
-				<?php foreach(['client', 'partner', 'stuff'] as $type): ?>
-					var comissionAccount_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionAccount-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Sub account', 'domain')); ?>);
+				<?php foreach(['client', 'partner', 'staff'] as $type): ?>
+					var comissionAccount_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionAccount-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Sub account', 'gravitylovesflutterwave')); ?>);
 					inputs.push(comissionAccount_<?php echo esc_attr($type); ?>);
 
-					var comissionType_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionType-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Comission type', 'domain')); ?>);
+					var comissionType_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionType-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Comission type', 'gravitylovesflutterwave')); ?>);
 					inputs.push(comissionType_<?php echo esc_attr($type); ?>);
 
 					var comissionAmount_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionAmount-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html(ucfirst($type).' subaccount')); ?>);
@@ -1207,7 +1278,6 @@ class Gravityforms {
 				<?php endforeach; ?>
 	
 				field.inputs = inputs;
-				console.log(field);
 			break;
 		<?php
 	}
@@ -1239,7 +1309,7 @@ class Gravityforms {
 				<div>
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'This option is disabled because Flutterwave function disabled from this form settings or Secret keys not provided on settings or the key expired to your account is in live mode but the secret key you provided is in test mode. %1$sDo a reCheck over Flutterwave dashboard%2$s.', 'domain' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
+					printf( esc_html__( 'This option is disabled because Flutterwave function disabled from this form settings or Secret keys not provided on settings or the key expired to your account is in live mode but the secret key you provided is in test mode. %1$sDo a reCheck over Flutterwave dashboard%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
 					?>
 				</div>
 				<?php
@@ -1248,6 +1318,32 @@ class Gravityforms {
 		</li>
 		<?php
 	}
+	public function getSubAC() {
+		// check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		// Example usage
+		global $FWPFlutterwave;
+		$request = wp_parse_args($_POST, []);
+		$json = ['hooks' => ['card_subac_failed']];
+		$form = (\GFAPI::form_id_exists((int)$request['form_id']))?\GFAPI::get_form((int)$request['form_id']):false;
+		if(!$form) {$json['message'] = __('Something suspecius happens. Please try on live payment.', 'gravitylovesflutterwave');wp_send_json_error($json);}
+		try {
+			if(isset($request['get_all'])) {
+				$subaccounts = $FWPFlutterwave->getAllSubAccounts();
+			} else {
+				$subaccounts = $this->getSubAccountData($form);
+			}
+			if(count($subaccounts)<=0) {
+				$json['message'] = __('Subaccount not found', 'gravitylovesflutterwave');wp_send_json_error($json);
+			}
+			$json['hooks'] = ['card_subac_recieved'];
+			$json['message'] = __('Subaccount information recieved.', 'gravitylovesflutterwave');
+			if(isset($request['no_message'])) {unset($json['message']);}
+			$json['subaccounts'] = $subaccounts;wp_send_json_success($json);
+		} catch (\Exception $e) {
+			$json['message'] = 'Error: ' . $e->getMessage();
+			wp_send_json_error($json);
+		}
+	}
 	public function cardToken() {
 		// check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
 		// Example usage
@@ -1255,6 +1351,8 @@ class Gravityforms {
 		$request = wp_parse_args($_POST, []);
 		$json = ['hooks' => ['card_issued_falied']];
 		$request['total'] = intval($request['total']);
+		$form = (\GFAPI::form_id_exists((int)$request['form_id']))?\GFAPI::get_form((int)$request['form_id']):false;
+		if(!$form) {$json['message'] = __('Something suspecius happens. Please try on live payment.', 'gravitylovesflutterwave');wp_send_json_error($json);}
 		try {
 			$args = [
 				'name' => isset($request['name'])?$request['name']:'N/A',
@@ -1270,10 +1368,16 @@ class Gravityforms {
 				'customer_email' => $request['email'],
 				'tx_ref' => $request['unique']
 			];
+			$subaccounts = $this->getSubAccountData($form);
+			if(count($subaccounts)>=1) {$args['subaccounts'] = $subaccounts;}
+
+			if(isset($request['client'])) {
+				$args = ['client' => $request['client']];
+			}
 			$issuedCard = $FWPFlutterwave->processCardPayment($args);
 			// if(isset($issuedCard['meta']) && isset($issuedCard['meta']['authorization']) && isset($issuedCard['meta']['authorization']['mode'])) {}
 			$json['hooks'] = ['card_issued_success'];
-			$json['message'] = __('Successfully Issued your card. Please input the OPT just sent to your number.', 'domain');
+			$json['message'] = __('Successfully Issued your card. Please input the OPT just sent to your number.', 'gravitylovesflutterwave');
 			$json['issuedData'] = $issuedCard;
 			wp_send_json_success($json);
 		} catch (\Exception $e) {
@@ -1295,7 +1399,7 @@ class Gravityforms {
 			$issuedCard = $FWPFlutterwave->processCardVerify($args);
 
 			$json['hooks'] = ['cardotp_success'];
-			$json['message'] = __('Successfully Issued your card. Please input the OPT just sent to your number.', 'domain');
+			$json['message'] = __('Successfully Issued your card. Please input the OPT just sent to your number.', 'gravitylovesflutterwave');
 			$json['issuedData'] = $issuedCard;
 			wp_send_json_success($json);
 		} catch (\Exception $e) {
@@ -1304,4 +1408,37 @@ class Gravityforms {
 		}
 	}
 
+	public function getSubAccountData($form) {
+		$subaccounts = [];
+		foreach($form['fields'] as $i => $field) {
+			if($field->type == 'flutterwave_credit_card') {
+				foreach($field as $key => $val) {
+					if(strpos($key, 'comissionAccount-') !== false) {
+						$agent = str_replace(['comissionAccount-'], [''], $key);
+						$field['comissionType-'.$agent] = (!isset($field['comissionType-'.$agent]) || empty($field['comissionType-'.$agent]))?'percentage_subaccount':$field['comissionType-'.$agent];
+						if(
+						in_array($agent, ['client', 'partner', 'staff']) &&
+						!empty($val) && isset($field['comissionAmount-'.$agent]) && !empty($field['comissionAmount-'.$agent])
+						) {
+							$charge_type = (true)?(
+								($field['comissionType-'.$agent] == 'flatamount')?'flat_subaccount':'percentage_subaccount'
+							):(
+								($field['comissionType-'.$agent] == 'flatamount')?'flat':'percentage'
+							);
+							if(in_array($charge_type, ['percentage_subaccount', 'percentage'])) {
+								$field['comissionAmount-'.$agent] = (float) $field['comissionAmount-'.$agent];
+							}
+							$subaccounts[] = [
+								'id'						=> $val,
+								'transaction_charge'		=> (float) $field['comissionAmount-'.$agent],
+								'transaction_charge_type'	=> $charge_type,
+							];
+						}
+					} else {}
+				}
+				break;
+			}
+		}
+		return $subaccounts;
+	}
 }

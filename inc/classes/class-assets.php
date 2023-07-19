@@ -33,7 +33,6 @@ class Assets {
 	public function register_styles() {
 		$version = $this->filemtime(GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_CSS_DIR_PATH.'/frontend.css');
 		// Register styles.
-		wp_register_script( 'checkout-flutterwave', 'https://checkout.flutterwave.com/v3.js', ['jquery'], false, true );
 		wp_register_style('GravityformsFlutterwaveAddons', GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_CSS_URI.'/frontend.css?vers'.$version, [], $version, 'all');
 		// wp_enqueue_style('GravityformsFlutterwaveAddons');
 		// if( $this->allow_enqueue() ) {}
@@ -43,6 +42,8 @@ class Assets {
 		// Register scripts.
 		// 'https://cdnjs.cloudflare.com/ajax/libs/imask/3.4.0/imask.min.js'
 		wp_register_script('imask', GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_LIB_URI.'/js/imask.min.js', [], false, true);
+		wp_register_script( 'checkout-flutterwave', 'https://checkout.flutterwave.com/v3.js', ['jquery'], false, true );
+		wp_register_script( 'forge', 'https://cdn.jsdelivr.net/npm/node-forge@1.0.0/dist/forge.min.js', ['jquery'], false, true );
 		wp_register_script('GravityformsFlutterwaveAddons', GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_JS_URI.'/frontend.js?vers'.$version, ['jquery', 'imask'], $version, true);
 		wp_enqueue_script('GravityformsFlutterwaveAddons');
 		
@@ -116,8 +117,12 @@ class Assets {
 			'ajax_nonce' 		=> wp_create_nonce( 'gravityformsflutterwaveaddons/project/verify/nonce' ),
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI,
-			'videoClips'  		=> ( function_exists( 'WC' ) && WC()->session !== null ) ? (array) WC()->session->get( 'uploaded_files_to_archive' ) : [],
-			'i18n'					=> [
+			'config'  			=> [
+				'encryptionKey'		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['encryptionkey'],
+				'public_key'		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['publickey'],
+				'siteUrl'			=> site_url('/')
+			],
+			'i18n'				=> [
 				'sureToSubmit'							=> __( 'Want to submit it? You can retake.', 'gravitylovesflutterwave' ),
 				'uploading'									=> __( 'Uploading', 'gravitylovesflutterwave' ),
 				'click_here'								=> __( 'Click here', 'gravitylovesflutterwave' ),

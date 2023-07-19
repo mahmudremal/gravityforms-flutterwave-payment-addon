@@ -9,7 +9,7 @@
 
 <fieldset id="gform-settings-section-flutterwave-payment" class="gform-settings-panel gform-settings-panel--with-title" data-style="display: none;">
   <legend class="gform-settings-panel__title gform-settings-panel__title--header">
-    <?php esc_html_e( 'Flutterwave Payment', 'domain' ); ?>
+    <?php esc_html_e( 'Flutterwave Payment', 'gravitylovesflutterwave' ); ?>
     <?php gform_tooltip( 'form_field_enable_card_payment_method' ); ?>
   </legend>
   <div class="gform-settings-panel__content">
@@ -17,24 +17,24 @@
     <div class="enable-card-payment-method">
       <input type="checkbox" id="field_enable_multiple_payment_methods" data-js="enable_multiple_payment_methods" onclick="SetFieldProperty('enableCardPaymentMethod', this.checked);" onkeypress="SetFieldProperty('enableCardPaymentMethod', this.checked);" <?php echo checked(rgar($field,'enableCardPaymentMethod'), true); ?> />
       <label for="field_enable_multiple_payment_methods" class="inline">
-          <?php esc_html_e( 'Enable multiple payment methods. Payer will be able to pay through card & direct checkout method.', 'domain' ); ?>
+          <?php esc_html_e( 'Enable multiple payment methods. Payer will be able to pay through card & direct checkout method.', 'gravitylovesflutterwave' ); ?>
           <?php gform_tooltip( 'form_field_enable_multiple_payment_methods' ); ?>
       </label>
       <div id="field_multiple_payment_methods_description">
           <?php
           // translators: variables are the markup to generate a link.
-          printf( esc_html__( 'Available payment methods can be configured in your %1$sFlutterwave Dashboard%2$s.', 'domain' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
+          printf( esc_html__( 'Available payment methods can be configured in your %1$sFlutterwave Dashboard%2$s.', 'gravitylovesflutterwave' ), '<a href="https://dashboard.flutterwave.com/" target="_blank">', '</a>' );
           ?>
       </div>
       <input type="checkbox" id="field_flutterwave_default_mode" data-js="flutterwave_default_mode" onclick="SetFieldProperty('flutterwaveDefaultModeCard', this.checked);" onkeypress="SetFieldProperty('flutterwaveDefaultModeCard', this.checked);" <?php echo checked(rgar($field,'flutterwaveDefaultModeCard'), true); ?> />
       <label for="field_flutterwave_default_mode" class="inline">
-          <?php esc_html_e( 'Set credit card as default selected method.', 'domain' ); ?>
+          <?php esc_html_e( 'Set credit card as default selected method.', 'gravitylovesflutterwave' ); ?>
           <?php gform_tooltip( 'form_field_flutterwave_default_mode' ); ?>
       </label>
     </div>
     <!-- <div id="link_email_field_container" class="d-none">
         <label for="link_email_field" class="section_label">
-            <?php esc_html_e( 'Link Email Field', 'domain' ); ?>
+            <?php esc_html_e( 'Link Email Field', 'gravitylovesflutterwave' ); ?>
         </label>
         <select id="link_email_field" data-js="link_email_field" class="inline">
             <?php echo implode( '', $options['email'] ); ?>
@@ -43,7 +43,7 @@
     <div class="mt-2">
         <input type="checkbox" id="field_enable_preview_field" data-js="enable_preview_field" onclick="SetFieldProperty('enablePreviewField', this.checked);" onkeypress="SetFieldProperty('enablePreviewField', this.checked);" <?php checked( rgar( $field, 'enablePreviewField' ), true ); ?> />
         <label for="field_enable_preview_field" class="inline">
-            <?php esc_html_e( 'Show preview card', 'domain' ); ?>
+            <?php esc_html_e( 'Show preview card', 'gravitylovesflutterwave' ); ?>
             <?php gform_tooltip( 'form_field_enable_card_payment_method' ); ?>
         </label>
     </div>
@@ -62,20 +62,20 @@
     </div> -->
     <div id="gform_setting_successBtnLink" class="gform-settings-field gform-settings-field__radio">
       <div class="gform-settings-field__header">
-        <label class="gform-settings-label" for="successBtnLink"><?php esc_html_e('Button Link', 'domain'); ?></label>
+        <label class="gform-settings-label" for="successBtnLink"><?php esc_html_e('Button Link', 'gravitylovesflutterwave'); ?></label>
         <?php echo gform_tooltip('form_successBtnLink', '', true); ?>
       </div>
       <span class="gform-settings-input__container">
         <div id="gform-settings-radio-choice-successBtnLink0" class="gform-settings-choice">
           <input type="radio" data-js="_gform_setting_successBtnLink" value="percentage" id="successBtnLink0" onclick="SetFieldProperty('successBtnLink', this.checked);" onkeypress="SetFieldProperty('successBtnLink', this.checked);" <?php echo checked(rgar($field,'successBtnLink'), true); ?>>
           <label for="successBtnLink0">
-            <span><?php esc_html_e('Percentage', 'domain'); ?></span>
+            <span><?php esc_html_e('Percentage', 'gravitylovesflutterwave'); ?></span>
           </label>
         </div>
         <div id="gform-settings-radio-choice-successBtnLink1" class="gform-settings-choice">
           <input type="radio" data-js="_gform_setting_successBtnLink" value="flatamount" checked="checked" id="successBtnLink1" onclick="SetFieldProperty('successBtnLink', this.checked);" onkeypress="SetFieldProperty('successBtnLink', this.checked);" <?php echo checked(rgar($field,'successBtnLink'), true); ?>>
           <label for="successBtnLink1">
-            <span><?php esc_html_e('Flat amount', 'domain'); ?></span>
+            <span><?php esc_html_e('Flat amount', 'gravitylovesflutterwave'); ?></span>
           </label>
         </div>
       </span>
@@ -115,7 +115,7 @@
     </div>
     <div id="gform_setting_percentageAmount" class="gform-settings-field gform-settings-field__text">
       <div class="gform-settings-field__header">
-        <label class="gform-settings-label" for="percentageAmount">Comission Percent</label>
+        <label class="gform-settings-label" for="percentageAmount">Commission</label>
         <?php echo gform_tooltip('form_comissionpercent', '', true); ?>
       </div>
       <span class="gform-settings-input__container">

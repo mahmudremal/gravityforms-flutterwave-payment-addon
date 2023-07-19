@@ -244,12 +244,60 @@
 .gform-settings-tab {
   &__header {
     padding: 5px 10px;
-    background: #e4e4e4;
+    font-size: 14px;
+    font-weight: 600;
+    background: #ebebeb;
   }
   &__body {
     padding: 10px;
     padding-bottom: 0;
     margin-bottom: 10px;
     border: 1px solid #d3d3d3;
+  }
+}
+
+.gform-settings-panel__content .gform-settings-field.gform-settings-field__number .gform-settings-input__container input[type="number"] {
+  max-width: 100%;
+  width: 100%;
+}
+.gform-settings-input__container {
+  input[type="text"] {
+    & + small {
+      padding: 5px;
+      display: block;
+      font-size: 12px;
+      margin-top: 5px;
+      font-weight: 600;
+      position: relative;
+      border: 1px solid #eee;
+    }
+  }
+}
+
+
+
+
+
+
+.gform-settings-panel label[for="paymentReminder"] + h4 {
+  margin: 30px auto 0;
+  // text-transform: uppercase;
+  font-size: 15px;
+  padding: 10px;
+  border: 1px solid #dfdfdf;
+  border-radius: 3px;
+  border-bottom: unset;
+  & ~ * {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-bottom: unset;
+    border-top: unset;
+    margin: auto;
+    &:last-child {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+  & + * {
+    border-top: 1px solid #ddd;
   }
 }

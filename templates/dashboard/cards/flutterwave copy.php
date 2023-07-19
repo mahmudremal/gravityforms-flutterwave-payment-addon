@@ -60,9 +60,9 @@ if(in_array($payment_status, ['success', 'successful'])) {
     } else {
         wp_die(
             sprintf(
-                __('We can\'t verify this transaction. Please contact with support. Transaction no is. %s', 'domain'),
+                __('We can\'t verify this transaction. Please contact with support. Transaction no is. %s', 'gravitylovesflutterwave'),
                 '<b>'.$transaction_id.'</b>'
-            ), __('Verification failed!', 'domain')
+            ), __('Verification failed!', 'gravitylovesflutterwave')
         );
     }
 }
@@ -103,6 +103,6 @@ if(in_array($payment_status, ['success', 'successful'])) {
     </style>
   <?php get_footer(); ?>
     <?php else:
-  wp_die(__('Something suspicious detected or it would be probably Failed your payment. Please try again.', 'domain'));
+  wp_die(__('Something suspicious detected or it would be probably Failed your payment. Please try again.', 'gravitylovesflutterwave'));
   ?>
 <?php endif; ?>
