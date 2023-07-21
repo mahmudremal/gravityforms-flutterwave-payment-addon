@@ -26,6 +26,7 @@ import Toastify from 'toastify-js';
 			this.i18n = {i_confirm_it: 'Yes I confirm it',...i18n};
 			this.pendingRequestofComissionAccounts = false;
 			window.matchComissionAccount = this.matchComissionAccount;
+			this.fetchedFieldFirstTime = false;
 			window.thisClass = this;
 			this.setup_hooks();
 			this.init_settings_field();
@@ -644,6 +645,26 @@ import Toastify from 'toastify-js';
 					var node = document.createElement('small');node.innerHTML = account.full_name+' ('+account.business_name+')';
 					el.parentElement.appendChild(node);
 				}
+			}
+			const section = document.querySelector('.flutterwave_settings_advanced');
+			if(section && ! thisClass.fetchedFieldFirstTime) {
+				console.log('Fetching fields...');
+				section.querySelectorAll('input[onchange], select[onchange]').forEach((el)=>{
+					var attr = el.getAttribute('onchange');attr = attr.split(')');
+					attr = attr[0].replaceAll('SetFieldProperty(', '');attr = attr.split(',');
+					attr = attr[0].replaceAll('"', '');attr = attr.replaceAll('\'', '');
+					console.log('Fetching '+attr);
+					switch(el.type) {
+						case 'radio':case 'checkbox':
+							if(el.checked) {SetFieldProperty(attr, el.value);}
+							break;
+						default:
+							// if(el.nodeName == 'SELECT') {}
+							SetFieldProperty(attr, el.value);
+							break;
+					}
+					thisClass.fetchedFieldFirstTime = true;
+				});
 			}
 		}
 		loadComissionAccount() {

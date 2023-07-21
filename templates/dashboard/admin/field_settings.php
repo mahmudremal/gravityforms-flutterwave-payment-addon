@@ -166,24 +166,24 @@ $subAccountInput = true;
         <?php echo gform_tooltip('form_submittext', '', true); ?>
       </div>
       <span class="gform-settings-input__container">
-        <input type="text" id="submitBtnText"  onchange="SetFieldProperty('submitBtnText', this.value);" onkeypress="SetFieldProperty('submitBtnText', this.value);" value="<?php echo esc_attr(empty(rgar($field, 'submitBtnText'))?__('Submit', 'gravitylovesflutterwave'):rgar($field, 'submitBtnText')); ?>">
+        <input type="text" id="submitBtnText" onchange="SetFieldProperty('submitBtnText', this.value);" onkeypress="SetFieldProperty('submitBtnText', this.value);" value="<?php echo esc_attr(empty(rgar($field, 'submitBtnText'))?__('Submit', 'gravitylovesflutterwave'):rgar($field, 'submitBtnText')); ?>">
       </span>
     </div>
-    <div id="gform_setting_statusBtnLink" class="gform-settings-field gform-settings-field__radio">
+    <!-- <div id="gform_setting_statusBtnLink" class="gform-settings-field gform-settings-field__radio">
       <div class="gform-settings-field__header">
-        <label class="gform-settings-label" for="statusBtnLink"><?php esc_html_e('Success page link', 'gravitylovesflutterwave'); ?></label>
-        <?php echo gform_tooltip('form_statusBtnLink', '', true); ?>
+        <label class="gform-settings-label" for="statusBtnLink"><?php // esc_html_e('Success page link', 'gravitylovesflutterwave'); ?></label>
+        <?php // echo gform_tooltip('form_statusBtnLink', '', true); ?>
       </div>
       <span class="gform-settings-input__container">
         <div id="gform-settings-radio-select-statusBtnLink0" class="gform-settings-select">
           <select id="statusBtnLink" onchange="SetFieldProperty('statusBtnLink', this.value);" onkeypress="SetFieldProperty('statusBtnLink', this.value);">
-            <?php $linkType = in_array(rgar($field,'statusBtnLink'), ['form', 'home'])?rgar($field,'statusBtnLink'):'form'; ?>
-            <option value="form" <?php selected($linkType, 'form', true); ?>><?php esc_html_e('Form page', 'gravitylovesflutterwave'); ?></option>
-            <option value="home" <?php selected($linkType, 'home', true); ?>><?php esc_html_e('Home page', 'gravitylovesflutterwave'); ?></option>
+            <?php // $linkType = in_array(rgar($field,'statusBtnLink'), ['form', 'home'])?rgar($field,'statusBtnLink'):'form'; ?>
+            <option value="form" <?php // selected($linkType, 'form', true); ?>><?php // esc_html_e('Form page', 'gravitylovesflutterwave'); ?></option>
+            <option value="home" <?php // selected($linkType, 'home', true); ?>><?php // esc_html_e('Home page', 'gravitylovesflutterwave'); ?></option>
           </select>
         </div>
       </span>
-    </div>
+    </div> -->
     <div id="gform_setting_fluttercardMessage" class="gform-settings-field gform-settings-field__textarea">
       <div class="gform-settings-field__header">
         <label class="gform-settings-label" for="fluttercardMessage"><?php esc_html_e('Card message', 'gravitylovesflutterwave'); ?></label>

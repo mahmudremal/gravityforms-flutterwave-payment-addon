@@ -396,6 +396,7 @@ class Gravityforms {
 
 
 	public function settings_fields() {
+		// print_r($this->settings);
 		$args = [
 			'title'							=> __( 'General', 'gravitylovesflutterwave' ),
 			'description'				=> sprintf(
@@ -434,6 +435,19 @@ class Gravityforms {
 					'default'				=> true,
 					// 'description'			=> __( 'Mark to enable function of this Plugin.', 'gravitylovesflutterwave' ),
 					'help'					=> '<strong>Encryption Key</strong>Enter your Encryption Key, if you do not have a key you can register for one at the provided link.'
+				],
+				[
+					'id' 					=> 'statusBtnLink',
+					'name' 					=> 'statusBtnLink',
+					'label'					=> __('Success page link', 'gravitylovesflutterwave'),
+					'type'					=> 'select',
+					'description'			=> __('Select a link for the payment returned/Success page.', 'gravitylovesflutterwave'),
+					'default'				=> 'form',
+					'help'					=> sprintf(__("%s Success page link %s Payment returned status page button link. Set homepage to setup Back to home like, site homepage link. Selecting form will set button link form entry screen link.", 'gravitylovesflutterwave'), '<strong>', '</strong>'),
+					'options'				=> [
+						'form'			=> __('Form page', 'gravitylovesflutterwave'),
+						'home'			=> __('Home page', 'gravitylovesflutterwave'),
+					]
 				],
 				[
 					'id' 						=> 'amountZeroMsg',
@@ -499,7 +513,8 @@ class Gravityforms {
 		$html = '';
 		$option_name = $this->settingSlug ."[". $field['id']. "]";
 		$field[ 'default' ] = isset( $field[ 'default' ] ) ? $field[ 'default' ] : '';
-		$data = (isset($this->options[$field['id']]))?$this->options[$field['id']]:$field['default'];
+		// $data = (isset($this->options[$field['id']]))?$this->options[$field['id']]:$field['default'];
+		$data = (isset($this->settings[$field['id']]))?$this->settings[$field['id']]:$field['default'];
 		$field['value'] = isset($this->settings[$field['id']])?$this->settings[$field['id']]:'';
 		switch( $field['type'] ) {
 			case 'text':case 'email':case 'password':case 'number':
@@ -509,7 +524,7 @@ class Gravityforms {
 						<div class="gform-settings-field__header">
 							<label class="gform-settings-label" for="public_key">'.esc_html($field['label']).'</label>
 							'.wp_kses_post(
-								(isset($field['help'])) ? '<button onclick="return false;" onkeypress="return false;" class="gf_tooltip tooltip tooltip_settings_recaptcha_public" aria-label="'.esc_attr($field['help']).'">
+								(isset($field['help'])) ? '<button type="button" onclick="return false;" onkeypress="return false;" class="gf_tooltip tooltip tooltip_settings_recaptcha_public" aria-label="'.esc_attr($field['help']).'">
 								<i class="gform-icon gform-icon--question-mark" aria-hidden="true"></i>
 							</button>': ''
 							).'
@@ -552,13 +567,25 @@ class Gravityforms {
 				}
 			break;
 			case 'select':
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" ' . $this->attributes( $field ) . '>';
+				$html .= '
+				<div class="gform-settings-field gform-settings-field__'.esc_attr($field['type']).'">
+					<div class="gform-settings-field__header">
+						<label class="gform-settings-label" for="'.esc_attr($field['id']).'">'.esc_html($field['label']).'</label>
+						'.wp_kses_post(
+							(isset($field['help'])) ? '<button type="button" onclick="return false;" onkeypress="return false;" class="gf_tooltip tooltip tooltip_settings_recaptcha_public" aria-label="'.esc_attr($field['help']).'">
+							<i class="gform-icon gform-icon--question-mark" aria-hidden="true"></i>
+						</button>': ''
+						).'
+					</div>
+					<span class="gform-settings-input__container">
+						<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" ' . $this->attributes( $field ) . '>';
 				foreach( $field['options'] as $k => $v ) {
-					$selected = ( $k == $data );
-					if( empty( $data ) && ! $selected && $k == $field[ 'default' ] ) {$selected = true;}
-					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>';
+					// if(empty($data) && !$selected && $k==$field['default']) {$selected = true;}
+					$html .= '<option '.selected($k, $data, false).' value="'.esc_attr($k).'">'.esc_html($v).'</option>';
 				}
-				$html .= '</select> ';
+				$html .= '</select>
+					</span>
+				</div>';
 			break;
 			case 'select_multi':
 				$html .= '<select name="' . esc_attr( $option_name ) . '[]" id="' . esc_attr( $field['id'] ) . '" multiple="multiple" ' . $this->attributes( $field ) . '>';
@@ -1039,9 +1066,10 @@ class Gravityforms {
 					wp_die(__('Payment comission splitting is not properly initiated. Please contact with the administrative.', 'gravitylovesflutterwave'));
 				}
 			}
-			$args = $this->convertPercentage2CalculatedAmount($args, $form);
-			// print_r([$link, $args]);wp_die();
+			// $args = $this->convertPercentage2CalculatedAmount($args, $form);
+			$args = $this->convertDefined2PercentageAmount($args, $form);
 			$link = $FWPFlutterwave->createPayment($args);
+			// print_r([$link, $args]);wp_die();
 		}
 		if($link) {
 			gform_update_meta($entry['id'], '_paymentlink', $link);
@@ -1075,6 +1103,16 @@ class Gravityforms {
 					$args['subaccounts'][$i]['transaction_charge'] = (
 						($row['transaction_charge'] / 100) * $args['amount']
 					);
+				}
+			}
+		}
+		return $args;
+	}
+	public function convertDefined2PercentageAmount($args, $form) {
+		if(isset($args['subaccounts'])) {
+			foreach($args['subaccounts'] as $i => $row) {
+				if($row['transaction_charge_type'] == 'percentage_subaccount') {
+					$args['subaccounts'][$i]['transaction_charge'] = ($row['transaction_charge'] / 100);
 				}
 			}
 		}
@@ -1408,6 +1446,39 @@ class Gravityforms {
 		}
 	}
 
+	public function getSubAccountData__($form) {
+		$subaccounts = [];
+		foreach($form['fields'] as $i => $field) {
+			if($field->type == 'flutterwave_credit_card') {
+				foreach($field as $key => $val) {
+					if(strpos($key, 'comissionAccount-') !== false) {
+						$agent = str_replace(['comissionAccount-'], [''], $key);
+						$field['comissionType-'.$agent] = (!isset($field['comissionType-'.$agent]) || empty($field['comissionType-'.$agent]))?'percentage_subaccount':$field['comissionType-'.$agent];
+						if(
+						in_array($agent, ['client', 'partner', 'stuff']) &&
+						!empty($val) && isset($field['comissionAmount-'.$agent]) && !empty($field['comissionAmount-'.$agent])
+						) {
+							$charge_type = (true)?(
+								($field['comissionType-'.$agent] == 'flatamount')?'flat_subaccount':'percentage_subaccount'
+							):(
+								($field['comissionType-'.$agent] == 'flatamount')?'flat':'percentage'
+							);
+							if(in_array($charge_type, ['percentage_subaccount', 'percentage'])) {
+								$field['comissionAmount-'.$agent] = ((float) $field['comissionAmount-'.$agent]/100);
+							}
+							$subaccounts[] = [
+								'id'						=> $val,
+								'transaction_charge'		=> (float) $field['comissionAmount-'.$agent],
+								'transaction_charge_type'	=> $charge_type,
+							];
+						}
+					} else {}
+				}
+				break;
+			}
+		}
+		return $subaccounts;
+	}
 	public function getSubAccountData($form) {
 		$subaccounts = [];
 		foreach($form['fields'] as $i => $field) {

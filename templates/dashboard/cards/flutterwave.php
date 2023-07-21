@@ -27,7 +27,7 @@ if(!$entry || is_wp_error($entry)) {
 }
 $form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
 
-
+// print_r($form);
 
 
 $backtoLink = site_url();$backtoText = __('Back to home', 'gravitylovesflutterwave');
@@ -36,9 +36,9 @@ if(isset($entry['source_url']) && !empty($entry['source_url'])) {
     $backtoLink = $entry['source_url'];$backtoText = __('Back to form', 'gravitylovesflutterwave');
     if($form && !is_wp_error($form)) {
         foreach($form['fields'] as $i => $field) {
-            if(isset($field['type']) && $field['type'] == 'flutterwave_credit_card' && isset($field['statusBtnLink']) && $field['statusBtnLink'] == 'home') {
+            if(isset($field['type']) && $field['type'] == 'flutterwave_credit_card' && isset($settings['statusBtnLink']) && $settings['statusBtnLink'] == 'home') {
                 $backtoLink = site_url();$backtoText = __('Back to home', 'gravitylovesflutterwave');
-            } else if($field->type == 'flutterwave_credit_card' && $field->statusBtnLink && $field->statusBtnLink == 'home') {
+            } else if($field->type == 'flutterwave_credit_card' && isset($settings['statusBtnLink']) && $settings['statusBtnLink'] == 'home') {
                 $backtoLink = site_url();$backtoText = __('Back to home', 'gravitylovesflutterwave');
             } else {}
         }
