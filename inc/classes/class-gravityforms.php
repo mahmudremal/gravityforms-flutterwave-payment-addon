@@ -323,6 +323,9 @@ class Gravityforms {
 		if (isset($_POST['gform_settings_flutterwaveaddons'])) {
 			// Perform validation and save the settings
 			update_option('flutterwaveaddons', $_POST['flutterwaveaddons']);
+
+			$this->changeSubaccountsPercentageonAllForms($this->settings, $_POST['flutterwaveaddons']);
+			
 			$this->settings = $_POST['flutterwaveaddons'];
 			// Add other necessary settings update code here
 			// Display a success message
@@ -392,6 +395,49 @@ class Gravityforms {
 				$order->add_order_note('Failed to process refund via Flutterwave: ' . $error_message);
 			}
 		}
+	}
+
+	public function changeSubaccountsPercentageonAllForms($previous, $updated) {
+		global $wpdb;$do_update = false;
+		$subAccounts = ['client', 'partner', 'staff'];
+		foreach($subAccounts as $ac) {
+			if(isset($updated['defaultComission-'.$ac]) && isset($previous['defaultComission-'.$ac]) && $previous['defaultComission-'.$ac] != $updated['defaultComission-'.$ac]) {
+				$do_update = true;
+			}
+		}
+		if($do_update) {
+			$result = $wpdb->get_results("SELECT form_id, display_meta FROM {$wpdb->prefix}gf_form_meta");
+			if($result && !is_wp_error($result)) {
+				foreach($result as $row) {
+					$form = json_decode($row->display_meta, true);
+					foreach($form['fields'] as $i => $field) {
+						if(isset($field['type']) && $field['type'] == 'flutterwave_credit_card') {
+							$is_merged = false;
+							foreach($subAccounts as $ac) {
+								if(
+									isset($field['comissionAmount-'.$ac]) && !empty($updated['defaultComission-'.$ac]) &&
+									isset($updated['defaultComission-'.$ac]) && !empty($updated['defaultComission-'.$ac]) &&
+									$previous['defaultComission-'.$ac] != $updated['defaultComission-'.$ac]
+								) {
+									$form['fields'][$i]['comissionAmount-'.$ac] = $updated['defaultComission-'.$ac];
+									$is_merged = true;
+								}
+							}
+
+							if($is_merged) {
+								$wpdb->update($wpdb->prefix.'gf_form_meta', [
+									'display_meta' => json_encode($form)
+								], [
+									'form_id' => $row->form_id
+								], '%s', '%d');
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		
 	}
 
 
@@ -499,9 +545,12 @@ class Gravityforms {
 			$args['fields'][] = [
 				'id' 						=> 'defaultComission-'.$for,
 				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst($for)),
-				'type'					=> 'number',
+				'type'					=> 'text',
 				'default'				=> true,
-				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.'
+				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.',
+				'attr'					=> [
+					'step'		=> '0.01'
+				]
 			];
 		}
 		return $args;

@@ -136,7 +136,7 @@ $subAccountInput = true;
                           $comission = rgar($field, 'comissionAmount-'.esc_attr($type));
                           $comission = (!$comission || empty($comission))?GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['defaultComission-'.esc_attr($type)]:$comission;
                         ?>
-                        <input type="text" id="comissionAmount-<?php echo esc_attr($type); ?>"  onchange="SetFieldProperty('comissionAmount-<?php echo esc_attr($type); ?>', this.value);" onkeypress="SetFieldProperty('comissionAmount-<?php echo esc_attr($type); ?>', this.value);" value="<?php echo esc_attr($comission); ?>">
+                        <input type="text" id="comissionAmount-<?php echo esc_attr($type); ?>"  onchange="SetFieldProperty('comissionAmount-<?php echo esc_attr($type); ?>', this.value);" onkeypress="SetFieldProperty('comissionAmount-<?php echo esc_attr($type); ?>', this.value);" value="<?php echo esc_attr($comission); ?>" data-default="<?php echo esc_attr(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['defaultComission-'.esc_attr($type)]); ?>" step="0.01">
                       </span>
                     </div>
                   </div>

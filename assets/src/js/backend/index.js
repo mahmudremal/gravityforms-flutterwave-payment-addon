@@ -36,6 +36,7 @@ import Toastify from 'toastify-js';
 			this.init_toast();
 			this.init_fieldSettings();
 			this.loadComissionAccount();
+			// this.fetchDefaultComission();
 		}
 		setup_hooks() {
 			const thisClass = this;var frame, element, text;
@@ -683,6 +684,11 @@ import Toastify from 'toastify-js';
 					clearInterval(loadComissionAccountInterval);
 				}
 			}, 1000);
+		}
+		fetchDefaultComission() {
+			document.querySelectorAll('.gform-settings-panel__content input[type=text][data-default][id^="comissionAmount-"]').forEach((el)=>{
+				if(el.value == '') {el.value = el.dataset.value;}
+			});
 		}
 	}
 	new FutureWordPress_Backend();
