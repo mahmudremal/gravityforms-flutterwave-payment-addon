@@ -112,7 +112,7 @@ use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
 		$headers[] = 'Reply-To: ' . $request[ 'name' ] . ' <' . $request[ 'email' ] . '>';
 
 		$mail_sent = wp_mail( $to, $subject, $body, $headers );
-		// $msg = [ 'status' => 'success', 'message' => __( get_FwpOption( 'msg_profile_edit_success_txt', 'Changes saved' ), FUTUREWORDPRESS_PROJECT_TEXT_DOMAIN ) ];
+		// $msg = [ 'status' => 'success', 'message' => __( get_FwpOption( 'msg_profile_edit_success_txt', 'Changes saved' ), GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEXT_DOMAIN ) ];
 		// set_transient( 'status_successed_message-' . get_current_user_id(), $msg, 300 );
 		// wp_safe_redirect( wp_get_referer() );
 
@@ -233,12 +233,12 @@ use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
 		return ( $country ) ? 'https://flagpedia.net/data/flags/icon/36x27/' . strtolower( $country ) . '.webp' : false;
 	}
 	public function dashboardPermalink( $id, $user = 'me' ) {
-		if( ! defined( 'FUTUREWORDPRESS_PROJECT_DASHBOARDPERMALINK' ) ) {
+		if( ! defined( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS_DASHBOARDPERMALINK' ) ) {
 			$dashboard_permalink = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'permalink-dashboard', 'dashboard' );
 			$dashboard_permalink = site_url( $dashboard_permalink );
-			define( 'FUTUREWORDPRESS_PROJECT_DASHBOARDPERMALINK', $dashboard_permalink );
+			define( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS_DASHBOARDPERMALINK', $dashboard_permalink );
 		}
-		$profile = ( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'permalink-userby', 'id' ) == 'id' ) ? FUTUREWORDPRESS_PROJECT_DASHBOARDPERMALINK . '/' . ( ( $id ) ? $id : 'me' ) : FUTUREWORDPRESS_PROJECT_DASHBOARDPERMALINK . '/' . $user;
+		$profile = ( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'permalink-userby', 'id' ) == 'id' ) ? GRAVITYFORMS_FLUTTERWAVE_ADDONS_DASHBOARDPERMALINK . '/' . ( ( $id ) ? $id : 'me' ) : GRAVITYFORMS_FLUTTERWAVE_ADDONS_DASHBOARDPERMALINK . '/' . $user;
 		return $profile . '/' . apply_filters( 'gravityformsflutterwaveaddons/project/profile/defaulttab', 'profile' );
 	}
 	public function visitorIP() {

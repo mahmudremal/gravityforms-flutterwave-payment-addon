@@ -669,14 +669,13 @@ import Toastify from 'toastify-js';
 			}
 		}
 		loadComissionAccount() {
-			const thisClass = this;
-			var loadComissionAccountInterval = setInterval(() => {
-				console.log('loadComissionAccount...');
-				if(typeof gforms_original_json !== 'undefined') {
-					console.log('loading.... loadComissionAccount...');
+			const thisClass = this;var loadComissionAccountInterval;
+			loadComissionAccountInterval = setInterval(() => {
+				const settingsSubaccount = document.querySelector('#gform_setting_subAccounts');
+				if(settingsSubaccount) {
 					var formdata = new FormData();
 					formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac');
-					formdata.append('form_id', parseInt(JSON.parse(gforms_original_json).id));
+					formdata.append('form_id', parseInt(settingsSubaccount.dataset.id));
 					formdata.append('get_all', true);
 					formdata.append('no_message', true);
 					formdata.append('_nonce', thisClass.ajaxNonce);

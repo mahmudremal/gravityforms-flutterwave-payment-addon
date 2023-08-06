@@ -9,6 +9,7 @@ use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
 use \WP_Query;use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Option;
 class Gravityforms {
 	use Singleton;
+	private $id;
 	private $settings;
 	private $settingSlug;
 	private $gformSetting;
@@ -71,9 +72,9 @@ class Gravityforms {
 		add_filter('gform_tooltips', [$this, 'gform_tooltips'], 10, 1);
 
 		// add_filter('gform_form_settings_fields', [$this, 'gform_form_settings_fields'], 10, 2);
-		// add_filter('gform_form_settings_menu', [$this, 'gform_form_settings_menu'], 10, 2);
-
-		// add_action('gform_form_settings_page_flutterwave', [$this, 'gform_form_settings_page_flutterwave'], 10, 1);
+		
+		add_filter('gform_form_settings_menu', [$this, 'gform_form_settings_menu'], 10, 2);
+		add_action('gform_form_settings_page_flutterwave', [$this, 'gform_form_settings_page_flutterwave'], 10, 1);
 
 		// add_action('init', function() {$this->gformSetting = \GFFormsModel::get_form_meta(1);}, 1, 0);
 
@@ -98,6 +99,7 @@ class Gravityforms {
 		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
+
 	}
 	public function wp_init() {
 		$entry_id = 64;
@@ -441,6 +443,30 @@ class Gravityforms {
 	}
 
 
+	public function form_settings_fields() {
+		// print_r($this->settings);
+		$args = [
+			'title'							=> __('Sub Accounts', 'gravitylovesflutterwave'),
+			'description'					=> sprintf(
+				__('Set Up your subaccount commission account, Commission type, and percentage or flat amount. You should confirm  Sub account ID while you enter the Subaccount ID. An irrelevant subaccount ID that is not allowed from the main/merchant account might not work. %sfollow this link%s to get Sub account id.', 'gravitylovesflutterwave'),
+				'<a href="https://app.flutterwave.com/dashboard/subaccounts/list/" target="_blank">', '</a>'
+			),
+			'fields'						=> []
+		];
+		foreach(['client', 'partner', 'staff'] as $for) {
+			$args['fields'][] = [
+				'id' 						=> 'defaultComission-'.$for,
+				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst($for)),
+				'type'					=> 'text',
+				'default'				=> true,
+				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.',
+				'attr'					=> [
+					'step'		=> '0.01'
+				]
+			];
+		}
+		return $args;
+	}
 	public function settings_fields() {
 		// print_r($this->settings);
 		$args = [
@@ -541,6 +567,14 @@ class Gravityforms {
 			'label'					=> __('Default value for sub accounts commission', 'gravitylovesflutterwave'),
 			'type'					=> 'template'
 		];
+		$args['fields'][] = [
+			'id' 					=> 'enableReadOnly',
+			'label'					=> __('Enable read only', 'gravitylovesflutterwave'),
+			'type'					=> 'checkbox',
+			'default'				=> false,
+			'description'			=> false,
+			'help'					=> '<strong>Read only</strong>Enable read only on the default value for sub accounts commission. In this case, user will no longer set comission from form settings.'
+		];
 		foreach(['client', 'partner', 'staff'] as $for) {
 			$args['fields'][] = [
 				'id' 						=> 'defaultComission-'.$for,
@@ -593,7 +627,20 @@ class Gravityforms {
 			case 'checkbox':
 				$checked = ($data&&'on'==$data)?'checked="checked"':'';
 				$this->settings[$field['id']] = isset($this->settings[$field['id']])?$this->settings[$field['id']]:false;
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="on" '.$this->attributes($field).' '.esc_attr(($this->settings[$field['id']]=='on')?'checked':'').'/>' . "\n";
+				$html .= '
+				<div class="gform-settings-field gform-settings-field__'.$field['type'].'">
+					<div class="gform-settings-field__header">
+						<span class="gform-settings-input__container">
+							<input type="'.esc_attr($field['type']).'" name="'.esc_attr($option_name).'" value="on" id="'.esc_attr($field['id']).'" '.esc_attr(($this->settings[$field['id']]=='on')?'checked':'').'>
+						</span>
+						<label class="gform-settings-label" for="'.esc_attr($field['id']).'">'.esc_attr($field['label']).'</label>
+						'.(isset($field['help'])?'
+						<button type="button" class="gf_tooltip tooltip tooltip_settings_recaptcha_public" aria-label="'.esc_attr($field['help']).'">
+							<i class="gform-icon gform-icon--question-mark" aria-hidden="true"></i>
+						</button>':'').'
+					</div>
+				</div>
+				';
 			break;
 			case 'template':
 				$html .= '<h4>'.esc_attr($field['label']).'</h4>'."\n";
@@ -649,6 +696,8 @@ class Gravityforms {
 			break;
 		}
 		switch( $field['type'] ) {
+			case 'checkbox':
+				break;
 			case 'checkbox_multi':
 			case 'radio':
 			case 'select_multi':
@@ -955,8 +1004,49 @@ class Gravityforms {
 		// \GFFormSettings::page_header( __( 'Flutterwave Gateway', 'gravitylovesflutterwave' ) );
 		\GFFormSettings::page_header();
 		$form_id = absint(rgget('id'));
-		
+		$form = \GFAPI::get_form($form_id);
+		$subAccountInput = true;
+		// unset($form['fields']);
+		if(isset($_POST['gform_setting_flutterwave']) && $_POST['gform_setting_flutterwave'] == 'update') {
+			foreach(['client', 'partner', 'staff'] as $type) {
+				foreach(['comissionAccount', 'comissionType', 'comissionAmount'] as $key) {
+					if(isset($_POST['_gform_setting_'.$key.'-'.$type])) {
+						gform_update_meta($form_id, $key.'-'.$type, sanitize_text_field($_POST['_gform_setting_'.$key.'-'.$type]));
+						$form[$key.'-'.$type] = rgpost('_gform_setting_'.$key.'-'.$type);
+						// wp_die('updated.' . rgpost('_gform_setting_'.$key.'-'.$type));
+					}
+				}
+			}
+			$result = \GFAPI::update_form($form);
+		}
+		// echo '<pre>'.print_r($form).'</pre>';
 
+		$settings = $this->form_settings_fields();
+		?>
+		<form id="gform-settings" class="gform_settings_form" action="" method="post" enctype="multipart/form-data">
+			<?php wp_nonce_field('gform_settings_flutterwaveaddons', 'gform_settings_flutterwaveaddons', true, true ); ?>
+			<fieldset class="gform-settings-panel gform-settings-panel--full gform-settings-panel--with-title">
+				<legend class="gform-settings-panel__title gform-settings-panel__title--header">
+					<?php echo esc_html($settings['title']); ?>
+				</legend>
+				<div class="gform-settings-panel__content">
+					<div class="gform-settings-description gform-kitchen-sink">
+						<?php echo wp_kses_post($settings['description']); ?>
+					</div>
+					<?php // echo $this->print_settings_fields($settings['fields']); ?>
+					<?php include untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/templates/dashboard/admin/subaccount_settings.php'; ?>
+
+				</div>
+			</fieldset>
+
+			
+			<div class="gform-settings-save-container">
+				<button type="submit" id="gform-settings-save" name="gform-settings-save" value="save" form="gform-settings" class="primary button large">Save Settings &nbsp;→</button>
+			</div>
+			<script type="text/javascript" src="http://localhost/wordpress/wp-content/plugins/gravityforms/js/plugin_settings.js"></script>
+		</form>
+		<?php
+		// echo $this->print_settings_fields($settings['fields']);
 		
 		\GFFormSettings::page_footer();
 	}
@@ -1495,40 +1585,11 @@ class Gravityforms {
 		}
 	}
 
-	public function getSubAccountData__($form) {
-		$subaccounts = [];
-		foreach($form['fields'] as $i => $field) {
-			if($field->type == 'flutterwave_credit_card') {
-				foreach($field as $key => $val) {
-					if(strpos($key, 'comissionAccount-') !== false) {
-						$agent = str_replace(['comissionAccount-'], [''], $key);
-						$field['comissionType-'.$agent] = (!isset($field['comissionType-'.$agent]) || empty($field['comissionType-'.$agent]))?'percentage_subaccount':$field['comissionType-'.$agent];
-						if(
-						in_array($agent, ['client', 'partner', 'stuff']) &&
-						!empty($val) && isset($field['comissionAmount-'.$agent]) && !empty($field['comissionAmount-'.$agent])
-						) {
-							$charge_type = (true)?(
-								($field['comissionType-'.$agent] == 'flatamount')?'flat_subaccount':'percentage_subaccount'
-							):(
-								($field['comissionType-'.$agent] == 'flatamount')?'flat':'percentage'
-							);
-							if(in_array($charge_type, ['percentage_subaccount', 'percentage'])) {
-								$field['comissionAmount-'.$agent] = ((float) $field['comissionAmount-'.$agent]/100);
-							}
-							$subaccounts[] = [
-								'id'						=> $val,
-								'transaction_charge'		=> (float) $field['comissionAmount-'.$agent],
-								'transaction_charge_type'	=> $charge_type,
-							];
-						}
-					} else {}
-				}
-				break;
-			}
-		}
-		return $subaccounts;
-	}
+	
 	public function getSubAccountData($form) {
+		return $this->getSubAccountData_byForm($form);
+	}
+	public function getSubAccountData_byField($form) {
 		$subaccounts = [];
 		foreach($form['fields'] as $i => $field) {
 			if($field->type == 'flutterwave_credit_card') {
@@ -1557,6 +1618,24 @@ class Gravityforms {
 					} else {}
 				}
 				break;
+			}
+		}
+		return $subaccounts;
+	}
+	public function getSubAccountData_byForm($form) {
+		$subaccounts = [];
+		foreach(['client', 'partner', 'staff'] as $agent) {
+			if(
+				isset($form['comissionAccount-'.$agent]) && !empty($form['comissionAccount-'.$agent]) &&
+				isset($form['comissionAmount-'.$agent]) && !empty($form['comissionAmount-'.$agent]) &&
+				isset($form['comissionType-'.$agent]) && !empty($form['comissionType-'.$agent])
+			) {
+				$charge_type = ($form['comissionType-'.$agent] == 'flatamount')?'flat_subaccount':'percentage_subaccount';
+				$subaccounts[] = [
+					'id'						=> $form['comissionAccount-'.$agent],
+					'transaction_charge'		=> (float) $form['comissionAmount-'.$agent],
+					'transaction_charge_type'	=> $charge_type,
+				];
 			}
 		}
 		return $subaccounts;

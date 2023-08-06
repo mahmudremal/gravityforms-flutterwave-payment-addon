@@ -9,7 +9,13 @@ use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
 use \WP_Query;
 class Flutterwave {
 	use Singleton;
+	private $theTable;
+	private $productID;
 	private $settings;
+	private $lastResult;
+	private $userInfo;
+	private $successUrl;
+	private $cancelUrl;
 	private $api_key; // Replace with your Flutterwave API key
 	private $encryptionKey; // Replace with your Flutterwave API key
     private $base_url = 'https://api.flutterwave.com/v3';
