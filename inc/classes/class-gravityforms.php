@@ -14,6 +14,8 @@ class Gravityforms {
 	private $settingSlug;
 	private $gformSetting;
 	private $currentEntry;
+	private $lastEntryStatus;
+	private $transaction_id;
 	protected function __construct() {
 		global $fwpGravityforms;$fwpGravityforms = $this;
 		$this->settingSlug = 'flutterwaveaddons';
@@ -81,6 +83,11 @@ class Gravityforms {
 
 		add_filter('gform_pre_send_email', [$this, 'gform_pre_send_email'], 10, 4);
 		add_action('gform_entry_created', [$this, 'gform_entry_created'], 10, 2);
+		// add_action('gform_after_submission', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
+		// add_action('gform_suppress_confirmation_redirect', [$this, 'gform_suppress_confirmation_redirect'], 99999, 1);
+		add_action('gform_post_process', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
+		
+		
 		// add_filter('gform_payment_complete', [$this, 'approve_entry_and_trigger_notifications'], 10, 2);
 
 		// add_action('gform_pre_submission', [$this, 'gform_pre_submission'], 10, 1);
@@ -100,6 +107,8 @@ class Gravityforms {
 
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
 
+		add_filter('gpi_approved_payment_statuses', [$this, 'gpi_approved_payment_statuses'], 10, 1);
+		add_filter('gpi_query', [$this, 'gpi_query_hook_payment_status'], 10, 2);
 	}
 	public function wp_init() {
 		$entry_id = 64;
@@ -1088,25 +1097,27 @@ class Gravityforms {
 		return false;
 		// return (isset($form['enableFlutterwave']) && $form['enableFlutterwave']);
 	}
-	public function gform_pre_send_email($email, $message_format, $notification, $entry) {
-		// print_r([$email, $message_format, $notification, $entry]);
-		if(!$entry && $this->currentEntry) {$entry = $this->currentEntry;}
-		$form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
-		if(!$form || !$this->isPayable($entry, $form)) {return $notification;}
-		 // Check the payment status of the entry
-		 $payment_status = rgar($entry, 'payment_status');
-		 // Disable notifications if payment status is not success
-		 if($payment_status !== 'success') {
-			$notification['disableAutoformat'] = true;
-			// $notification['sendTo'] = '';
-			$email['abort_email'] = true;
-		 }
-		 return $email;
-	}
 	public function gform_entry_created($entry, $form) {
 		$this->currentEntry = $entry;
 		if(!$this->isPayable($entry, $form)) {return;}
-		$this->createPayLinkandGo($entry, $form);
+		$link = $this->createPayLinkandGo($entry, $form, false);
+		if($link && !empty($link)) {
+			define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL', $link);
+		}
+	}
+	public function gform_entry_confirmation_then_redirect($form, $entry) {
+		if(defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
+			// this->lastEntryStatus
+			// $is_updated = \GFAPI::update_entry_property($this->currentEntry['id'], 'status', 'pending_payment');
+			wp_redirect(GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL);exit;
+		}
+	}
+	public function gform_suppress_confirmation_redirect($bool) {
+		$this->gform_entry_confirmation_then_redirect(false, false);
+		if(defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
+			return true;
+		}
+		return $bool;
 	}
 	public function createPayLinkandGo($entry, $form, $go = true) {
 		global $FWPFlutterwave;
@@ -1127,7 +1138,7 @@ class Gravityforms {
 		 * 
 		 */
 		$formDate = $this->extract_gravityentry_fields($entry);
-		
+
 		$user_id = get_current_user_id();
 
 		$payment_amount = (isset($entry['payment_amount']) && $entry['payment_amount']!==null && (float) $entry['payment_amount'] > 0)?(float) $entry['payment_amount']:(isset($formDate['total'])?(float)$formDate['total']:1);
@@ -1141,9 +1152,10 @@ class Gravityforms {
 		$entry['is_fulfilled'] = null;
 		$entry['created_by'] = $user_id;
 		$entry['transaction_type'] = null;
+		$this->lastEntryStatus = $entry['status'];
 		$entry['status'] = 'pending_payment';
 		
-		// Update the entry with the new status
+		// // Update the entry with the new status
 		\GFAPI::update_entry($entry);
 		$args = [
 			'txref' => $txref,
@@ -1210,6 +1222,7 @@ class Gravityforms {
 			$link = $FWPFlutterwave->createPayment($args);
 			// print_r([$link, $args]);wp_die();
 		}
+		if(isset($args['txref'])) {$this->transaction_id = $args['txref'];}
 		if($link) {
 			gform_update_meta($entry['id'], '_paymentlink', $link);
 			if($go) {wp_redirect($link);} else {return $link;}
@@ -1295,6 +1308,7 @@ class Gravityforms {
 		add_filter('gform_disable_post_creation', '__return_true');
 	}
 	public function gform_after_submission($entry, $form) {
+		// print_r([$entry, $form]);wp_die();
 		$this->currentEntry = $entry;
 		$this->createPayLinkandGo($entry, $form);exit;
 	}
@@ -1640,4 +1654,119 @@ class Gravityforms {
 		}
 		return $subaccounts;
 	}
+
+
+	// Prevent sending if payment pending.
+	public function gform_pre_send_email($email, $message_format, $notification, $entry) {
+		if(!$entry && $this->currentEntry) {$entry = $this->currentEntry;}
+		$form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
+		if(!$form || !$this->isPayable($entry, $form)) {return $notification;}
+		// Check the payment status of the entry
+		$payment_status = rgar($entry, 'payment_status');
+		// Disable notifications if payment status is not success
+		if($payment_status !== 'success' && !defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE')) {
+			// Store email data in a temporary storage
+			$this->store_email_data_temporarily($entry['id'], $email, $message_format, $notification, $entry);
+
+			$notification['disableAutoformat'] = true;
+			// $notification['sendTo'] = '';
+			$email['abort_email'] = true;
+			// Return an empty email object to suppress the email notification
+		}
+		 
+		return $email;
+	}
+	// This is after payment is confirmed
+	public function process_payment_and_send_emails($entry) {
+		// Process payment here
+		// Retrieve email data from the temporary storage
+		$form           = \GFAPI::get_form($entry['form_id']);
+		$transaction_id = rgar($entry, 'transaction_id');
+		$email_data = $this->retrieve_email_data_temporarily($entry['id']);
+		
+		$this->update_gform_inventory($entry, $form);
+
+		// Send delayed email notifications
+		foreach($email_data as $email) {
+			\GFAPI::send_notifications($email['notification'], $entry, $email['notification']['form'], true, $email['message_format']);
+			// \GFCommon::send_notifications( $email['notification'], $form, $entry, true, $event, $data );
+			\GFAPI::send_notifications($form, $entry);
+		}
+
+		// Clear or mark email data as sent
+		$this->clear_email_data_temporarily($entry['id']);
+	}
+	// Store email data temporarily
+	public function store_email_data_temporarily($entry_id, $email, $message_format, $notification, $entry) {
+		$email_data = gform_get_meta($entry_id, 'flutterwave_temp_email_data', true);
+
+		if (!is_array($email_data)) {
+			$email_data = array();
+		}
+
+		// Add the email data for this entry ID
+		$email_data[] = array(
+			'email' => $email,
+			'message_format' => $message_format,
+			'notification' => $notification,
+			'entry' => $entry,
+		);
+
+		// Update the entry meta with the new data
+		gform_update_meta($entry_id, 'flutterwave_temp_email_data', $email_data);
+	}
+	// Retrieve email data temporarily
+	public function retrieve_email_data_temporarily($entry_id) {
+		$email_data = gform_get_meta($entry_id, 'flutterwave_temp_email_data', true);
+
+		if (is_array($email_data)) {
+			return $email_data;
+		}
+
+		return array(); // Return an empty array if no data is found
+	}
+	// Clear email data temporarily after sending
+	public function clear_email_data_temporarily($entry_id) {
+		gform_delete_meta($entry_id, 'flutterwave_temp_email_data');
+	}
+	// Update claimed inventory
+	public function update_gform_inventory($entry, $form) {
+		if(class_exists('GP_Inventory_Type')) {
+			// [feilds][0][gpiInventory] => simple
+			$inventory_type_simple = gp_inventory_type_simple();
+			$fields = $inventory_type_simple->get_applicable_fields($form);
+			foreach($fields as $field) {
+				$requested_quantity = $inventory_type_simple->get_requested_quantity($field, $entry);
+				$claimed_inventory = (int) $inventory_type_simple->get_claimed_inventory($field);
+				$inventory_limit = $inventory_type_simple->get_stock_quantity($field);
+				$inventory_available = $inventory_type_simple->get_available_stock($field);
+
+				// if($inventory_available < $requested_quantity) {return;}
+				$claimed_inventory += $requested_quantity;
+				// if($claimed_inventory > $inventory_limit) {continue;}
+
+				// print_r([$claimed_inventory, $requested_quantity, $inventory_limit, gform_get_meta($form['id'], 'claimed_inventory_' . $field['id'])]);
+				// \GFAPI::update_entry_meta($entry, $field['id'], $claimed_inventory);
+
+				// Update the entry's metadata with the new claimed inventory value
+				// gform_update_meta($entry['id'], 'claimed_inventory_' . $product_field_id, $new_claimed_inventory );
+			}
+			// unset($form['fields']);
+			// print_r($form);
+		}
+		// wp_die();
+	}
+	public function gpi_approved_payment_statuses($statuses) {
+		$statuses[] = 'pending';// $statuses[] = 'active';
+		return $statuses;
+	}
+	public function gpi_query_hook_payment_status($query, $field) {
+		// print_r([$query, $field]);
+		// if(isset($query['where']) && !empty($query['where'])) {
+		// 	$query['where'] .= "OR e.status = 'pending_payment'";
+		// }
+		return $query;
+	}
+
+
 }

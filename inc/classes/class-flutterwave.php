@@ -23,8 +23,8 @@ class Flutterwave {
 	
 	protected function __construct() {
         $this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
-		$this->api_key  = $this->settings['secretkey'];
-		$this->encryptionKey  = $this->settings['encryptionkey'];
+		$this->api_key  = isset($this->settings['secretkey'])?$this->settings['secretkey']:false;
+		$this->encryptionKey  = isset($this->settings['encryptionkey'])?$this->settings['encryptionkey']:false;
         $this->is_test_mode = GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE;
         global $FWPFlutterwave;$FWPFlutterwave = $this;
 

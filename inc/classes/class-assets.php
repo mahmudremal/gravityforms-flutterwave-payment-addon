@@ -118,8 +118,8 @@ class Assets {
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI,
 			'config'  			=> [
-				'encryptionKey'		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['encryptionkey'],
-				'public_key'		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['publickey'],
+				'encryptionKey'		=> isset(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['encryptionkey'])?GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['encryptionkey']:false,
+				'public_key'		=> isset(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['publickey'])?GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['publickey']:false,
 				'siteUrl'			=> site_url('/')
 			],
 			'i18n'				=> [

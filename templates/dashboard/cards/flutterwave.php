@@ -4,7 +4,7 @@
  * 
  * @package GravityformsFlutterwaveAddons
  */
-$settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
+global $fwpGravityforms;$settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 $transaction_id    = get_query_var('transaction_id'); // (get_query_var('transaction_id') != '')?get_query_var('transaction_id'):get_query_var('tx_ref');
 $payment_status    = get_query_var('status'); // (get_query_var('payment_status') != '')?get_query_var('payment_status'):get_query_var('status');
 $tx_ref = get_query_var('tx_ref');
@@ -27,9 +27,6 @@ if(!$entry || is_wp_error($entry)) {
 }
 $form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
 
-// print_r($form);
-
-
 $backtoLink = site_url();$backtoText = __('Back to home', 'gravitylovesflutterwave');
 
 if(isset($entry['source_url']) && !empty($entry['source_url'])) {
@@ -45,25 +42,31 @@ if(isset($entry['source_url']) && !empty($entry['source_url'])) {
     }
 }
 
+// Here
+defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE', true);
+
 if(in_array($payment_status, ['success', 'successful'])) {
-    $verify = apply_filters( 'gravityformsflutterwaveaddons/project/payment/flutterwave/verify', $transaction_id, $payment_status );
+    $verify = apply_filters('gravityformsflutterwaveaddons/project/payment/flutterwave/verify', $transaction_id, $payment_status);
     if($verify) {
         // $entry = GFAPI::get_entry_by_transaction_id($transaction_id);
         // Update the entry status
-        $result = \GFAPI::update_entry_property($entry_id, 'transaction_id', $transaction_id);
-        $result = \GFAPI::update_entry_property($entry_id, 'payment_status', $payment_status);
-        $result = \GFAPI::update_entry_property($entry_id, 'payment_method', 'flutterwave');
-        $result = \GFAPI::update_entry_property($entry_id, 'transaction_type', 'card');
-        $result = \GFAPI::update_entry_property($entry_id, 'is_fulfilled', true);
-        $result = \GFAPI::update_entry_property($entry_id, 'status', 'active');
-        // $result = \GFAPI::update_entry_property($entry_id, 'is_approved', true);
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'transaction_id', $transaction_id);
+        // $is_updated = \GFAPI::update_entry_property($entry_id, 'payment_status', $payment_status);
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'payment_method', 'flutterwave');
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'transaction_type', 'card');
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'is_fulfilled', true);
+        // $is_updated = \GFAPI::update_entry_property($entry_id, 'status', 'active');
+        // $is_updated = \GFAPI::update_entry_property($entry_id, 'is_approved', true);
 
-        // Here
+        // Notification sends from Here
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'payment_status', 'Completed');
+        $is_updated = \GFAPI::update_entry_property($entry_id, 'status', 'active');
         $notify = \GFCommon::send_form_submission_notifications($entry, $form);
+        $fwpGravityforms->process_payment_and_send_emails($entry);
 
-        if(is_wp_error($result)) {
+        if(is_wp_error($is_updated)) {
             // Handle error case
-            $error_message = $result->get_error_message();
+            $error_message = $is_updated->get_error_message();
             // echo "Error updating entry status: $error_message";
         } else {
             // Entry status updated successfully
