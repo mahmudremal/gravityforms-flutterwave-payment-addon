@@ -104,6 +104,7 @@ class Install {
 		foreach( $options as $option => $value ) {
 			if(!get_option($option,false)) {add_option($option,$value);}
 		}
+		$this->create_ngn_currency_file();
 	}
 	public function register_deactivation_hook() {
 		global $wpdb;$prefix = $wpdb->prefix . 'fwp_';
@@ -111,6 +112,39 @@ class Install {
 		$tables = [ 'googledrive' ]; // [ 'stripe_payments', 'stripe_subscriptions', 'googledrive' ];
 		foreach( $tables as $table ) {
 			// $wpdb->query( "DROP TABLE IF EXISTS {$prefix}{$table};" );
+		}
+	}
+	public function create_ngn_currency_file() {
+		$_ngn_path = get_template_directory() . '/gfrom_flutterwave_currency.php';
+
+		if(!(file_exists($_ngn_path) && !is_dir($_ngn_path))) {
+			$_ngn_content = '<?php
+			add_filter(\'gform_currencies\', function($currencies) {
+				$currencies[\'NGN\'] = [
+					\'name\'               => esc_html__( \'Nigerian Naira\', \'gravitylovesflutterwave\' ),
+					\'symbol_left\'        => \'&#8358;\',
+					\'symbol_right\'       => \'\',
+					\'symbol_padding\'     => \' \',
+					\'thousand_separator\' => \',\',
+					\'decimal_separator\'  => \'.\',
+					\'decimals\'           => 2,
+					\'code\'               => \'NGN\'
+				];
+				return $currencies;
+			}, 10, 1);
+			';
+			// wp_die($_ngn_path);
+			$_ngn_file = fopen($_ngn_path, 'w+');
+			fwrite($_ngn_file, $_ngn_content);
+			fclose($_ngn_file);
+
+			$_ngn_content = '
+			$_ngn_path = get_template_directory() . \'/gfrom_flutterwave_currency.php\';if(file_exists($_ngn_path) && !is_dir($_ngn_path)) {include_once($_ngn_path);}
+			';
+			$_fnc_path = get_template_directory() . '/functions.php';
+			$_ngn_file = fopen($_fnc_path, 'a+');
+			fwrite($_ngn_file, $_ngn_content);
+			fclose($_ngn_file);
 		}
 	}
 

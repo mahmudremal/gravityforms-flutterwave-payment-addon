@@ -91,7 +91,12 @@ $subAccountInput = true;
               <?php foreach(['client', 'partner', 'staff'] as $type): ?>
                 <div class="gform-settings-tab">
                   <div class="gform-settings-tab__header">
-                    <span><?php echo esc_html(ucfirst($type).' subaccount'); ?></span>
+                    <?php $typeTitle = ucfirst(
+                        ($type == 'client')?__('Service provider', 'domain'):(
+                          ($type == 'staff')?__('Agent', 'domain'):$type
+                        )
+                      ); ?>
+                    <span><?php echo esc_html(sprintf(__('%s subaccount', 'domain'), $typeTitle)); ?></span>
                   </div>
                   <div class="gform-settings-tab__body">
                     <div id="gform-settings-<?php echo esc_attr(($subAccountInput)?'text':'select'); ?>-subaccounts<?php echo esc_attr($type); ?>" class="gform-settings-field gform-settings-field__<?php echo esc_attr(($subAccountInput)?'text':'select'); ?>">

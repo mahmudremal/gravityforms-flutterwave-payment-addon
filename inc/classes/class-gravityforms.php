@@ -30,22 +30,24 @@ class Gravityforms {
 		// add_action( 'admin_init', [ $this, 'admin_init' ], 10, 0 );
 		// add_filter( 'pre_get_posts', [ $this, 'pre_get_posts' ], 10, 1 );
 
-		// Hook into the Gravity Forms submission process
-		add_action('gform_entry_post_save', [$this, 'process_flutterwave_payment'], 10, 2);
-
-		// Handle the return URL after the Flutterwave payment
+		/**
+		 * Hook into the Gravity Forms submission process
+		 */
+		add_filter('gform_entry_post_save', [$this, 'process_flutterwave_payment'], 99, 2);
+		/**
+		 * Handle the return URL after the Flutterwave payment
+		 */
 		add_action('template_redirect', [$this, 'handle_flutterwave_payment_return']);
-		
 		add_action('gform_field_standard_settings', [$this, 'gform_field_standard_settings'], 10, 2);
+
 		// add_action('gform_field_content', [$this, 'gform_field_content'], 10, 5);
 		// add_filter('gform_pre_update_filter', [$this, 'gform_pre_update_filter'], 10, 2);
 		// Action to inject supporting script to the form editor page
 		// add_action('gform_editor_js', [$this, 'editor_script']);
 		//Filter to add a new tooltip
+
 		add_filter('gform_tooltips', [$this, 'gform_tooltips']);
-
 		add_filter('gform_settings_menu', [$this, 'gform_settings_menu'], 10, 1);
-
 		add_action('gform_settings_flutterwaveaddons', [$this, 'gform_settings_flutterwaveaddons'], 10, 0);
 		
 		// Refund Woocommerce Order
@@ -61,6 +63,7 @@ class Gravityforms {
 		 * Gravity form custom field.
 		 */
 		add_action('gform_loaded', [$this, 'register_credit_card_field'], 5, 0);
+		
 		// add_action('gform_field_standard_fields', [$this, 'gform_field_standard_fields'], 10, 1);
 		// add_action('gform_add_field_buttons', [$this, 'gform_add_field_buttons'], 10, 1);
 		// Add a custom payment button
@@ -81,7 +84,11 @@ class Gravityforms {
 		// add_action('init', function() {$this->gformSetting = \GFFormsModel::get_form_meta(1);}, 1, 0);
 
 
-		add_filter('gform_pre_send_email', [$this, 'gform_pre_send_email'], 10, 4);
+		/**
+		 * Prevent sending email on condition.
+		 */
+		// add_filter('gform_pre_send_email', [$this, 'gform_pre_send_email'], 10, 4);
+
 		add_action('gform_entry_created', [$this, 'gform_entry_created'], 10, 2);
 		// add_action('gform_after_submission', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
 		// add_action('gform_suppress_confirmation_redirect', [$this, 'gform_suppress_confirmation_redirect'], 99999, 1);
@@ -195,22 +202,38 @@ class Gravityforms {
 	}
 	
 	public function process_flutterwave_payment($entry, $form) {
-		// Check if the form has the required payment field
-		if (!isset($form['paymentMethod']) || $form['paymentMethod']['gateway'] !== 'flutterwave') {
-			return;
-		}
+		/**
+		 * Check if the entry is payable.
+		 */
+		if(!$this->isPayable($entry, $form)) {return $entry;}
+		$entry['isPayable'] = true;
+
+		
+		// echo '<pre>';
+		// print_r([
+		// 	$this->isPayable($entry, $form),
+		// 	$entry,
+		// 	$form
+		// ]);echo '</pre>';wp_die();
+
+		// if (!isset($form['paymentMethod']) || !isset($form['paymentMethod']['gateway']) || $form['paymentMethod']['gateway'] !== 'flutterwave') {return $entry;}
 		// Get the submission ID and transaction reference from the entry
-		$submission_id = $entry['id'];
-		$txref = 'your_transaction_reference'; // Replace with your transaction reference generation logic
-		// Get the total payment amount from the entry
-		$payment_amount = rgar($entry, 'payment_amount');
-		// Create a payment request to Flutterwave
-		$payment_request = $this->create_flutterwave_payment_request($txref, $payment_amount);
-		// Store the payment request details in the entry meta
-		gform_update_meta($submission_id, 'flutterwave_payment_request', $payment_request);
-		// Redirect the user to the payment URL
-		wp_redirect($payment_request['data']['link']);
-		exit();
+
+		// $submission_id = $entry['id'];
+		// $txref = wp_unique_id('flutterwave'); // Replace with your transaction reference generation logic
+		// // Get the total payment amount from the entry
+		// $payment_amount = rgar($entry, 'payment_amount');
+		// // Create a payment request to Flutterwave
+		// $payment_request = $this->create_flutterwave_payment_request($txref, $payment_amount);
+		// // Store the payment request details in the entry meta
+		// gform_update_meta($submission_id, 'flutterwave_payment_request', $payment_request);
+		// // Redirect the user to the payment URL
+		// if(isset($payment_request['data']) && isset($payment_request['data']['link'])) {
+		// 	wp_redirect($payment_request['data']['link']);
+		// }
+		
+		return false;
+		// return $entry;
 	}
 	public function handle_flutterwave_payment_return() {
 		// Check if the current request is the return URL from Flutterwave
@@ -465,7 +488,11 @@ class Gravityforms {
 		foreach(['client', 'partner', 'staff'] as $for) {
 			$args['fields'][] = [
 				'id' 						=> 'defaultComission-'.$for,
-				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst($for)),
+				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst(
+					($for == 'client')?__('Service provider', 'domain'):(
+						($for == 'staff')?__('Agent', 'domain'):$for
+					)
+				)),
 				'type'					=> 'text',
 				'default'				=> true,
 				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.',
@@ -587,7 +614,11 @@ class Gravityforms {
 		foreach(['client', 'partner', 'staff'] as $for) {
 			$args['fields'][] = [
 				'id' 						=> 'defaultComission-'.$for,
-				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst($for)),
+				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst(
+					($for == 'client')?__('Service provider', 'domain'):(
+						($for == 'staff')?__('Agent', 'domain'):$for
+					)
+				)),
 				'type'					=> 'text',
 				'default'				=> true,
 				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.',
@@ -1660,20 +1691,21 @@ class Gravityforms {
 	public function gform_pre_send_email($email, $message_format, $notification, $entry) {
 		if(!$entry && $this->currentEntry) {$entry = $this->currentEntry;}
 		$form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
-		if(!$form || !$this->isPayable($entry, $form)) {return $notification;}
+		if(!$form || !$this->isPayable($entry, $form)) {return $email;}
 		// Check the payment status of the entry
 		$payment_status = rgar($entry, 'payment_status');
 		// Disable notifications if payment status is not success
 		if($payment_status !== 'success' && !defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE')) {
 			// Store email data in a temporary storage
 			$this->store_email_data_temporarily($entry['id'], $email, $message_format, $notification, $entry);
-
 			$notification['disableAutoformat'] = true;
 			// $notification['sendTo'] = '';
 			$email['abort_email'] = true;
 			// Return an empty email object to suppress the email notification
 		}
-		 
+		// $email['headers']['Bcc'] = 'Bcc: ' . $email['to'];
+		// $email['headers']['Bcc'] = 'Bcc: mahmudremal@yahoo.com';
+		
 		return $email;
 	}
 	// This is after payment is confirmed
