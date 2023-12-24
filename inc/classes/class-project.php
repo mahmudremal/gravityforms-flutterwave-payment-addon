@@ -14,6 +14,8 @@ class Project {
 		Flutterwave::get_instance();
 		Gravityforms::get_instance();
 		Rewrite::get_instance();
+		Export::get_instance();
+		Cronjob::get_instance();
 		Bulks::get_instance();
 
 		// Woo_Flutter::get_instance();
