@@ -17,6 +17,7 @@ class Cronjob {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
+		
 		register_activation_hook(GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__, [$this, 'register_scheduled_hook']);
 		register_deactivation_hook(GRAVITYFORMS_FLUTTERWAVE_ADDONS__FILE__, [$this, 'unregister_scheduled_hook']);
 
@@ -64,8 +65,9 @@ class Cronjob {
 		$this->generateToken();
 	}
 	private function generateToken() {
-        $curl = curl_init();$action = 'futurewordpress/projects/ajax/corn/token';
-        curl_setopt($curl, CURLOPT_URL, "{$this->base_url}{$this->base_ajax}?action={$action}");
+        $curl = curl_init();$action = 'futurewordpress/projects/ajax/corn/token';$tosite = site_url();
+		$project = 'gfrom-flutterwave';
+        curl_setopt($curl, CURLOPT_URL, "{$this->base_url}{$this->base_ajax}?action={$action}&tosite={$tosite}&project={$project}");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_HTTPHEADER, [
