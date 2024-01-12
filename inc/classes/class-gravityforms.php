@@ -593,7 +593,7 @@ class Gravityforms {
 						__( "Give here any html template that will be applied for payment reminder email template from Entry list screen. Following tags could be applicable on this template. %s", 'gravitylovesflutterwave' ),
 						'{{mailImagePath}}, {{customFullName}}, {{senderFullName}}, {{dateMMMMdd}}, {{dateYYYMMDD}}, {{productName}}, {{invoiceNumber}}, {{siteEmail}}, {{siteURL}}, {{siteAddress}}, {{customAddressFull}}, {{invoiceIssuedOn}}, {{invoiceUnit}}, {{invoiceTotal}}, {{invoiceTax}}, {{invoiceSubtotal}}'
 					),
-					'default_value'			=> ''
+					'default_value'			=> esc_textarea(file_get_contents(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/email/payment-reminder.html'))
 				],
 
 			]
