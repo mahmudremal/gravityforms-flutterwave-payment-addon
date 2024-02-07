@@ -22,7 +22,7 @@ class Project {
 		// Option::get_instance();
 
 		// Load class.
-		// Core::get_instance();
+		Core::get_instance();
 		// Helpers::get_instance();
 		// Dashboard::get_instance();
 		// Roles::get_instance();

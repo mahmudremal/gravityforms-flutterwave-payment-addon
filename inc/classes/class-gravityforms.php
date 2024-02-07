@@ -1408,7 +1408,7 @@ class Gravityforms {
 		$args = [];
 		$args['hooks'] = ['reminder-sent'];
 		$args['message'] = __('Payment reminder mail sent successfully!', 'gravitylovesflutterwave');
-		$template = $this->replaceMagicWords(stripslashes(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['paymentReminder']), ['entry'=>$_POST['entry'],'form_id'=>$_POST['form_id']]);
+		$template = $this->replaceMagicWords(stripslashes(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['paymentReminder']), ['entry'=>$_POST['entry'], 'form_id'=>$_POST['form_id']]);
 		// $args['template'] = $template;
 
 		if($template) {

@@ -27,7 +27,7 @@ import Toastify from 'toastify-js';
 			this.pendingRequestofComissionAccounts = false;
 			window.matchComissionAccount = this.matchComissionAccount;
 			this.fetchedFieldFirstTime = false;
-			window.thisClass = this;
+			window.Swal = Swal;
 			this.setup_hooks();
 			this.init_settings_field();
 			this.init_creditCard();
@@ -106,6 +106,23 @@ import Toastify from 'toastify-js';
 					});
 					if(fieldsAccessed) {clearInterval(theInterval);}
 				}, 1000);
+			});
+			document.body.addEventListener('getEmailTemplate', () => {
+				var elem = document.querySelector('#get-email-template');
+				if (elem) {
+					var form = document.createElement('form');
+					form.method = 'post';form.id = 'getemailtemplate';
+					form.innerHTML = `<input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/update/email/template" />`;
+					var area = document.createElement('div');
+					area.classList.add('gform-settings-panel__content');
+					var text = document.createElement('textarea');
+					text.innerHTML = thisClass.lastJson?.template??'';
+					text.name = 'template';text.rows = 10;
+					area.appendChild(text);form.appendChild(area);
+					elem.innerHTML = '';elem.appendChild(form);
+
+					Swal.hideLoading();
+				}
 			});
 		}
 		init_toast() {
@@ -578,22 +595,62 @@ import Toastify from 'toastify-js';
 		}
 		init_settings_field() {
 			const thisClass = this;
-
 			/**
 			 * Transfer text field to textarea field;
 			 */
 			document.querySelectorAll('#paymentReminder').forEach((el)=>{
-				el.value = thisClass.stripslashes(el.value);
-				var value = el.value;var parent = el.parentElement;
-				var textarea = document.createElement('textarea');
-				textarea.value = value;textarea.name = el.name;
-				textarea.id=el.id;el.id = el.id+'_';
-				textarea.placeholder = el.placeholder;
-				textarea.rows = 10;
-				parent.insertBefore(textarea, el);
-				el.remove();
-			});
+				var parent = el.parentElement;
 
+				// el.value = thisClass.stripslashes(el.value);
+				// var value = el.value;
+				// var textarea = document.createElement('textarea');
+				// textarea.value = value;textarea.name = el.name;
+				// textarea.id=el.id;el.id = el.id+'_';
+				// textarea.placeholder = el.placeholder;
+				// textarea.rows = 10;
+				// parent.insertBefore(textarea, el);
+				// el.remove();
+
+				var btn = document.createElement('button');
+				btn.id=el.id;el.id = el.id+'_';btn.type = 'button';
+				btn.classList.add('primary', 'button', 'large');
+				btn.innerHTML = thisClass.i18n?.edit_template??'Edit template';
+
+				btn.addEventListener('click', (event) => {
+					event.preventDefault();
+					Swal.fire({
+						html: `<div id="get-email-template"></div>`,
+						title: thisClass.i18n?.emailtemplate??'Email template',
+						showConfirmButton: true,
+						showCancelButton: true,
+						showCloseButton: false,
+						backdrop: `rgba(0,0,123,0.4)`,
+						showLoaderOnConfirm: true,
+						allowOutsideClick: false,
+						confirmButtonText: thisClass.i18n?.submit??'Submit',
+						allowOutsideClick: () => !Swal.isLoading(),
+						didOpen: () => {
+							Swal.showLoading();
+							var formdata = new FormData();
+							formdata.append('action', 'gravityformsflutterwaveaddons/project/get/email/template');
+							formdata.append('_nonce', thisClass.ajaxNonce);
+							thisClass.sendToServer(formdata);
+						},
+						preConfirm: async () => {
+							document.querySelectorAll('#getemailtemplate').forEach((form) => {
+								var formdata = new FormData(form);
+								formdata.append('action', 'gravityformsflutterwaveaddons/project/update/email/template');
+								formdata.append('_nonce', thisClass.ajaxNonce);
+								thisClass.sendToServer(formdata);
+							});
+							return await thisClass.sleep(5000);
+						}
+					}).then((result) => {
+					});
+				});
+				
+				parent.insertBefore(btn, el);el.remove();
+			});
 		}
 		stripslashes(str) {
 			// Replace occurrences of '\\'
@@ -688,6 +745,10 @@ import Toastify from 'toastify-js';
 			document.querySelectorAll('.gform-settings-panel__content input[type=text][data-default][id^="comissionAmount-"]').forEach((el)=>{
 				if(el.value == '') {el.value = el.dataset.value;}
 			});
+		}
+
+		sleep(ms) {
+			return new Promise(resolve => setTimeout(resolve, ms));
 		}
 	}
 	new FutureWordPress_Backend();
