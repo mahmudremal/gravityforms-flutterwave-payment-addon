@@ -17,7 +17,7 @@ if( isset( $meta[ 'full_path' ] ) && $meta[ 'full_path' ] !== false && ! empty( 
   //   'dashboard' => get_query_var( 'dashboard' )
   // ];
   // $userInfo = wp_get_current_user();
-  // $title = apply_filters( 'gravityformsflutterwaveaddons/project/job/dashboard/title', $args );
+  // $title = apply_filters( 'gflutter/project/job/dashboard/title', $args );
   // if( $title && ! empty( $title ) ) {
   //   global $fwpDashboardTitle;$fwpDashboardTitle = $title;
   //   add_filter( 'pre_get_document_title', function( $title, $sep = '-' ) {

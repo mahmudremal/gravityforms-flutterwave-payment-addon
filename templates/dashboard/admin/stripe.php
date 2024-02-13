@@ -35,7 +35,7 @@ $logs = $wpdb->get_results( $wpdb->prepare(
                 <?php foreach( $logs as $log ) :
                   $userInfo = get_user_by( 'id', $log->user_id );
                   $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
-                  $userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta ) ) ] );
+                  $userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta ) ) ] );
                   // print_r( $userInfo );
                   ?>
                   <tr id="stripelog-<?php echo esc_html( $userInfo->ID ); ?>">
@@ -47,7 +47,7 @@ $logs = $wpdb->get_results( $wpdb->prepare(
                         <div class="media-support-info">
                         <h5 class="iq-sub-label"><?php echo esc_html( $userInfo->meta->first_name . ' ' . $userInfo->meta->last_name ); ?></h5>
                         <p class="mb-0">@<?php echo esc_html( $userInfo->data->user_nicename ); ?></p>
-                        <?php $flag = apply_filters( 'gravityformsflutterwaveaddons/project/database/countryflags', get_user_meta( $userInfo->ID, 'country', true ) );if( $flag ) : ?>
+                        <?php $flag = apply_filters( 'gflutter/project/database/countryflags', get_user_meta( $userInfo->ID, 'country', true ) );if( $flag ) : ?>
                         <img width="18" class="me-2" src="<?php echo esc_url( $flag ); ?>"/>
                         <?php endif;echo esc_html( $userInfo->meta->country ); ?>
                         </div>

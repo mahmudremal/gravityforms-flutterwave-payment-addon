@@ -16,7 +16,7 @@ if(empty($payment_status) && empty($tx_ref)) {
     $payment_status = $request['status'];
 }
 
-$verify = apply_filters( 'gravityformsflutterwaveaddons/project/payment/flutterwave/verify', $transaction_id, $payment_status );
+$verify = apply_filters( 'gflutter/project/payment/flutterwave/verify', $transaction_id, $payment_status );
 // || $verify == $transaction_id
 $backtoLink = site_url();$backtoText = __('Back to home', 'gravitylovesflutterwave');
 

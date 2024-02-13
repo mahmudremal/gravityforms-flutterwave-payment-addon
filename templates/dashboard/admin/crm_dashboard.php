@@ -1,10 +1,10 @@
 
-<?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'before_content' ); ?>
+<?php do_action( 'gflutter/project/parts/call', 'before_content' ); ?>
 <div class="content-inner container-fluid pb-0" id="page_layout">
-    <?php do_action( 'gravityformsflutterwaveaddons/project/admin/notices', 'content' ); ?>
-    <?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'content' ); ?>
+    <?php do_action( 'gflutter/project/admin/notices', 'content' ); ?>
+    <?php do_action( 'gflutter/project/parts/call', 'content' ); ?>
 </div>
-<?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'aft_ercontent' ); ?>
+<?php do_action( 'gflutter/project/parts/call', 'aft_ercontent' ); ?>
 
 <?php
 add_action( 'admin_footer', function() {

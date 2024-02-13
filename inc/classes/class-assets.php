@@ -17,9 +17,9 @@ class Assets {
 		 * Actions.
 		 */
 		add_action('wp_enqueue_scripts',[$this,'register_styles']);
-		add_action('gravityformsflutterwaveaddons/project/assets/register_styles',[$this,'register_styles']);
+		add_action('gflutter/project/assets/register_styles',[$this,'register_styles']);
 		add_action('wp_enqueue_scripts',[$this,'register_scripts']);
-		add_action('gravityformsflutterwaveaddons/project/assets/register_scripts',[$this,'register_scripts']);
+		add_action('gflutter/project/assets/register_scripts',[$this,'register_scripts']);
 		add_action('wp_enqueue_scripts',[$this,'wp_denqueue_scripts'],99);
 		/**
 		 * The 'enqueue_block_assets' hook includes styles and scripts both in editor and frontend,
@@ -28,7 +28,7 @@ class Assets {
 		// add_action( 'enqueue_block_assets', [ $this, 'enqueue_editor_assets' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ], 1, 1 );
 		// add_action( 'admin_enqueue_scripts', [ $this, 'admin_denqueue_scripts' ], 99 );
-		add_filter( 'gravityformsflutterwaveaddons/project/javascript/siteconfig', [ $this, 'siteConfig' ], 1, 1 );
+		add_filter( 'gflutter/project/javascript/siteconfig', [ $this, 'siteConfig' ], 1, 1 );
 	}
 	public function register_styles() {
 		$version = $this->filemtime(GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_CSS_DIR_PATH.'/frontend.css');
@@ -48,7 +48,7 @@ class Assets {
 		wp_enqueue_script('GravityformsFlutterwaveAddons');
 		
 		// if( $this->allow_enqueue() ) {}
-		wp_localize_script( 'GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters( 'gravityformsflutterwaveaddons/project/javascript/siteconfig', [] ) );
+		wp_localize_script( 'GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters( 'gflutter/project/javascript/siteconfig', [] ) );
 	}
 	private function allow_enqueue() {
 		return ( function_exists( 'is_checkout' ) && ( is_checkout() || is_order_received_page() || is_wc_endpoint_url( 'order-received' ) ) );
@@ -105,16 +105,16 @@ class Assets {
 		// $suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		wp_enqueue_style('GravityformsFlutterwaveAddons');
 		wp_enqueue_script('GravityformsFlutterwaveAddons');
-		wp_localize_script('GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters( 'gravityformsflutterwaveaddons/project/javascript/siteconfig', []));
+		wp_localize_script('GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters( 'gflutter/project/javascript/siteconfig', []));
 	}
 	private function filemtime( $path ) {
 		return (file_exists($path)&&!is_dir($path))?filemtime($path):false;
-		// return apply_filters( 'gravityformsflutterwaveaddons/project/filesystem/filemtime', false, $path );
+		// return apply_filters( 'gflutter/project/filesystem/filemtime', false, $path );
 	}
 	public function siteConfig( $args ) {
 		return wp_parse_args( [
 			'ajaxUrl'    		=> admin_url( 'admin-ajax.php' ),
-			'ajax_nonce' 		=> wp_create_nonce( 'gravityformsflutterwaveaddons/project/verify/nonce' ),
+			'ajax_nonce' 		=> wp_create_nonce( 'gflutter/project/verify/nonce' ),
 			'is_admin' 			=> is_admin(),
 			'buildPath'  		=> GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI,
 			'config'  			=> [
@@ -160,7 +160,7 @@ class Assets {
 				'rusure2subscribe'					=> __( 'We are super happy you want to resume your retainer. Are you sure you want to start now?', 'gravitylovesflutterwave' ),
 				'say2wait2pause'						=> __( 'You\'ve already paused your subscription this month. Please wait until 60 days over to pause again. If you need further assistance, please contact our administrative team.', 'gravitylovesflutterwave' ),
 			],
-			'leadStatus'		=> apply_filters( 'gravityformsflutterwaveaddons/project/action/statuses', ['no-action' => __( 'No action fetched', 'gravitylovesflutterwave' )], false )
+			'leadStatus'		=> apply_filters( 'gflutter/project/action/statuses', ['no-action' => __( 'No action fetched', 'gravitylovesflutterwave' )], false )
 		], (array) $args );
 	}
 	public function wp_denqueue_scripts() {}

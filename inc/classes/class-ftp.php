@@ -30,23 +30,23 @@ class Ftp {
 	}
 	protected function setup_hooks() {
     add_action( 'synchronization_ftp_files', [ $this, 'syncFiles' ], 10, 0 );
-    add_filter( 'gravityformsflutterwaveaddons/project/filesystem/mediadirectory', [ $this, 'getAllLocalFiles' ], 10, 2 );
+    add_filter( 'gflutter/project/filesystem/mediadirectory', [ $this, 'getAllLocalFiles' ], 10, 2 );
 		// add_action( 'init', [ $this, 'deleteFiles' ], 10, 0 );
 	}
 	public function initialize() {
     $this->lastError        = false;
     $this->ftpConnect       = false;
-    $this->ftpServer        = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'ftp-server', false );
-    $this->ftpUsername      = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'ftp-username', false );
-    $this->ftpPassword      = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'ftp-password', false );
-    $this->ftpDirectory     = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'ftp-remotedir', false );
-    $this->localDirectory   = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'ftp-localdir', false );
+    $this->ftpServer        = apply_filters( 'gflutter/project/system/getoption', 'ftp-server', false );
+    $this->ftpUsername      = apply_filters( 'gflutter/project/system/getoption', 'ftp-username', false );
+    $this->ftpPassword      = apply_filters( 'gflutter/project/system/getoption', 'ftp-password', false );
+    $this->ftpDirectory     = apply_filters( 'gflutter/project/system/getoption', 'ftp-remotedir', false );
+    $this->localDirectory   = apply_filters( 'gflutter/project/system/getoption', 'ftp-localdir', false );
     if( $this->localDirectory === false || empty( $this->localDirectory ) ) {
-      $this->localDirectory = apply_filters( 'gravityformsflutterwaveaddons/project/filesystem/uploaddir', false );
+      $this->localDirectory = apply_filters( 'gflutter/project/filesystem/uploaddir', false );
     }
 	}
   public function syncFiles() {
-    // if( ! apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'ftp-enable' ) ) {return;}
+    // if( ! apply_filters( 'gflutter/project/system/isactive', 'ftp-enable' ) ) {return;}
 
     if( $this->ftpServer === false ) {$this->initialize();}
     if( $this->ftpServer === false ) {return;}

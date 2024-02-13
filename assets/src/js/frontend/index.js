@@ -62,7 +62,7 @@ import toastify from "toastify-js";
 				if(typeof FlutterwaveCheckout === 'function' && thisClass.lastCardData) {
 					// console.log('Payment failed');
 					var formdata = new FormData();
-					formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac');
+					formdata.append('action', 'gflutter/project/payment/flutterwave/getsubac');
 					formdata.append('form_id', parseInt($(creditCard.lastSubmitBtn).parents('form').attr('id').replace('gform_', '')));
 					formdata.append('_nonce', thisClass.ajaxNonce);
 					thisClass.sendToServer(formdata);
@@ -110,7 +110,7 @@ import toastify from "toastify-js";
 										if(input.value =='') {input.focus();return;}
 										
 										var formdata = new FormData();
-										formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/cardotp');
+										formdata.append('action', 'gflutter/project/payment/flutterwave/cardotp');
 										formdata.append('flw_ref', window.issuedData.data?.flw_reference??window.issuedData.data.flw_ref);
 										formdata.append('_nonce', thisClass.ajaxNonce);
 										formdata.append('otp', input.value);

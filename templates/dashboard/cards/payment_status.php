@@ -7,7 +7,7 @@
 
 $transaction_id = get_query_var( 'transaction_id' );
 $payment_status = get_query_var( 'payment_status' );
-$result = apply_filters( 'gravityformsflutterwaveaddons/project/payment/stripe/handlesuccess', $transaction_id );
+$result = apply_filters( 'gflutter/project/payment/stripe/handlesuccess', $transaction_id );
 // if( $result[ 'payment_status' ] == 'paid' ) {echo 'Success';} else {print_r( $result );}
 if( isset( $result[ 'customer_details' ] ) && isset( $result[ 'customer_details' ][ 'email' ] ) && !empty( $result[ 'customer_details' ][ 'email' ] ) ) {
   $userInfo = get_user_by( 'email', $result[ 'customer_details' ][ 'email' ] );
@@ -16,7 +16,7 @@ if( ! isset( $userInfo ) || ! $userInfo ) {
   $userInfo = get_user_by( 'id', get_current_user_id() );
 }
 $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
-$userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta ) ) ] );
+$userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta ) ) ] );
 // print_r( $result );
 ?>
 
@@ -48,7 +48,7 @@ $userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_arg
                   __( 'Congratulations! Your subscription has been successfully processed. As a next step, please click here to sign the necessary documents and complete the process. Thank you for choosing us and we look forward to serving you. If you have any questions or concerns, please don\'t hesitate to reach out to us. We are always here to help.',   'gravitylovesflutterwave' ) : 
                   __( nl2br( "Unfortunately, your payment has failed.\nDon\'t worry,we understand that things happen. To try again, please click the button below. \nIf you need assistance or have any questions, please reach out to our support team for help. \n\nPlease note that until your payment is successful, you will not be able to proceed with the contract. We encourage you to try again as soon as possible. Thank you for your understanding." ),   'gravitylovesflutterwave' ) ); ?></p>
                   <div class="d-inline-block w-100">
-                    <a href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>/sign/" class="btn btn-primary mt-3"><?php esc_html_e( 'Sign the Document',   'gravitylovesflutterwave' ); ?></a>
+                    <a href="<?php echo esc_url( apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>/sign/" class="btn btn-primary mt-3"><?php esc_html_e( 'Sign the Document',   'gravitylovesflutterwave' ); ?></a>
                   </div>
               </div>
             </div>

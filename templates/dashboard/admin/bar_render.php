@@ -1,6 +1,6 @@
-<?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'before_rootnav' ); ?>
-<div class="<?php echo esc_attr( implode( ' ', apply_filters( 'gravityformsflutterwaveaddons/project/classes/rootnav', [ 'position-relative' ] ) ) ); ?>">
-    <?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'before_nav' ); ?>
+<?php do_action( 'gflutter/project/parts/call', 'before_rootnav' ); ?>
+<div class="<?php echo esc_attr( implode( ' ', apply_filters( 'gflutter/project/classes/rootnav', [ 'position-relative' ] ) ) ); ?>">
+    <?php do_action( 'gflutter/project/parts/call', 'before_nav' ); ?>
     <!--Nav Start-->
     <nav class="nav navbar navbar-expand-xl navbar-light iq-navbar">
         <div class="container-fluid navbar-inner">
@@ -34,7 +34,7 @@
                     <ul class="iq-nav-menu list-unstyled">
                         <?php
                         $pageRoot = '/admin.php?page=crm_dashboard';$current_path = isset( $_GET[ 'path' ] ) ? $_GET[ 'path' ] : '';
-                        $menus = apply_filters( 'gravityformsflutterwaveaddons/project/admin/pagetree', [] );$current_pathinfo = explode( '/', $current_path );
+                        $menus = apply_filters( 'gflutter/project/admin/pagetree', [] );$current_pathinfo = explode( '/', $current_path );
                         for($i=0;$i<=2;$i++) {$current_pathinfo[$i] = isset( $current_pathinfo[$i] ) ? $current_pathinfo[$i] : false;}
                         // print_r( $current_pathinfo );wp_die();
                         foreach( $menus as $menu_id => $menu ) :
@@ -121,6 +121,6 @@
         </div>
     </nav>
     <!--Nav End--> 
-    <?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'after_nav' ); ?>
+    <?php do_action( 'gflutter/project/parts/call', 'after_nav' ); ?>
 </div>
-<?php do_action( 'gravityformsflutterwaveaddons/project/parts/call', 'after_rootnav' ); ?>
+<?php do_action( 'gflutter/project/parts/call', 'after_rootnav' ); ?>

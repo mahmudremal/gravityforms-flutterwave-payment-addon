@@ -6,19 +6,19 @@
  */
 $userInfo = get_user_by( 'id', hex2bin( get_query_var( 'lead_registration' ) ) );
 if( is_user_logged_in() ) {
-  $user_slug = apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename );
+  $user_slug = apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename );
   wp_redirect( $user_slug );exit;
 }
 // $_SESSION[ 'current-lead' ] = $userInfo->ID;
-if( get_transient( '_lead_user_registration-' . apply_filters( 'gravityformsflutterwaveaddons/project/user/visitorip', '' ) ) ) {
-  delete_transient( '_lead_user_registration-' . apply_filters( 'gravityformsflutterwaveaddons/project/user/visitorip', '' ) );
+if( get_transient( '_lead_user_registration-' . apply_filters( 'gflutter/project/user/visitorip', '' ) ) ) {
+  delete_transient( '_lead_user_registration-' . apply_filters( 'gflutter/project/user/visitorip', '' ) );
 }
-set_transient( '_lead_user_registration-' . apply_filters( 'gravityformsflutterwaveaddons/project/user/visitorip', '' ), $userInfo->ID, 7200 );
+set_transient( '_lead_user_registration-' . apply_filters( 'gflutter/project/user/visitorip', '' ), $userInfo->ID, 7200 );
 // if( function_exists( 'setcookie' ) ) {setcookie( '_lead_user_registration', $userInfo->ID, time()+31556926 );}
 
 $is_done = get_user_meta( $userInfo->ID, 'registration_done', true );
 if( $is_done && $is_done >= 10 ) {
-  wp_redirect( apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) );exit;
+  wp_redirect( apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) );exit;
 }
 $needToSelect = false;
 $regLink = get_user_meta( $userInfo->ID, 'contract_type', true );
@@ -26,7 +26,7 @@ if( ! $regLink || empty( $regLink ) || (int) $regLink <= 0 ) {
   /**
    * Woonna code here.
    */
-  $contractForms = apply_filters( 'gravityformsflutterwaveaddons/project/action/contractforms', [], false );
+  $contractForms = apply_filters( 'gflutter/project/action/contractforms', [], false );
   if( count( $contractForms ) == 1 ) {
     foreach( $contractForms as $contract_key => $contract_text ) {$regLink = $contract_key;break;}
   } else {
@@ -35,7 +35,7 @@ if( ! $regLink || empty( $regLink ) || (int) $regLink <= 0 ) {
   }
 }
 
-$regLink = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'regis-link-url-' . $regLink, false );
+$regLink = apply_filters( 'gflutter/project/system/getoption', 'regis-link-url-' . $regLink, false );
 // if( $regLink && ! empty( $regLink ) ) {$regLink = get_the_permalink( $regLink );}
 
 if( $regLink && ! empty( $regLink ) && ! $needToSelect ) {
@@ -43,7 +43,7 @@ if( $regLink && ! empty( $regLink ) && ! $needToSelect ) {
   // wp_die( esc_url( $regLink ) );
   wp_redirect( esc_url( $regLink ) );exit;
 } else {
-  $defaultContract = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'signature-defaultcontract', '' );
+  $defaultContract = apply_filters( 'gflutter/project/system/getoption', 'signature-defaultcontract', '' );
   if( ! empty( $defaultContract ) ) {
     wp_redirect( $defaultContract );exit;
   } else {
@@ -55,7 +55,7 @@ if( $regLink && ! empty( $regLink ) && ! $needToSelect ) {
 $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
 $userInfo = (object) wp_parse_args( $userInfo, [
   'id'            => '',
-  'meta'          => (object) apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta )
+  'meta'          => (object) apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta )
 ] );
 $errorHappens = false;
 // if( get_current_user_id() == $user_profile ) {}
@@ -70,7 +70,7 @@ if( is_wp_error( $userInfo ) || $errorHappens ) :
   wp_die( $errorHappens, __( 'Error Happens', 'gravitylovesflutterwave' ) );
 else :
   add_filter( 'pre_get_document_title', function( $title ) {
-    $title = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-title', __( 'Registration Field', 'gravitylovesflutterwave' ) );
+    $title = apply_filters( 'gflutter/project/system/getoption', 'dashboard-title', __( 'Registration Field', 'gravitylovesflutterwave' ) );
     return $title;
   }, 10, 1 );
   get_header();

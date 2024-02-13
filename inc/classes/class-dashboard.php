@@ -19,18 +19,18 @@ class Dashboard {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-    add_filter( 'gravityformsflutterwaveaddons/project/admin/allowedpage', [ $this, 'allowedpage' ], 10, 0 );
-    add_filter( 'gravityformsflutterwaveaddons/project/admin/pagetree', [ $this, 'pageTree' ], 10, 1 );
-    add_filter( 'gravityformsflutterwaveaddons/project/admin/title', [ $this, 'adminTitle' ], 10, 2 );
+    add_filter( 'gflutter/project/admin/allowedpage', [ $this, 'allowedpage' ], 10, 0 );
+    add_filter( 'gflutter/project/admin/pagetree', [ $this, 'pageTree' ], 10, 1 );
+    add_filter( 'gflutter/project/admin/title', [ $this, 'adminTitle' ], 10, 2 );
 		add_action( 'admin_menu', [ $this, 'admin_menu' ], 10, 0 );
     add_action( 'wp_after_admin_bar_render', [ $this, 'wp_after_admin_bar_render' ], 10, 0 );
-    add_action( 'gravityformsflutterwaveaddons/project/parts/call', [ $this, 'partsCall' ], 10, 1 );
-    add_filter( 'gravityformsflutterwaveaddons/project/classes/rootnav', [ $this, 'rootnavClasses' ], 10, 1 );
+    add_action( 'gflutter/project/parts/call', [ $this, 'partsCall' ], 10, 1 );
+    add_filter( 'gflutter/project/classes/rootnav', [ $this, 'rootnavClasses' ], 10, 1 );
     
-    add_action( 'gravityformsflutterwaveaddons/project/parts/split', [ $this, 'partSplit' ], 10, 1 );
-    add_action( 'gravityformsflutterwaveaddons/project/admin/notices', [ $this, 'adminNotices' ], 10, 1 );
-    add_filter( 'gravityformsflutterwaveaddons/project/usermeta/defaults', [ $this, 'defaultUserMeta' ], 10, 1 );
-    add_filter( 'gravityformsflutterwaveaddons/project/widgets/statustab', [ $this, 'statusTab' ], 10, 2 );
+    add_action( 'gflutter/project/parts/split', [ $this, 'partSplit' ], 10, 1 );
+    add_action( 'gflutter/project/admin/notices', [ $this, 'adminNotices' ], 10, 1 );
+    add_filter( 'gflutter/project/usermeta/defaults', [ $this, 'defaultUserMeta' ], 10, 1 );
+    add_filter( 'gflutter/project/widgets/statustab', [ $this, 'statusTab' ], 10, 2 );
 	}
   public function admin_menu() {
     add_menu_page(
@@ -108,7 +108,7 @@ class Dashboard {
         if( in_array( 'dashboard', [ $current_pathinfo[0], '' ] ) ) {
           include GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/admin/content.php';
         } else {
-          do_action( 'gravityformsflutterwaveaddons/project/parts/split', $this->args );
+          do_action( 'gflutter/project/parts/split', $this->args );
         }
         break;
       case 'homecontent':
@@ -116,7 +116,7 @@ class Dashboard {
           // include GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/admin/tasks.php';
           include GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/admin/leads.php';
         } else {
-          do_action( 'gravityformsflutterwaveaddons/project/parts/split', $this->args );
+          do_action( 'gflutter/project/parts/split', $this->args );
         }
         break;
       default:
@@ -161,9 +161,9 @@ class Dashboard {
     } else {return  $default;}
   }
   public function adminNotices() {
-    $alert = (array) get_transient( 'gravityformsflutterwaveaddons/project/transiant/admin/' . get_current_user_id() );
+    $alert = (array) get_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
     if( isset( $alert[ 'type' ] ) && isset( $alert[ 'message' ] ) ) {
-      delete_transient( 'gravityformsflutterwaveaddons/project/transiant/admin/' . get_current_user_id() );
+      delete_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
       ?>
       <!--begin::Alert-->
       <div class="alert alert-<?php echo esc_attr( $alert[ 'type' ] ); ?> d-flex align-items-center p-5 mb-10">

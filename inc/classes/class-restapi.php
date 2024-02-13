@@ -17,18 +17,18 @@ class Restapi {
 		add_action( 'rest_api_init', [ $this, 'rest_api_init' ], 10, 0 );
 	}
 	public function rest_api_init() {
-		register_rest_route( 'gravityformsflutterwaveaddons/project/rest', '/userserver/(?P<id>\d+)', [
+		register_rest_route( 'gflutter/project/rest', '/userserver/(?P<id>\d+)', [
 			'methods' => 'POST',
 			'callback' => [ $this, 'createuser' ],
 		] );
-		register_rest_route( 'gravityformsflutterwaveaddons/project/rest', '/system/(?P<object>[a-zA-Z0-9-]+)', [
+		register_rest_route( 'gflutter/project/rest', '/system/(?P<object>[a-zA-Z0-9-]+)', [
 			'methods' => 'GET',
 			'callback' => [ $this, 'systemObject' ],
 		] );
 	}
 	public function createuser( $data ) {
 		$request = $_POST;$restData = [];
-		// $userMeta = (object) apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', [] );
+		// $userMeta = (object) apply_filters( 'gflutter/project/usermeta/defaults', [] );
 		// foreach( $userMeta as $meta_key => $meta_value ) {
 		// 	if( ! isset( $request[ $meta_key ] ) ) {
 		// 		$restData[ $meta_key ] = $meta_value;
@@ -37,13 +37,13 @@ class Restapi {
 		$restResponse = __( 'Essential information missing to proceed request. Try with atleast email and username.', 'gravitylovesflutterwave' );
 		if( isset( $request[ 'email' ] ) && ! empty( $request[ 'email' ] ) ) {
 			$except = [ 'display_name' ];
-			$is_update_allowed = apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'rest-updateprofile' );
-			$is_create_allowed = apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'rest-createprofile' );
-			$is_email_prevent = apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'rest-preventemail' );
-			$is_default_pass = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'rest-defaultpass', time() );
+			$is_update_allowed = apply_filters( 'gflutter/project/system/isactive', 'rest-updateprofile' );
+			$is_create_allowed = apply_filters( 'gflutter/project/system/isactive', 'rest-createprofile' );
+			$is_email_prevent = apply_filters( 'gflutter/project/system/isactive', 'rest-preventemail' );
+			$is_default_pass = apply_filters( 'gflutter/project/system/getoption', 'rest-defaultpass', time() );
 			$userInfo = get_user_by_email( $request[ 'email' ] );
 			$userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
-			$userMeta = apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', $userMeta );
+			$userMeta = apply_filters( 'gflutter/project/usermeta/defaults', $userMeta );
 			foreach( $userMeta as $meta_key => $meta_value ) {
 				if( ! in_array( $meta_key, [ 'password' ] ) ) {
 					$userMeta[ $meta_key ] = isset( $request[ $meta_key ] ) ? $request[ $meta_key ] : $meta_value;
@@ -106,13 +106,13 @@ class Restapi {
 		if( isset( $request[ 'object' ] ) ) {
 			switch ( $request[ 'object' ] ) {
 				case 'countries':
-					return new \WP_REST_Response( apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [], false ) );
+					return new \WP_REST_Response( apply_filters( 'gflutter/project/database/countries', [], false ) );
 					break;
 				case 'countries-name':
-					return new \WP_REST_Response( array_values( (array) apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [], false ) ) );
+					return new \WP_REST_Response( array_values( (array) apply_filters( 'gflutter/project/database/countries', [], false ) ) );
 					break;
 				case 'countries-code':
-					return new \WP_REST_Response( array_keys( (array) apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [], false ) ) );
+					return new \WP_REST_Response( array_keys( (array) apply_filters( 'gflutter/project/database/countries', [], false ) ) );
 					break;
 				default:
 				return new \WP_REST_Response( 'Nothing found' );

@@ -38,7 +38,7 @@ class Shortcode {
 		wp_enqueue_script( 'FutureWordPressScratchProject' );wp_enqueue_script( 'FutureWordPressScratchProject-checkout' );
 		ob_start();
 		if( $errorHappens === false ) :
-			$meta['type'] = apply_filters( 'gravityformsflutterwaveaddons/project/validate/format', $meta['type'], $meta );
+			$meta['type'] = apply_filters( 'gflutter/project/validate/format', $meta['type'], $meta );
 		?>
 		<div class="fwp-video-player-wraper">
 			<div class="fwp-video-wrap">

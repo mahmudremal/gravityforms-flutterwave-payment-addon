@@ -16,9 +16,9 @@ class Notices {
 	}
 	public function admin_notices() {
 		// $this->notice();
-		$alert = (array) get_transient( 'gravityformsflutterwaveaddons/project/transiant/admin/' . get_current_user_id() );
+		$alert = (array) get_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
 		if( isset( $alert[ 'type' ] ) && isset( $alert[ 'message' ] ) ) {
-		  // delete_transient( 'gravityformsflutterwaveaddons/project/transiant/admin/' . get_current_user_id() );
+		  // delete_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
 		  ?>
 		  <div class="alert alert-<?php echo esc_attr( $alert[ 'type' ] ); ?> d-flex align-items-center p-5 mb-10">
 			<span class="svg-icon svg-icon-2hx svg-icon-<?php echo esc_attr( $alert[ 'type' ] ); ?> me-4">

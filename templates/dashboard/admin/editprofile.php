@@ -3,13 +3,13 @@
 if( empty( $args[ 'split' ][2] ) ) {
     wp_die( __( 'User didn\'t identified. Maybe you\'re visiting on an currupted URL.', 'gravitylovesflutterwave' ), __( 'Error Idetified', 'gravitylovesflutterwave' ) );
 }
-$userStatuses = apply_filters( 'gravityformsflutterwaveaddons/project/action/statuses', [
+$userStatuses = apply_filters( 'gflutter/project/action/statuses', [
     'no-action'             => __( 'No action fetched', 'gravitylovesflutterwave' )
 ], false );
-$contractForms = apply_filters( 'gravityformsflutterwaveaddons/project/action/contractforms', [
+$contractForms = apply_filters( 'gflutter/project/action/contractforms', [
     'no-action'             => __( 'No Contract fetched', 'gravitylovesflutterwave' )
 ], false );
-$userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/contracts', [
+$userContracts = apply_filters( 'gflutter/project/action/contracts', [
     'no-action'             => __( 'No Contract fetched', 'gravitylovesflutterwave' )
 ], false );
 $userDocuments = [
@@ -18,7 +18,7 @@ $userDocuments = [
 if( class_exists('ESIG_SAD_Admin') ) {
     $userDocuments[ 'sad' ] = __( 'Stand Alone Document',   'gravitylovesflutterwave' );
 }
-$userCountries = apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [
+$userCountries = apply_filters( 'gflutter/project/database/countries', [
     'no-country'			=> __( 'No Country Found', 'gravitylovesflutterwave' )
 ], false );
 $userInfo = get_user_by( 'id', $args[ 'split' ][2] );
@@ -28,7 +28,7 @@ if( ! $userInfo ) {wp_die( __( 'Seems something went wrong. User not found. Plea
 $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
 $userInfo = (object) wp_parse_args( $userInfo, [
     'id'            => '',
-    'meta'          => (object) apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta )
+    'meta'          => (object) apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta )
 ] );
 $is_edit_profile = ( ! empty( $args[ 'split' ][2] ) );
 
@@ -36,9 +36,9 @@ $is_edit_profile = ( ! empty( $args[ 'split' ][2] ) );
 ?>
 <div>
     <form class="row" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-        <input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/action/editsubscriber">
+        <input type="hidden" name="action" value="gflutter/project/action/editsubscriber">
         <input type="hidden" name="userid" value="<?php echo esc_attr( ( $is_edit_profile ) ? $args[ 'split' ][2] : 'new' ); ?>">
-        <?php wp_nonce_field( 'gravityformsflutterwaveaddons/project/nonce/editsubscriber', '_nonce', true, true ); ?>
+        <?php wp_nonce_field( 'gflutter/project/nonce/editsubscriber', '_nonce', true, true ); ?>
         <div class="col-xl-3 col-lg-4">
             <div class="card px-2">
                 <div class="card-header">
@@ -95,8 +95,8 @@ $is_edit_profile = ( ! empty( $args[ 'split' ][2] ) );
                 <div class="card-body">
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary mt-2"><?php echo esc_html( ( $is_edit_profile ) ? __( 'Update User', 'gravitylovesflutterwave' ) : __( 'Add New User', 'gravitylovesflutterwave' ) ); ?></button>
-                        <a class="btn btn-primary btn-outline mt-2" href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>" role="button" target="_blank"><?php esc_html_e( 'View Frontend', 'gravitylovesflutterwave' ); ?></a>
-                        <?php if( apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'general-leaddelete' ) ) : ?>
+                        <a class="btn btn-primary btn-outline mt-2" href="<?php echo esc_url( apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>" role="button" target="_blank"><?php esc_html_e( 'View Frontend', 'gravitylovesflutterwave' ); ?></a>
+                        <?php if( apply_filters( 'gflutter/project/system/isactive', 'general-leaddelete' ) ) : ?>
                             <button type="button" class="btn btn-danger btn-outline mt-2 delete-lead-user" data-id="<?php echo esc_attr( $userInfo->ID ); ?>" data-user-info="<?php echo esc_attr( json_encode( [ 'displayname' => $userInfo->display_name, 'role' => $userInfo->user_role ] ) ); ?>" role="button"><?php esc_html_e( 'Delete Account', 'gravitylovesflutterwave' ); ?></button>
                         <?php endif; ?>
                         <button type="button" class="btn btn-success btn-outline mt-2 lead-send-registration" data-id="<?php echo esc_attr( $userInfo->ID ); ?>" data-user-info="<?php echo esc_attr( $userInfo->display_name ); ?>" role="button"><?php esc_html_e( 'Mail Registration', 'gravitylovesflutterwave' ); ?></button>

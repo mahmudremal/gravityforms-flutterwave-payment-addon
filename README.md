@@ -23,6 +23,16 @@ Whether you're running an e-commerce store, accepting donations, or offering onl
 
 Take your online business to new heights with Gravityforms Flutterwave Payment Addons. Download and install the plugin today and witness the power of effortless payments right at your fingertips.
 
+
+
+![Editor](/templates/screenshot/editor.png)
+![Form](/templates/screenshot/form.png)
+![Form Setup](/templates/screenshot/form-setup.png)
+![Settings](/templates/screenshot/settings.png)
+![Email template](/templates/screenshot/email-template.png)
+<!-- ![Confirm](/templates/screenshot/confirmation.png) -->
+
+
 <!-- <img src="!/assets/img/popup" alt="YouTube"> -->
 ### Hi, I'm Remal Mahmud, currently working on something freelance projects 😉
 ### Connect with me:

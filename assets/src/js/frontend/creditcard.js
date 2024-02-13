@@ -298,7 +298,7 @@ const creditCard = {
             var formdata = new FormData();
             submit.disabled = true;cardData = {};
             creditCard.lastSubmitBtn = submit;
-            formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken');
+            formdata.append('action', 'gflutter/project/payment/flutterwave/cardtoken');
             document.querySelectorAll('.flutterwaves_credit_card input').forEach((el)=>{
                 if(el.dataset.name == 'unique') {
                     el.value = Math.round((new Date()).getTime()/1000);

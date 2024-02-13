@@ -1,5 +1,5 @@
 <?php
-$notices = (array) apply_filters( 'gravityformsflutterwaveaddons/project/notices/manager', 'get', true, true );
+$notices = (array) apply_filters( 'gflutter/project/notices/manager', 'get', true, true );
 ?>
 <div>
   <div class="row">

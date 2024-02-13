@@ -2,7 +2,7 @@
 $subscribers = get_users( [ 'role__in' => [ 'lead' ] ] ); // 'author',  subscriber
 $date_formate = get_option( 'date_format' );
 // print_r( $subscribers );wp_die();
-$userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/contracts', [
+$userContracts = apply_filters( 'gflutter/project/action/contracts', [
   'no-action'       => __( 'No Contract fetched', 'gravitylovesflutterwave' )
 ], false );
 ?>
@@ -37,10 +37,10 @@ $userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/co
                   $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
                   $userInfo = (object) wp_parse_args( $userInfo, [
                     'id'      => '',
-                    'meta'      => (object) wp_parse_args( $userMeta, apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta ) )
+                    'meta'      => (object) wp_parse_args( $userMeta, apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta ) )
                   ] );
                   $activeSubscription = in_array( $userInfo->meta->enable_subscription, [ 'on' ] );
-                  $doc = apply_filters( 'gravityformsflutterwaveaddons/project/esign/userdocument', false, $userInfo );$doc = ( $doc && is_array( $doc ) ) ? (object) $doc: $doc;
+                  $doc = apply_filters( 'gflutter/project/esign/userdocument', false, $userInfo );$doc = ( $doc && is_array( $doc ) ) ? (object) $doc: $doc;
                   if( $doc && ! empty( $doc->document_status ) ) {$is_signed = ( $doc->document_status == 'signed' );} else {$is_signed = null;}
                     //   Missing
                   $is_signed = ( $is_signed === null ) ? __( 'Pending', 'gravitylovesflutterwave' ) : (
@@ -58,17 +58,17 @@ $userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/co
                         <div class="media-support-info">
                         <h5 class="iq-sub-label"><?php echo esc_html( $userInfo->meta->first_name . ' ' . $userInfo->meta->last_name ); ?></h5>
                         <p class="mb-0">@<?php echo esc_html( $userInfo->data->user_nicename ); ?></p>
-                        <?php $flag = apply_filters( 'gravityformsflutterwaveaddons/project/database/countryflags', get_user_meta( $userInfo->ID, 'country', true ) );if( $flag ) : ?>
+                        <?php $flag = apply_filters( 'gflutter/project/database/countryflags', get_user_meta( $userInfo->ID, 'country', true ) );if( $flag ) : ?>
                         <img width="18" class="me-2" src="<?php echo esc_url( $flag ); ?>"/>
                         <?php endif;echo esc_html( $userInfo->meta->country ); ?>
                         </div>
                       </div>
                     </td>
                     <td id="lead-status-<?php echo esc_html( $userInfo->ID ); ?>">
-                      <?php $status = apply_filters( 'gravityformsflutterwaveaddons/project/action/statuses', [], $userInfo->meta->status ); ?>
+                      <?php $status = apply_filters( 'gflutter/project/action/statuses', [], $userInfo->meta->status ); ?>
                       <?php $status = is_string( $status ) ? $status : ''; ?>
                       <span class="badge bg-soft-success p-2 text-success"><?php echo esc_html( $status ); ?></span>
-                      <?php // echo apply_filters( 'gravityformsflutterwaveaddons/project/widgets/statustab', '', $userInfo ); ?>
+                      <?php // echo apply_filters( 'gflutter/project/widgets/statustab', '', $userInfo ); ?>
                       
                       <button type="button" class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary leadstatusswitcher" data-value="<?php echo esc_attr( $userInfo->ID ); ?>">
                         <!--begin::Svg Icon | path: icons/duotune/general/gen024.svg-->
@@ -103,7 +103,7 @@ $userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/co
                     <td class="text-dark"><?php echo esc_html( $contractStatus ); ?></td>
                     <td>
                       <div class="d-flex justify-content-evenly">
-                        <a class="btn btn-primary btn-icon btn-sm rounded-pill" href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>" role="button" target="_blank">
+                        <a class="btn btn-primary btn-icon btn-sm rounded-pill" href="<?php echo esc_url( apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) ); ?>" role="button" target="_blank">
                           <span class="btn-inner">
                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path opacity="0.4" d="M21.101 9.58786H19.8979V8.41162C19.8979 7.90945 19.4952 7.5 18.999 7.5C18.5038 7.5 18.1 7.90945 18.1 8.41162V9.58786H16.899C16.4027 9.58786 16 9.99731 16 10.4995C16 11.0016 16.4027 11.4111 16.899 11.4111H18.1V12.5884C18.1 13.0906 18.5038 13.5 18.999 13.5C19.4952 13.5 19.8979 13.0906 19.8979 12.5884V11.4111H21.101C21.5962 11.4111 22 11.0016 22 10.4995C22 9.99731 21.5962 9.58786 21.101 9.58786Z" fill="currentColor"></path>
@@ -121,7 +121,7 @@ $userContracts = apply_filters( 'gravityformsflutterwaveaddons/project/action/co
                             </svg>
                           </span>
                         </a>
-                        <?php if( apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'general-leaddelete' ) ) : ?>
+                        <?php if( apply_filters( 'gflutter/project/system/isactive', 'general-leaddelete' ) ) : ?>
                         <a class="btn btn-primary btn-icon btn-sm delete-lead-user ms-2" href="#" data-id="<?php echo esc_attr( $userInfo->ID ); ?>" data-user-info="<?php echo esc_attr( json_encode( [ 'displayname' => $userInfo->display_name, 'role' => $userInfo->user_role ]) ); ?>" role="button">
                           <span class="btn-inner">
                             <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

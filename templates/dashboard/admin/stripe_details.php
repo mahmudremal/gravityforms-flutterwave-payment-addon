@@ -13,7 +13,7 @@ if( $log && method_exists( $log, 'archived' ) ) {
 $log->archived = json_decode( maybe_unserialize( $log->archived ), true );
 $userInfo = get_user_by( 'id', $log->user_id );
 $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
-$userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta ) ) ] );
+$userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_args( $userMeta, apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta ) ) ] );
 // print_r( $log );
 ?>
 <div>
@@ -31,7 +31,7 @@ $userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_arg
           <div class="col-lg-4">
           <h5>Bill to:</h5>
           <p><?php echo esc_html( $userInfo->meta->first_name . ' ' . $userInfo->meta->last_name ); ?></p>
-          <p><?php echo esc_html( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'general-address', 'Address not available' ) ); ?> <br>
+          <p><?php echo esc_html( apply_filters( 'gflutter/project/system/getoption', 'general-address', 'Address not available' ) ); ?> <br>
           <?php echo esc_html( get_option( 'admin_email', '' ) ); ?></p>
           </div>
           <div class="col-lg-3">
@@ -66,8 +66,8 @@ $userInfo = (object) wp_parse_args( $userInfo, [ 'meta' => (object) wp_parse_arg
               <tbody>
                 <tr>
                   <td class="border-bottom-0">
-                    <h6 class="mb-0"><?php echo esc_html( ( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'stripe-productname', '' ) && ! empty( $text ) ) ? $text : 'Monthly Retainer' ); ?></h6>
-                    <p class="mb-0"><?php echo esc_html( ( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'stripe-productdesc', '' ) && ! empty( $text ) ) ? $text : '' ); ?></p>
+                    <h6 class="mb-0"><?php echo esc_html( ( $text = apply_filters( 'gflutter/project/system/getoption', 'stripe-productname', '' ) && ! empty( $text ) ) ? $text : 'Monthly Retainer' ); ?></h6>
+                    <p class="mb-0"><?php echo esc_html( ( $text = apply_filters( 'gflutter/project/system/getoption', 'stripe-productdesc', '' ) && ! empty( $text ) ) ? $text : '' ); ?></p>
                   </td>
                   <td class="border-bottom-0">$<?php echo esc_html( number_format_i18n( ( $log->amount / 100 ), 2 ) ); ?></td>
                   <td class="border-bottom-0">1</td>

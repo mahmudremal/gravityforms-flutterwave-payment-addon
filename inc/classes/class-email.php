@@ -1,22 +1,18 @@
 <?php
 /**
- * The OpenAI ChatGPT-3.
- * https://www.npmjs.com/package/openai
- * https://www.npmjs.com/package/chatgpt
- * 
+ * WP E-Signature integration plugin.
+ *
  * @package GravityformsFlutterwaveAddons
  */
 namespace GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc;
 use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
-
-class Gpt3 {
+class Email {
 	use Singleton;
-	private $base;
 	protected function __construct() {
-    	$this->base = [];
+		// load class.
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
+		// add_action('init', [$this, 'init'], 10, 0);
 	}
-  
 }

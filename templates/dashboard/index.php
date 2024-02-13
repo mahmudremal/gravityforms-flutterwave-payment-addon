@@ -14,7 +14,7 @@ if( empty( $user_profile ) || $user_profile == 0 ) {
 if( $user_profile == 'me' ) {
   $userInfo = wp_get_current_user();
   // print_r( $userInfo );
-  wp_redirect( apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) );
+  wp_redirect( apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ) );
   exit;
 }
 $currenttab = get_query_var( 'currenttab' );
@@ -24,13 +24,13 @@ $errorHappens = false;
 // print_r( get_userdata( $user_profile ) );
 
 // 'id | ID | slug | email | login ', $user_profile
-$userInfo = get_user_by( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'permalink-userby', 'id' ), $user_profile );
+$userInfo = get_user_by( apply_filters( 'gflutter/project/system/getoption', 'permalink-userby', 'id' ), $user_profile );
 
 if( $currenttab && in_array( $currenttab, $allowedTabs ) ) {
-  add_filter( 'gravityformsflutterwaveaddons/project/javascript/siteconfig', function( $args ) {
+  add_filter( 'gflutter/project/javascript/siteconfig', function( $args ) {
     global $currenttab;global $user_profile;global $userInfo;
     $args[ 'profile' ] = [
-      'profilePath'         => apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ),
+      'profilePath'         => apply_filters( 'gflutter/project/user/dashboardpermalink', $userInfo->ID, $userInfo->data->user_nicename ),
       'currentTab'          => $currenttab
     ];return $args;
   }, 10, 1 );
@@ -44,11 +44,11 @@ else :
   $userMeta = array_map( function( $a ){ return $a[0]; }, (array) get_user_meta( $userInfo->ID ) );
   $userInfo = (object) wp_parse_args( $userInfo, [
   'id'      => '',
-  'meta'      => (object) apply_filters( 'gravityformsflutterwaveaddons/project/usermeta/defaults', (array) $userMeta )
+  'meta'      => (object) apply_filters( 'gflutter/project/usermeta/defaults', (array) $userMeta )
   ] );
   add_filter( 'pre_get_document_title', function( $title ) {
     global $userInfo;
-    $title = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-title', __( 'User Dashbord', 'gravitylovesflutterwave' ) );
+    $title = apply_filters( 'gflutter/project/system/getoption', 'dashboard-title', __( 'User Dashbord', 'gravitylovesflutterwave' ) );
     $title = str_replace( [
       '{username}', '{sitename}'
     ], [
@@ -62,7 +62,7 @@ else :
   }
   // echo '<pre style="display: none;">';print_r( $userInfo );echo '</pre>';
   
-  if( empty( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-headerbg', '' ) ) ) {
+  if( empty( apply_filters( 'gflutter/project/system/getoption', 'dashboard-headerbg', '' ) ) ) {
     add_filter( 'body_class', function( $classes ) {
       $classes[] = 'no-header-bg';return $classes;
     }, 10, 1 );
@@ -82,8 +82,8 @@ else :
         </div>
       </div>
       <div class="iq-header-img" style="z-index: unset;">
-        <?php if( ! empty( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-headerbg', '' ) ) ) : ?>
-        <img src="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-headerbg', '' ) ); ?>" alt="header" class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX" loading="lazy">
+        <?php if( ! empty( apply_filters( 'gflutter/project/system/getoption', 'dashboard-headerbg', '' ) ) ) : ?>
+        <img src="<?php echo esc_url( apply_filters( 'gflutter/project/system/getoption', 'dashboard-headerbg', '' ) ); ?>" alt="header" class="theme-color-default-img img-fluid w-100 h-100 animated-scaleX" loading="lazy">
         <?php endif; ?>
       </div>
     </div>
@@ -127,7 +127,7 @@ else :
                   <a class="nav-link" data-bs-toggle="tab" href="#profile-settings" role="tab" aria-selected="false" tabindex="-1"><?php esc_html_e( 'Your Social Media Handles',   'gravitylovesflutterwave' ); ?></a>
                 </li>
                 <?php endif; ?>
-                <?php if( in_array( 'contact', $allowedTabs ) && apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'social-contact' ) ) : ?>
+                <?php if( in_array( 'contact', $allowedTabs ) && apply_filters( 'gflutter/project/system/isactive', 'social-contact' ) ) : ?>
                 <li class="nav-item" role="presentation">
                   <a class="nav-link" data-bs-toggle="tab" href="#profile-contact" role="tab" aria-selected="false" tabindex="-1"><?php esc_html_e( 'Contact us now!',   'gravitylovesflutterwave' ); ?></a>
                 </li>
@@ -162,11 +162,11 @@ else :
             <?php if( ! empty( $userInfo->meta->monthly_retainer ) ): ?>
             <div class="text-center m-auto">
               <h4><?php esc_html_e( 'Monthly Retainer', 'gravitylovesflutterwave' ); ?></h4>
-              <h2 class="counter mb-2" style="<?php echo esc_attr( ( apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'stripe-cancelsubscription' ) && (bool) $userInfo->meta->subscribe === false ) ? 'text-decoration: line-through;' : '' ); ?>">$<?php echo esc_attr( number_format_i18n( $userInfo->meta->monthly_retainer, 2 ) ); ?></h2>
+              <h2 class="counter mb-2" style="<?php echo esc_attr( ( apply_filters( 'gflutter/project/system/isactive', 'stripe-cancelsubscription' ) && (bool) $userInfo->meta->subscribe === false ) ? 'text-decoration: line-through;' : '' ); ?>">$<?php echo esc_attr( number_format_i18n( $userInfo->meta->monthly_retainer, 2 ) ); ?></h2>
             </div>
             <p class="mt-4 text-center"><strong style="margin-right: 5px;"><?php esc_html_e( 'Joined:',   'gravitylovesflutterwave' ); ?></strong> <?php echo esc_html( wp_date( 'M d, Y', strtotime( $userInfo->data->user_registered ) ) ); ?></p>
             
-            <?php $subsc = (array) apply_filters( 'gravityformsflutterwaveaddons/project/payment/stripe/getsubscriptionby', [], ['by' => 'email', 'email' => ( ! empty( $userInfo->data->user_email ) ? $userInfo->data->user_email : $userInfo->meta->email ) ] );
+            <?php $subsc = (array) apply_filters( 'gflutter/project/payment/stripe/getsubscriptionby', [], ['by' => 'email', 'email' => ( ! empty( $userInfo->data->user_email ) ? $userInfo->data->user_email : $userInfo->meta->email ) ] );
             if( isset( $subsc[ 'current_period_end' ] ) && ! empty( $subsc[ 'current_period_end' ] ) ) : ?>
             <p class="mt-4 text-center"><strong style="margin-right: 5px;"><?php esc_html_e( 'Next Retainer:',   'gravitylovesflutterwave' ); ?></strong> <?php echo esc_html( wp_date( 'M d, Y', (int) $subsc[ 'current_period_end' ] ) ); ?></p>
             <?php endif; ?>
@@ -194,7 +194,7 @@ else :
                   </a>
                 </div>
               </li>
-              <?php $doc = apply_filters( 'gravityformsflutterwaveaddons/project/esign/userdocument', false, $userInfo );$doc = ( $doc && is_array( $doc ) ) ? (object) $doc: $doc;if( $doc && $doc->permalink ) : ?>
+              <?php $doc = apply_filters( 'gflutter/project/esign/userdocument', false, $userInfo );$doc = ( $doc && is_array( $doc ) ) ? (object) $doc: $doc;if( $doc && $doc->permalink ) : ?>
               <li class="d-flex mb-4 align-items-center position-relative">
                 <img src="<?php echo esc_url( GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI . '/icons/contract-document-svgrepo-com.svg' ); ?>" data-img="<?php echo esc_url( GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI . '/icons/Information carousel_Monochromatic.svg' ); ?>" alt="story-img" class="rounded-pill avatar-70 p-1 border img-fluid bg-soft-danger" loading="lazy">
                 <?php if( $doc->document_status != 'signed' ) : ?>
@@ -253,7 +253,7 @@ else :
                 </div>
                 <div class="mt-2">
                 <h6 class="mb-1"><?php esc_html_e( 'Lives:',   'gravitylovesflutterwave' ); ?></h6>
-                <?php $country = apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [], $userInfo->meta->country ); ?>
+                <?php $country = apply_filters( 'gflutter/project/database/countries', [], $userInfo->meta->country ); ?>
                 <p> <?php echo esc_html( $userInfo->meta->city . ' - ' . $country ); ?></p>
                 </div>
                 <div class="mt-2">
@@ -283,9 +283,9 @@ else :
               <div class="card-body">
                 <div class="border rounded mb-3 p-2">
                   <form id="the-raw-video-archive-upload" class="form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post" enctype="multipart/form-data">
-                    <input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/action/submitarchives">
+                    <input type="hidden" name="action" value="gflutter/project/action/submitarchives">
                     <input type="hidden" name="userid" value="<?php echo esc_attr( $userInfo->ID ); ?>">
-                    <?php wp_nonce_field( 'gravityformsflutterwaveaddons/project/action/submitarchives', '_nonce', true, true ); ?>
+                    <?php wp_nonce_field( 'gflutter/project/action/submitarchives', '_nonce', true, true ); ?>
                     <div class="row">
                       <div class="col-md-6">
                         <select class="form-select form-select-lg form-select-solid mb-2" name="month" data-control="select2" data-placeholder="<?php esc_attr_e( 'Upload for...', 'gravitylovesflutterwave' ); ?>">
@@ -299,7 +299,7 @@ else :
                       </div>
                       <div class="col-md-6">
                         <select class="form-select form-select-lg form-select-solid mb-2" name="year" data-control="select2" data-placeholder="<?php esc_attr_e( 'Upload for...', 'gravitylovesflutterwave' ); ?>">
-                        <?php for( $i = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-yearstart', date( 'Y' ) ); $i <= apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'dashboard-yearend', ( date( 'Y' ) + 3 ) ); $i++ ) : ?>
+                        <?php for( $i = apply_filters( 'gflutter/project/system/getoption', 'dashboard-yearstart', date( 'Y' ) ); $i <= apply_filters( 'gflutter/project/system/getoption', 'dashboard-yearend', ( date( 'Y' ) + 3 ) ); $i++ ) : ?>
                           <option value="<?php echo esc_attr( $i ); ?>" <?php echo esc_attr( ( $i == date( 'Y' ) ) ? 'selected' : '' ); ?>><?php echo esc_html( $i ); ?></option>
                         <?php endfor; ?>
                         </select>
@@ -345,7 +345,7 @@ else :
                     </div>
                   </form>
                 </div>
-                <?php $archives = apply_filters( 'gravityformsflutterwaveaddons/project/filesystem/ziparchives', [], $userInfo->ID ); ?>
+                <?php $archives = apply_filters( 'gflutter/project/filesystem/ziparchives', [], $userInfo->ID ); ?>
 
                 <div class="<?php echo esc_attr( ( count( $archives ) > 0 ) ? 'custom-table-effect' : '' ); ?> table-responsive  border rounded">
                   <table class="table mb-0 fwp-datatable-field" data-toggle="data-table">
@@ -373,7 +373,7 @@ else :
                                   <svg fill="#fff" xmlns="http://www.w3.org/2000/svg" class="icon-32" width="32" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.1535 16.64L14.995 13.77C15.2822 13.47 15.2822 13 14.9851 12.71C14.698 12.42 14.2327 12.42 13.9455 12.71L12.3713 14.31V9.49C12.3713 9.07 12.0446 8.74 11.6386 8.74C11.2327 8.74 10.896 9.07 10.896 9.49V14.31L9.32178 12.71C9.03465 12.42 8.56931 12.42 8.28218 12.71C7.99505 13 7.99505 13.47 8.28218 13.77L11.1139 16.64C11.1832 16.71 11.2624 16.76 11.3515 16.8C11.4406 16.84 11.5396 16.86 11.6386 16.86C11.7376 16.86 11.8267 16.84 11.9158 16.8C12.005 16.76 12.0842 16.71 12.1535 16.64ZM19.3282 9.02561C19.5609 9.02292 19.8143 9.02 20.0446 9.02C20.302 9.02 20.5 9.22 20.5 9.47V17.51C20.5 19.99 18.5 22 16.0446 22H8.17327C5.58911 22 3.5 19.89 3.5 17.29V6.51C3.5 4.03 5.4901 2 7.96535 2H13.2525C13.5 2 13.7079 2.21 13.7079 2.46V5.68C13.7079 7.51 15.1931 9.01 17.0149 9.02C17.4333 9.02 17.8077 9.02318 18.1346 9.02595C18.3878 9.02809 18.6125 9.03 18.8069 9.03C18.9479 9.03 19.1306 9.02789 19.3282 9.02561ZM19.6045 7.5661C18.7916 7.5691 17.8322 7.5661 17.1421 7.5591C16.047 7.5591 15.145 6.6481 15.145 5.5421V2.9061C15.145 2.4751 15.6629 2.2611 15.9579 2.5721C16.7203 3.37199 17.8873 4.5978 18.8738 5.63395C19.2735 6.05379 19.6436 6.44249 19.945 6.7591C20.2342 7.0621 20.0223 7.5651 19.6045 7.5661Z" fill="currentColor" /></svg>
                                 </span>
                               </a>
-                              <?php if( apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'general-archivedelete' ) ) : ?>
+                              <?php if( apply_filters( 'gflutter/project/system/isactive', 'general-archivedelete' ) ) : ?>
                               <a class="btn btn-danger btn-icon btn-sm archive-delete-btn" href="#" data-archive="<?php echo esc_attr( $archive->id ); ?>" data-userid="<?php echo esc_attr( $userInfo->ID ); ?>" role="button">
                                 <span class="btn-inner">
                                   <svg class="icon-32" width="32" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
@@ -398,7 +398,7 @@ else :
           <?php if( in_array( 'payments', $allowedTabs ) ) : ?>
           <div id="profile-payments" class="tab-pane fade" role="tabpanel">
             <div class="row">
-            <?php if( false && apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
+            <?php if( false && apply_filters( 'gflutter/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
               <div class="col-lg-6 col-md-6">
                 <div class="card text-center">
                   <div class="card-body payment-page-card">
@@ -410,7 +410,7 @@ else :
                 </div>
               </div>
               <?php endif; ?>
-              <?php if( apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
+              <?php if( apply_filters( 'gflutter/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
               <div class="col-lg-6 col-md-6">
                 <div class="card text-center">
                   <div class="card-body payment-page-card">
@@ -433,11 +433,11 @@ else :
                 <div class="header-title pause-unpause-subscription-wrap">
                   <h4 class="card-title"><?php esc_html_e( 'Payment History',   'gravitylovesflutterwave' ); ?></h4>
                   
-                  <?php if( ! apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
+                  <?php if( ! apply_filters( 'gflutter/project/system/isactive', 'stripe-cancelsubscription' ) ) : ?>
                     <?php
                       $is_active = in_array( $userInfo->meta->enable_subscription, [ 'on' ] );
                       $lastchanged = get_usermeta( $userInfo->ID, 'subscription_last_changed', true );
-                      $dida_pause = ( ! apply_filters( 'gravityformsflutterwaveaddons/project/payment/stripe/allowswitchpause', true, $is_active ? 'pause' : 'unpause', $userInfo->ID ) ); // ( $lastchanged && $lastchanged == date( 'M, Y' ) ) 
+                      $dida_pause = ( ! apply_filters( 'gflutter/project/payment/stripe/allowswitchpause', true, $is_active ? 'pause' : 'unpause', $userInfo->ID ) ); // ( $lastchanged && $lastchanged == date( 'M, Y' ) ) 
                       $dida_pause = false;
                       $is_pending = false; // ( $lastchanged && $lastchanged == date( 'M, Y' ) );
                       $config = [
@@ -464,7 +464,7 @@ else :
               </div>
               <div class="card-body">
 
-                <?php $payments = apply_filters( 'gravityformsflutterwaveaddons/project/payment/stripe/payment_history', [], empty( $userInfo->data->user_email ) ?  $userInfo->meta->email : $userInfo->data->user_email );
+                <?php $payments = apply_filters( 'gflutter/project/payment/stripe/payment_history', [], empty( $userInfo->data->user_email ) ?  $userInfo->meta->email : $userInfo->data->user_email );
                 $payments[ 'data' ] = isset( $payments[ 'data' ] ) ? (array) $payments[ 'data' ] : [];
                 ?>
 
@@ -536,7 +536,7 @@ else :
             </div>
           </div>
           <?php endif; ?>
-          <?php if( in_array( 'contact', $allowedTabs ) && apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'social-contact' ) ) : ?>
+          <?php if( in_array( 'contact', $allowedTabs ) && apply_filters( 'gflutter/project/system/isactive', 'social-contact' ) ) : ?>
           <div id="profile-contact" class="tab-pane fade" role="tabpanel">
             
             <div class="card">
@@ -549,10 +549,10 @@ else :
 
                 <div class="row">
 
-                  <?php $social = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-telegram', false );if( $social && ! empty( $social ) ) : ?>
+                  <?php $social = apply_filters( 'gflutter/project/system/getoption', 'social-telegram', false );if( $social && ! empty( $social ) ) : ?>
                   <div class="col-lg-4 col-md-6">
                     <div class="card bg-soft-warning">
-                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-telegram', false ) ); ?>" target="_blank">
+                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gflutter/project/system/getoption', 'social-telegram', false ) ); ?>" target="_blank">
                         <div class="d-block justify-content-between align-items-center">
                           <div class="rounded p-3 text-center">
                             <svg width="100px" height="100px" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Telegram" role="img" viewBox="0 0 512 512"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><rect width="512" height="512" rx="15%" fill="#ffcf01"></rect><path fill="#c8daea" d="M199 404c-11 0-10-4-13-14l-32-105 245-144"></path><path fill="#a9c9dd" d="M199 404c7 0 11-4 16-8l45-43-56-34"></path><path fill="#f6fbfe" d="M204 319l135 99c14 9 26 4 30-14l55-258c5-22-9-32-24-25L79 245c-21 8-21 21-4 26l83 26 190-121c9-5 17-3 11 4"></path></g></svg>
@@ -565,10 +565,10 @@ else :
                     </div>
                   </div>
                   <?php endif; ?>
-                  <?php $social = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-whatsapp', false );if( $social && ! empty( $social ) ) : ?>
+                  <?php $social = apply_filters( 'gflutter/project/system/getoption', 'social-whatsapp', false );if( $social && ! empty( $social ) ) : ?>
                   <div class="col-lg-4 col-md-6">
                     <div class="card bg-soft-warning">
-                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-whatsapp', false ) ); ?>" target="_blank">
+                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gflutter/project/system/getoption', 'social-whatsapp', false ) ); ?>" target="_blank">
                         <div class="d-block justify-content-between align-items-center">
                           <div class="rounded p-3 text-center">
                             <svg width="100px" height="100px" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="WhatsApp" role="img" viewBox="0 0 512 512" fill="#000000"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><rect width="512" height="512" rx="15%" fill="#ffcf01"></rect><path fill="#ffcf01" stroke="#ffffff" stroke-width="26" d="M123 393l14-65a138 138 0 1150 47z"></path><path fill="#ffffff" d="M308 273c-3-2-6-3-9 1l-12 16c-3 2-5 3-9 1-15-8-36-17-54-47-1-4 1-6 3-8l9-14c2-2 1-4 0-6l-12-29c-3-8-6-7-9-7h-8c-2 0-6 1-10 5-22 22-13 53 3 73 3 4 23 40 66 59 32 14 39 12 48 10 11-1 22-10 27-19 1-3 6-16 2-18"></path></g></svg>
@@ -581,10 +581,10 @@ else :
                     </div>
                   </div>
                   <?php endif; ?>
-                  <?php $social = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-email', false );if( $social && ! empty( $social ) ) : ?>
+                  <?php $social = apply_filters( 'gflutter/project/system/getoption', 'social-email', false );if( $social && ! empty( $social ) ) : ?>
                   <div class="col-lg-4 col-md-6">
                     <div class="card bg-soft-warning">
-                      <a class="card-body" href="mailto:<?php echo esc_attr( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-email', false ) ); ?>">
+                      <a class="card-body" href="mailto:<?php echo esc_attr( apply_filters( 'gflutter/project/system/getoption', 'social-email', false ) ); ?>">
                         <div class="d-block justify-content-between align-items-center">
                           <div class="rounded p-3 text-center">
                             <svg width="100px" height="100px" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Email" role="img" viewBox="0 0 512 512" stroke="#ffcf01"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><rect width="512" height="512" rx="15%" fill="#ffcf01"></rect><rect width="356" height="256" x="78" y="128" fill="#ffffff" rx="8%"></rect><path fill="none" stroke="#ffcf01" stroke-width="20" d="M434 128L269 292c-7 8-19 8-26 0L78 128m0 256l129-128m227 128L305 256"></path></g></svg>
@@ -597,10 +597,10 @@ else :
                     </div>
                   </div>
                   <?php endif; ?>
-                  <?php $social = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-contactus', false );if( $social && ! empty( $social ) ) : ?>
+                  <?php $social = apply_filters( 'gflutter/project/system/getoption', 'social-contactus', false );if( $social && ! empty( $social ) ) : ?>
                   <div class="col-lg-12 col-md-12">
                     <div class="card">
-                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'social-contactus', false ) ); ?>" target="_blank">
+                      <a class="card-body" href="<?php echo esc_url( apply_filters( 'gflutter/project/system/getoption', 'social-contactus', false ) ); ?>" target="_blank">
                         <div class="d-block justify-content-between align-items-center">
                           <div class="rounded p-3 text-center">
                             <img src="<?php echo esc_url( GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_URI . '/icons/Team meeting_Monochromatic.svg' ); ?>" alt="Contact Us" height="" width="">

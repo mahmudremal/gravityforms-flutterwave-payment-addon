@@ -461,7 +461,7 @@ class Woo_Flutter extends \WC_Payment_Gateway {
 			}
 		}
 
-		// wp_localize_script('GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters('gravityformsflutterwaveaddons/project/javascript/siteconfig', ['config' => $flutterwave_params]));
+		// wp_localize_script('GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters('gflutter/project/javascript/siteconfig', ['config' => $flutterwave_params]));
 	}
 
 	/**

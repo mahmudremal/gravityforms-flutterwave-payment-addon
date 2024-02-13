@@ -22,8 +22,8 @@ class SocialAuth {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		$this->facebookAppID					= apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'auth-googleclientid', 'facebook-app-id' );
-		$this->facebookAppSecret			= apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'auth-googleclientid', 'facebook-app-secret' );
+		$this->facebookAppID					= apply_filters( 'gflutter/project/system/getoption', 'auth-googleclientid', 'facebook-app-id' );
+		$this->facebookAppSecret			= apply_filters( 'gflutter/project/system/getoption', 'auth-googleclientid', 'facebook-app-secret' );
 		$this->facebookAppRedirect		= $this->socialAuthRedirect( false, 'facebook' ); // site_url( 'custompermalink/fb-callback.php?&scope=email' );
 		$this->googleClientID					= 'google-client-id';
 		$this->googleClientSecret			= 'google-client-secret';
@@ -31,14 +31,14 @@ class SocialAuth {
 		$this->instagramAppID					= 'instagram-app-id';
 		$this->instagramAppSecret			= 'instagram-app-secret';
 		$this->instagramAppRedirect		= $this->socialAuthRedirect( false, 'instagram' );
-		add_filter( 'gravityformsflutterwaveaddons/project/socialauth/redirect', [ $this, 'socialAuthRedirect' ], 10, 2 );
-		add_filter( 'gravityformsflutterwaveaddons/project/socialauth/link', [ $this, 'socialAuthLink' ], 0, 2 );
-		add_filter( 'gravityformsflutterwaveaddons/project/rewrite/rules', [ $this, 'rewriteRules' ], 10, 1 );
+		add_filter( 'gflutter/project/socialauth/redirect', [ $this, 'socialAuthRedirect' ], 10, 2 );
+		add_filter( 'gflutter/project/socialauth/link', [ $this, 'socialAuthLink' ], 0, 2 );
+		add_filter( 'gflutter/project/rewrite/rules', [ $this, 'rewriteRules' ], 10, 1 );
 		add_filter( 'query_vars', [ $this, 'query_vars' ], 10, 1 );
 		add_filter( 'template_include', [ $this, 'template_include' ], 10, 1 );
 
 		
-		if( ! apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'auth-enable' ) ) {return;}
+		if( ! apply_filters( 'gflutter/project/system/isactive', 'auth-enable' ) ) {return;}
 		/**
 		 * Actions.
 		 */

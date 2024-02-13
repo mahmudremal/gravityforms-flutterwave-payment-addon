@@ -23,21 +23,21 @@ class Roles {
 		$cap = [ 'read'  => true, 'delete_posts'  => true, 'delete_published_posts' => true, 'edit_posts'   => true, 'publish_posts' => true, 'upload_files'  => true, 'edit_pages'  => true, 'edit_published_pages'  =>  true, 'publish_pages'  => true, 'delete_published_pages' => false, ];
 		add_role( 'lead', __( 'Lead',   'gravitylovesflutterwave' ), $cap );
 		$role = get_role( 'lead' );
-    $role->add_cap( 'read' );
-    $role->add_cap( 'read_events' );
-    $role->add_cap( 'read_private_events' );
-    $role->add_cap( 'edit_events' );
-    $role->add_cap( 'edit_published_events' );
-    $role->add_cap( 'publish_events' );
-    $role->add_cap( 'delete_events' );
-    $role->add_cap( 'delete_private_events' );
-    $role->add_cap( 'delete_published_events' );
+		$role->add_cap( 'read' );
+		$role->add_cap( 'read_events' );
+		$role->add_cap( 'read_private_events' );
+		$role->add_cap( 'edit_events' );
+		$role->add_cap( 'edit_published_events' );
+		$role->add_cap( 'publish_events' );
+		$role->add_cap( 'delete_events' );
+		$role->add_cap( 'delete_private_events' );
+		$role->add_cap( 'delete_published_events' );
 	}
 	public function admin_init() {
 		// Add the roles you'd like to administer the custom post types
-    $roles = [ 'lead' ];
-    // Loop through each role and assign capabilities
-    foreach ($roles as $the_role) {
+		$roles = [ 'lead' ];
+		// Loop through each role and assign capabilities
+		foreach ($roles as $the_role) {
 			$role = get_role($the_role);
 			$role->add_cap('read');
 			$role->add_cap('read_event');

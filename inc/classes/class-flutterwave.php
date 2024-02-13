@@ -30,7 +30,7 @@ class Flutterwave {
 
 		add_action( 'init', [ $this, 'setup_hooks' ], 1, 0 );
 
-        add_filter('gravityformsflutterwaveaddons/project/payment/getallsubaccounts', [$this, 'getAllSubAccounts'], 10, 0);
+        add_filter('gflutter/project/payment/getallsubaccounts', [$this, 'getAllSubAccounts'], 10, 0);
 	}
 	public function setup_hooks() {
 		global $wpdb;$this->theTable				= $wpdb->prefix . 'fwp_flutterwave_subscriptions';
@@ -40,11 +40,11 @@ class Flutterwave {
 		$this->cancelUrl							= site_url( 'payment/flutterwave/{CHECKOUT_SESSION_ID}/cancel' );
 		
 		
-		add_filter('gravityformsflutterwaveaddons/project/rewrite/rules', [ $this, 'rewriteRules' ], 10, 1);
+		add_filter('gflutter/project/rewrite/rules', [ $this, 'rewriteRules' ], 10, 1);
 		add_filter('query_vars', [ $this, 'query_vars' ], 10, 1);
 		add_filter('template_include', [ $this, 'template_include' ], 10, 1);
-		// add_filter('gravityformsflutterwaveaddons/project/payment/stripe/handle/status', [$this, 'handleStatus'], 10, 3);
-		add_filter('gravityformsflutterwaveaddons/project/payment/flutterwave/verify', [$this, 'verify'], 10, 2);
+		// add_filter('gflutter/project/payment/stripe/handle/status', [$this, 'handleStatus'], 10, 3);
+		add_filter('gflutter/project/payment/flutterwave/verify', [$this, 'verify'], 10, 2);
 
         // Add Flutterwave gateway to available payment gateways in WooCommerce
         add_filter('woocommerce_payment_gateways', [$this, 'add_flutterwave_gateway']);

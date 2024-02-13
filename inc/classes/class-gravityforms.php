@@ -102,15 +102,15 @@ class Gravityforms {
 
 		add_filter('gform_currencies', [$this, 'gform_currencies'], 10, 1);
 
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/mailsystem/sendreminder', [$this, 'sendReminder'], 10, 0);
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/updatelink', [$this, 'updateLink'], 10, 0);
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/refund', [$this, 'paymentRefund'], 10, 0);
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
-		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
-		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
-		add_action('wp_ajax_gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
-		add_action('wp_ajax_nopriv_gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
+		add_action('wp_ajax_gflutter/project/mailsystem/sendreminder', [$this, 'sendReminder'], 10, 0);
+		add_action('wp_ajax_gflutter/project/payment/updatelink', [$this, 'updateLink'], 10, 0);
+		add_action('wp_ajax_gflutter/project/payment/refund', [$this, 'paymentRefund'], 10, 0);
+		add_action('wp_ajax_gflutter/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
+		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
+		add_action('wp_ajax_gflutter/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
+		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
+		add_action('wp_ajax_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
+		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
 
@@ -741,10 +741,10 @@ class Gravityforms {
 			case 'checkbox_multi':
 			case 'radio':
 			case 'select_multi':
-				$html .= apply_filters( 'gravityformsflutterwaveaddons/project/settings/fields/label', '<br/><span class="description">' . $field['description'] . '</span>', $field );
+				$html .= apply_filters( 'gflutter/project/settings/fields/label', '<br/><span class="description">' . $field['description'] . '</span>', $field );
 			break;
 			default:
-				$html .= isset($field['description'])?apply_filters( 'gravityformsflutterwaveaddons/project/settings/fields/label', '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field ):'';
+				$html .= isset($field['description'])?apply_filters( 'gflutter/project/settings/fields/label', '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field ):'';
 			break;
 		}
 		echo $html;
@@ -815,8 +815,8 @@ class Gravityforms {
 		return $button;
 	}
 	public function gform_editor_js() {
-		do_action('gravityformsflutterwaveaddons/project/assets/register_styles');
-        do_action('gravityformsflutterwaveaddons/project/assets/register_scripts');
+		do_action('gflutter/project/assets/register_styles');
+        do_action('gflutter/project/assets/register_scripts');
         wp_enqueue_style('GravityformsFlutterwaveAddons');wp_enqueue_script('imask');
         wp_enqueue_script('GravityformsFlutterwaveAddons');
 		?>
@@ -1096,7 +1096,7 @@ class Gravityforms {
 		// for ($i=1; $i <= 6; $i++) {
 		// 	$subaccounts[] = ['name' => 'account '.$i, 'label' => esc_html__( 'Sub account '.$i, 'gravitylovesflutterwave' ), 'value' => 'flatamount'];
 		// }
-		// $subaccounts = (array) apply_filters('gravityformsflutterwaveaddons/project/payment/getallsubaccounts',[], false);
+		// $subaccounts = (array) apply_filters('gflutter/project/payment/getallsubaccounts',[], false);
 		try {
 			$subaccounts = $FWPFlutterwave->getAllSubAccounts();
 			if(count($subaccounts)>=1) {
@@ -1347,7 +1347,7 @@ class Gravityforms {
 
 	public function updateLink() {
 		$request = $_POST;
-		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		$args = [];
 		$args['hooks'] = ['payment-link-updated'];
 		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'gravitylovesflutterwave');
@@ -1368,7 +1368,7 @@ class Gravityforms {
 		}
 	}
 	public function paymentRefund() {
-		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		global $FWPFlutterwave;$request = $_POST;$args = [];
 		$args['hooks'] = ['payment-refunded-failed'];$refund_amount = $request['amount'];
 		$args['message'] = __('Something went wrong. We can\'t update payment link.', 'gravitylovesflutterwave');
@@ -1404,7 +1404,7 @@ class Gravityforms {
 	}
 	public function sendReminder() {
 		$request = $_POST;
-		check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		$args = [];
 		$args['hooks'] = ['reminder-sent'];
 		$args['message'] = __('Payment reminder mail sent successfully!', 'gravitylovesflutterwave');
@@ -1541,7 +1541,7 @@ class Gravityforms {
 		<?php
 	}
 	public function getSubAC() {
-		// check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		// check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		// Example usage
 		global $FWPFlutterwave;
 		$request = wp_parse_args($_POST, []);
@@ -1567,7 +1567,7 @@ class Gravityforms {
 		}
 	}
 	public function cardToken() {
-		// check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		// check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		// Example usage
 		global $FWPFlutterwave;
 		$request = wp_parse_args($_POST, []);
@@ -1608,7 +1608,7 @@ class Gravityforms {
 		}
 	}
 	public function cardOTP() {
-		// check_ajax_referer('gravityformsflutterwaveaddons/project/verify/nonce', '_nonce', true);
+		// check_ajax_referer('gflutter/project/verify/nonce', '_nonce', true);
 		global $FWPFlutterwave;
 		$request = wp_parse_args($_POST, []);
 		$json = ['hooks' => ['cardotp_falied']];

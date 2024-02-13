@@ -38,7 +38,7 @@ class Option {
 	 * @return void
 	 */
 	public function init() {
-		$this->general = (object) wp_parse_args( apply_filters( 'gravityformsflutterwaveaddons/project/settings/general', [] ), [
+		$this->general = (object) wp_parse_args( apply_filters( 'gflutter/project/settings/general', [] ), [
 			'page_title'					=> __( 'Configuration.', 'gravitylovesflutterwave' ),
 			'menu_title'					=> __( 'Config', 'gravitylovesflutterwave' ),
 			'role'								=> 'manage_options',
@@ -79,7 +79,7 @@ class Option {
 	 */
 	private function settings_fields() {
 		$settings = [];
-		$settings = apply_filters( 'gravityformsflutterwaveaddons/project/settings/fields', $settings );
+		$settings = apply_filters( 'gflutter/project/settings/fields', $settings );
 		return $settings;
 	}
 	/**
@@ -199,10 +199,10 @@ class Option {
 			case 'checkbox_multi':
 			case 'radio':
 			case 'select_multi':
-				$html .= apply_filters( 'gravityformsflutterwaveaddons/project/settings/fields/label', '<br/><span class="description">' . $field['description'] . '</span>', $field );
+				$html .= apply_filters( 'gflutter/project/settings/fields/label', '<br/><span class="description">' . $field['description'] . '</span>', $field );
 			break;
 			default:
-				$html .= apply_filters( 'gravityformsflutterwaveaddons/project/settings/fields/label', '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field );
+				$html .= apply_filters( 'gflutter/project/settings/fields/label', '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n", $field );
 			break;
 		}
 		echo $html;
@@ -287,7 +287,7 @@ class Option {
 			triggers.eq(0).click();
 		});
 		</script>
-	<?php
+		<?php
 	}
 	public function attributes( $field ) {
 		if( ! isset( $field[ 'attr' ] ) || ! is_array( $field[ 'attr' ] ) || count( $field[ 'attr' ] ) < 1 ) {return '';}

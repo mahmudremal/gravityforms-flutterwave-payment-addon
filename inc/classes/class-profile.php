@@ -17,14 +17,14 @@ class Profile {
 		// add_filter( 'get_avatar', [ $this, 'get_avatar' ], 9999, 5 );
 		// add_filter( 'get_avatar_url', [ $this, 'get_avatar_url' ], 99, 3 );
 		add_filter( 'get_avatar_data', [ $this, 'get_avatar_data' ], 99, 2 );
-		add_filter( 'gravityformsflutterwaveaddons/project/filesystem/set_avater', [ $this, 'set_avater' ], 10, 2 );
-		add_action( 'wp_ajax_gravityformsflutterwaveaddons/project/filesystem/uploadavater', [ $this, 'uploadAvater' ], 10, 0 );
+		add_filter( 'gflutter/project/filesystem/set_avater', [ $this, 'set_avater' ], 10, 2 );
+		add_action( 'wp_ajax_gflutter/project/filesystem/uploadavater', [ $this, 'uploadAvater' ], 10, 0 );
 		add_filter( 'login_redirect', [ $this, 'login_redirect' ], 199, 0 );
 		add_action( 'after_setup_theme', [ $this, 'remove_admin_bar' ], 10, 0 );
 		// add_filter( 'woocommerce_get_myaccount_page_permalink', [ $this, 'woocommerce_get_myaccount_page_permalink' ], 10, 1 );
 		add_action( 'woocommerce_account_navigation', [ $this, 'woocommerce_account_navigation' ], 10, 0 );
 		add_filter( 'woocommerce_login_redirect', [ $this, 'woocommerce_login_redirect' ], 10, 2 );
-		add_filter( 'gravityformsflutterwaveaddons/project/profile/defaulttab', [ $this, 'defaultTab' ], 1, 1 );
+		add_filter( 'gflutter/project/profile/defaulttab', [ $this, 'defaultTab' ], 1, 1 );
 	}
 	public function get_avatar( $avatar, $id_or_email, $size, $default, $alt ) {
 		$user = false;
@@ -100,15 +100,15 @@ class Profile {
 		}
 	}
 	public function uploadAvater() {
-		check_ajax_referer( 'gravityformsflutterwaveaddons/project/verify/nonce', '_nonce' );
+		check_ajax_referer( 'gflutter/project/verify/nonce', '_nonce' );
 		$user_id = is_admin() ? $_POST[ 'lead' ] : get_current_user_id();
-		$upload_dir = apply_filters( 'gravityformsflutterwaveaddons/project/filesystem/uploaddir', false );
+		$upload_dir = apply_filters( 'gflutter/project/filesystem/uploaddir', false );
 		$custom_avatar = get_user_meta( $user_id, 'custom_avatar', true );
 		$oldFilePATH = str_replace( [site_url('/')], [ABSPATH], $custom_avatar );
 		if( $oldFilePATH && ! empty( $oldFilePATH ) && file_exists( $oldFilePATH ) && ! is_dir( $oldFilePATH ) ) {
 			unlink( $oldFilePATH );
 		}
-		$randomstring = apply_filters( 'gravityformsflutterwaveaddons/project/filter/string/random', '', 10 );
+		$randomstring = apply_filters( 'gflutter/project/filter/string/random', '', 10 );
 		$newFileName = time() . '-' . $randomstring . '-' . $_FILES[ 'avater' ][ 'name' ];
 		// wp_send_json_success( $newFileName );
 		if( $upload_dir && move_uploaded_file( $_FILES[ 'avater' ][ 'tmp_name' ], $upload_dir . '/' . $newFileName ) ) {
@@ -122,8 +122,8 @@ class Profile {
 	}
 	public function login_redirect() {
 		$who = 'me'; // isset( $_POST['log'] ) ? strtolower( sanitize_user( $_POST['log'] ) ) : 'me';
-    $redirect_to = apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', false, $who );
-    return $redirect_to;
+		$redirect_to = apply_filters( 'gflutter/project/user/dashboardpermalink', false, $who );
+		return $redirect_to;
 	}
 	public function remove_admin_bar() {
 		if( ! current_user_can( 'administrator' ) && ! is_admin() ) {
@@ -131,17 +131,17 @@ class Profile {
 		}
 	}
 	public function woocommerce_get_myaccount_page_permalink( $permalink ) {
-		return apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', false, 'me' );
+		return apply_filters( 'gflutter/project/user/dashboardpermalink', false, 'me' );
 	}
 	public function woocommerce_account_navigation() {
-		if( ! apply_filters( 'gravityformsflutterwaveaddons/project/system/isactive', 'dashboard-disablemyaccount' ) ) {return;}
-		$link = apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', false, 'me' );
+		if( ! apply_filters( 'gflutter/project/system/isactive', 'dashboard-disablemyaccount' ) ) {return;}
+		$link = apply_filters( 'gflutter/project/user/dashboardpermalink', false, 'me' );
 		wp_redirect( $link );
 		?>
 		<script>location.replace( "<?php echo esc_url( $link ); ?>" );</script>
 		<?php
 	}
 	public function woocommerce_login_redirect( $redirect, $user ) {
-		return apply_filters( 'gravityformsflutterwaveaddons/project/user/dashboardpermalink', false, 'me' );
+		return apply_filters( 'gflutter/project/user/dashboardpermalink', false, 'me' );
 	}
 }

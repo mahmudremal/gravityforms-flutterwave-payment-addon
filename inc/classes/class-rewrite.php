@@ -30,14 +30,14 @@ class Rewrite {
 		add_filter( 'query_vars', [ $this, 'query_vars' ], 10, 1 );
 		add_filter( 'template_include', [ $this, 'template_include' ], 10, 1 );
 	}
-  public function init() {
+  	public function init() {
 		// add_rewrite_rule( 'clip/([^/]*)/([^/]*)/?', 'index.php?user_profile=$matches[1]&order_id=$matches[2]', 'top' );
 		add_rewrite_rule( 'pay_retainer/([^/]*)/?', 'index.php?pay_retainer=$matches[1]&redirect=true', 'top' );
-		add_rewrite_rule( stripslashes( apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'permalink-dashboard', 'dashboard' ) ) . '/([^/]*)/([^/]*)/?', 'index.php?user_profile=$matches[1]&currenttab=$matches[2]', 'top' );
-		foreach( apply_filters( 'gravityformsflutterwaveaddons/project/rewrite/rules', [] ) as $rule ) {
+		add_rewrite_rule( stripslashes( apply_filters( 'gflutter/project/system/getoption', 'permalink-dashboard', 'dashboard' ) ) . '/([^/]*)/([^/]*)/?', 'index.php?user_profile=$matches[1]&currenttab=$matches[2]', 'top' );
+		foreach( apply_filters( 'gflutter/project/rewrite/rules', [] ) as $rule ) {
 			add_rewrite_rule( $rule[ 0 ], $rule[ 1 ], $rule[ 2 ] );
 		}
-  }
+  	}
 	public function query_vars( $query_vars  ) {
 		$query_vars[] = 'user_profile';
 		return $query_vars;

@@ -46,7 +46,7 @@ if(isset($entry['source_url']) && !empty($entry['source_url'])) {
 defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE', true);
 
 if(in_array($payment_status, ['success', 'successful'])) {
-    $verify = apply_filters('gravityformsflutterwaveaddons/project/payment/flutterwave/verify', $transaction_id, $payment_status);
+    $verify = apply_filters('gflutter/project/payment/flutterwave/verify', $transaction_id, $payment_status);
     if($verify) {
         // $entry = GFAPI::get_entry_by_transaction_id($transaction_id);
         // Update the entry status
@@ -86,8 +86,8 @@ if(in_array($payment_status, ['success', 'successful'])) {
 ?>
 <?php if($payment_status): ?>
     <?php
-        do_action('gravityformsflutterwaveaddons/project/assets/register_styles');
-        do_action('gravityformsflutterwaveaddons/project/assets/register_scripts');
+        do_action('gflutter/project/assets/register_styles');
+        do_action('gflutter/project/assets/register_scripts');
         wp_enqueue_style('GravityformsFlutterwaveAddons');wp_enqueue_script('imask');
         wp_enqueue_script('GravityformsFlutterwaveAddons');
     ?>

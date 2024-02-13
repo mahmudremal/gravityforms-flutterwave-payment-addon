@@ -1,5 +1,5 @@
 <?php
-$userCountries = apply_filters( 'gravityformsflutterwaveaddons/project/database/countries', [
+$userCountries = apply_filters( 'gflutter/project/database/countries', [
     'no-country'			=> __( 'No Country Found', 'gravitylovesflutterwave' )
 ], false );
 ?>
@@ -11,9 +11,9 @@ $userCountries = apply_filters( 'gravityformsflutterwaveaddons/project/database/
   </div>
   <div class="card-body">
     <form id="register-existing-account-wizard" class="mt-3 text-center" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-      <input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/action/registerexisting" encoding="multipart/form-data">
+      <input type="hidden" name="action" value="gflutter/project/action/registerexisting" encoding="multipart/form-data">
       <input type="hidden" name="userid" value="<?php echo esc_attr( bin2hex( $userInfo->ID ) ); ?>">
-      <?php wp_nonce_field( 'gravityformsflutterwaveaddons/project/verify/registerexisting', '_nonce', true, true ); ?>
+      <?php wp_nonce_field( 'gflutter/project/verify/registerexisting', '_nonce', true, true ); ?>
       <ul id="top-tab-list" class="p-0 row list-inline">
         <li class="mb-2 col-lg-3 col-md-6 text-start active" id="account">
           <a href="javascript:void(0);">

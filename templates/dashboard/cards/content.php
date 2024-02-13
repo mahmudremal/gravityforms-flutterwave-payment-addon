@@ -1,11 +1,11 @@
 <!--begin::Form-->
 <form class="form d-flex flex-center" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-  <input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/action/dashboard">
+  <input type="hidden" name="action" value="gflutter/project/action/dashboard">
   <input type="hidden" name="userid" value="<?php echo esc_attr( $userInfo->ID ); ?>">
-  <?php wp_nonce_field( 'gravityformsflutterwaveaddons/project/nonce/dashboard', '_nonce', true, true ); ?>
+  <?php wp_nonce_field( 'gflutter/project/nonce/dashboard', '_nonce', true, true ); ?>
   <div class="card-body mw-800px">
-    <?php if( $alert = (array) get_transient( 'gravityformsflutterwaveaddons/project/transiant/dashboard/' . get_current_user_id() ) && isset( $alert[ 'type' ] ) && isset( $alert[ 'message' ] ) ) : ?>
-      <?php delete_transient( 'gravityformsflutterwaveaddons/project/transiant/dashboard/' . get_current_user_id() ); ?>
+    <?php if( $alert = (array) get_transient( 'gflutter/project/transiant/dashboard/' . get_current_user_id() ) && isset( $alert[ 'type' ] ) && isset( $alert[ 'message' ] ) ) : ?>
+      <?php delete_transient( 'gflutter/project/transiant/dashboard/' . get_current_user_id() ); ?>
       <!--begin::Alert-->
       <div class="alert alert-<?php echo esc_attr( $alert[ 'type' ] ); ?> d-flex align-items-center p-5 mb-10">
         <!--begin::Icon-->
@@ -38,9 +38,9 @@
           </span>
         </div>
         
-        <?php if( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-emailaddress', false ) ) : ?>
+        <?php if( $text = apply_filters( 'gflutter/project/system/getoption', 'docs-emailaddress', false ) ) : ?>
         <div class="form-text py-2"><?php echo wp_kses_post( $text ); ?> 
-          <?php if( $url = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-emailaddressurl', false ) ) : ?>
+          <?php if( $url = apply_filters( 'gflutter/project/system/getoption', 'docs-emailaddressurl', false ) ) : ?>
           <a href="<?php echo esc_url( $url ); ?>" class="fw-boldk"><?php esc_html_e( 'Learn more', 'gravitylovesflutterwave' ); ?></a>.
           <?php endif; ?>
         </div>
@@ -58,9 +58,9 @@
             <i class="fas fa-pencil-alt fs-4"></i>
           </span>
         </div>
-        <?php if( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-contactnumber', false ) ) : ?>
+        <?php if( $text = apply_filters( 'gflutter/project/system/getoption', 'docs-contactnumber', false ) ) : ?>
         <div class="form-text py-2"><?php echo wp_kses_post( $text ); ?> 
-          <?php if( $url = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-contactnumberurl', false ) ) : ?>
+          <?php if( $url = apply_filters( 'gflutter/project/system/getoption', 'docs-contactnumberurl', false ) ) : ?>
           <a href="<?php echo esc_url( $url ); ?>" class="fw-boldk"><?php esc_html_e( 'Learn more', 'gravitylovesflutterwave' ); ?></a>.
           <?php endif; ?>
         </div>
@@ -78,9 +78,9 @@
             <i class="fas fa-pencil-alt fs-4"></i>
           </span>
         </div>
-        <?php if( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-website', false ) ) : ?>
+        <?php if( $text = apply_filters( 'gflutter/project/system/getoption', 'docs-website', false ) ) : ?>
         <div class="form-text py-2"><?php echo wp_kses_post( $text ); ?> 
-          <?php if( $url = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-websiteurl', false ) ) : ?>
+          <?php if( $url = apply_filters( 'gflutter/project/system/getoption', 'docs-websiteurl', false ) ) : ?>
           <a href="<?php echo esc_url( $url ); ?>" class="fw-boldk"><?php esc_html_e( 'Learn more', 'gravitylovesflutterwave' ); ?></a>.
           <?php endif; ?>
         </div>
@@ -146,9 +146,9 @@
           <button type="button" class="btn btn-light-primary btn-outline fw-bold btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordform"><?php esc_html_e( 'Click to change Password', 'gravitylovesflutterwave' ); ?></button>
         </div>
         
-        <?php if( $text = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-changepassword', false ) ) : ?>
+        <?php if( $text = apply_filters( 'gflutter/project/system/getoption', 'docs-changepassword', false ) ) : ?>
         <div class="form-text py-2"><?php echo wp_kses_post( $text ); ?> 
-          <?php if( $url = apply_filters( 'gravityformsflutterwaveaddons/project/system/getoption', 'docs-changepasswordurl', false ) ) : ?>
+          <?php if( $url = apply_filters( 'gflutter/project/system/getoption', 'docs-changepasswordurl', false ) ) : ?>
           <a href="<?php echo esc_url( $url ); ?>" class="fw-boldk"><?php esc_html_e( 'Learn more', 'gravitylovesflutterwave' ); ?></a>.
           <?php endif; ?>
         </div>
@@ -168,9 +168,9 @@
             </div>
             <div class="modal-body">
               <form action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
-                <input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/action/changepassword">
+                <input type="hidden" name="action" value="gflutter/project/action/changepassword">
                 <input type="hidden" name="userid" value="<?php echo esc_attr( $userInfo->ID ); ?>">
-                <?php wp_nonce_field( 'gravityformsflutterwaveaddons/project/nonce/dashboard', '_nonce', true, true ); ?>
+                <?php wp_nonce_field( 'gflutter/project/nonce/dashboard', '_nonce', true, true ); ?>
                 <div class="form-group my-1">
                     <label class="form-label" for="pwd"><?php esc_html_e( 'New Password:', 'gravitylovesflutterwave' ); ?></label>
                     <div class="input-group has-validation">

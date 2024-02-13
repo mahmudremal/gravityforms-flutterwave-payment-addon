@@ -112,7 +112,7 @@ import Toastify from 'toastify-js';
 				if (elem) {
 					var form = document.createElement('form');
 					form.method = 'post';form.id = 'getemailtemplate';
-					form.innerHTML = `<input type="hidden" name="action" value="gravityformsflutterwaveaddons/project/update/email/template" />`;
+					form.innerHTML = `<input type="hidden" name="action" value="gflutter/project/update/email/template" />`;
 					var area = document.createElement('div');
 					area.classList.add('gform-settings-panel__content');
 					var text = document.createElement('textarea');
@@ -538,7 +538,7 @@ import Toastify from 'toastify-js';
 					preview = document.querySelector('#email-template-preview');
 					if(preview) {preview.remove();}
 					var formdata = new FormData();
-					formdata.append('action', 'gravityformsflutterwaveaddons/project/mailsystem/sendreminder');
+					formdata.append('action', 'gflutter/project/mailsystem/sendreminder');
 					formdata.append('entry', thisClass.currentEntry.id);
 					formdata.append('form_id', thisClass.currentEntry.form_id);
 					formdata.append('_nonce', thisClass.ajaxNonce);
@@ -632,14 +632,14 @@ import Toastify from 'toastify-js';
 						didOpen: () => {
 							Swal.showLoading();
 							var formdata = new FormData();
-							formdata.append('action', 'gravityformsflutterwaveaddons/project/get/email/template');
+							formdata.append('action', 'gflutter/project/get/email/template');
 							formdata.append('_nonce', thisClass.ajaxNonce);
 							thisClass.sendToServer(formdata);
 						},
 						preConfirm: async () => {
 							document.querySelectorAll('#getemailtemplate').forEach((form) => {
 								var formdata = new FormData(form);
-								formdata.append('action', 'gravityformsflutterwaveaddons/project/update/email/template');
+								formdata.append('action', 'gflutter/project/update/email/template');
 								formdata.append('_nonce', thisClass.ajaxNonce);
 								thisClass.sendToServer(formdata);
 							});
@@ -676,7 +676,7 @@ import Toastify from 'toastify-js';
 		update_pay_link(el) {
 			const thisClass = this;
 			var formdata = new FormData();
-			formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/updatelink');
+			formdata.append('action', 'gflutter/project/payment/updatelink');
 			formdata.append('entry', thisClass.currentEntry.id);
 			formdata.append('form_id', thisClass.currentEntry.form_id);
 			formdata.append('_nonce', thisClass.ajaxNonce);
@@ -685,7 +685,7 @@ import Toastify from 'toastify-js';
 		refund_a_payment(amount) {
 			const thisClass = this;
 			var formdata = new FormData();
-			formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/refund');
+			formdata.append('action', 'gflutter/project/payment/refund');
 			formdata.append('transaction_id', thisClass.currentEntry.transaction_id);
 			formdata.append('form_id', thisClass.currentEntry.form_id);
 			formdata.append('entry', thisClass.currentEntry.id);
@@ -731,7 +731,7 @@ import Toastify from 'toastify-js';
 				const settingsSubaccount = document.querySelector('#gform_setting_subAccounts');
 				if(settingsSubaccount) {
 					var formdata = new FormData();
-					formdata.append('action', 'gravityformsflutterwaveaddons/project/payment/flutterwave/getsubac');
+					formdata.append('action', 'gflutter/project/payment/flutterwave/getsubac');
 					formdata.append('form_id', parseInt(settingsSubaccount.dataset.id));
 					formdata.append('get_all', true);
 					formdata.append('no_message', true);
