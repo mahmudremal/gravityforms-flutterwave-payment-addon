@@ -29,7 +29,7 @@ import toastify from "toastify-js";
 			this.setup_hooks();
 			// this.checkoutpay_button();
 			this.init_creditCard();
-			this.demo_fillup();
+			// this.demo_fillup();
 		}
 		setup_hooks() {
 			const thisClass = this;var html;
