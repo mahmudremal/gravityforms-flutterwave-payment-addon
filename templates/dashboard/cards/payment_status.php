@@ -5,8 +5,8 @@
  * @package GravityformsFlutterwaveAddons
  */
 
-$transaction_id = get_query_var( 'transaction_id' );
-$payment_status = get_query_var( 'payment_status' );
+$transaction_id = get_query_var('transaction_id');
+$payment_status = get_query_var('payment_status');
 $result = apply_filters( 'gflutter/project/payment/stripe/handlesuccess', $transaction_id );
 // if( $result[ 'payment_status' ] == 'paid' ) {echo 'Success';} else {print_r( $result );}
 if( isset( $result[ 'customer_details' ] ) && isset( $result[ 'customer_details' ][ 'email' ] ) && !empty( $result[ 'customer_details' ][ 'email' ] ) ) {

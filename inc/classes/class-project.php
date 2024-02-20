@@ -21,7 +21,7 @@ class Project {
 		global $GF_Core;$GF_Core					= Core::get_instance();
 		global $GF_Email;$GF_Email					= Email::get_instance();
 		global $GF_Log;$GF_Log						= Log::get_instance();
-
+		global $GF_Notices;$GF_Notices				= Notices::get_instance();
 
 		// Woo_Flutter::get_instance();
 		// Option::get_instance();
@@ -32,7 +32,6 @@ class Project {
 		// Restapi::get_instance();
 		// GoogleDrive::get_instance();
 		// SocialAuth::get_instance();
-		// Notices::get_instance();
 		// Admin::get_instance();
 		// Blocks::get_instance();
 		// Menus::get_instance();
