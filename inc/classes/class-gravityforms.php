@@ -91,7 +91,8 @@ class Gravityforms {
 
 		add_action('gform_entry_created', [$this, 'gform_entry_created'], 10, 2);
 		// add_action('gform_after_submission', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
-		// add_action('gform_post_process', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
+		// add_action('gform_suppress_confirmation_redirect', [$this, 'gform_suppress_confirmation_redirect'], 99999, 1);
+		add_action('gform_post_process', [$this, 'gform_entry_confirmation_then_redirect'], 99999, 2);
 		
 		
 		// add_filter('gform_payment_complete', [$this, 'approve_entry_and_trigger_notifications'], 10, 2);
@@ -1130,13 +1131,24 @@ class Gravityforms {
 	public function gform_entry_created($entry, $form) {
 		$this->currentEntry = $entry;
 		if(!$this->isPayable($entry, $form)) {return;}
-
 		$link = $this->createPayLinkandGo($entry, $form, false);
-		
 		if($link && !empty($link)) {
-			// remove_action('gform_notification', ['GFForms', 'send_notification'], 10, 3);
 			define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL', $link);
 		}
+	}
+	public function gform_entry_confirmation_then_redirect($form, $entry) {
+		if(defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
+			// this->lastEntryStatus
+			// $is_updated = \GFAPI::update_entry_property($this->currentEntry['id'], 'status', 'pending_payment');
+			wp_redirect(GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL);exit;
+		}
+	}
+	public function gform_suppress_confirmation_redirect($bool) {
+		$this->gform_entry_confirmation_then_redirect(false, false);
+		if(defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
+			return true;
+		}
+		return $bool;
 	}
 	public function createPayLinkandGo($entry, $form, $go = true) {
 		global $FWPFlutterwave;
@@ -1327,6 +1339,7 @@ class Gravityforms {
 		add_filter('gform_disable_post_creation', '__return_true');
 	}
 	public function gform_after_submission($entry, $form) {
+		// print_r([$entry, $form]);wp_die();
 		$this->currentEntry = $entry;
 		$this->createPayLinkandGo($entry, $form);exit;
 	}
@@ -1701,22 +1714,19 @@ class Gravityforms {
 		// Retrieve email data from the temporary storage
 		$form           = \GFAPI::get_form($entry['form_id']);
 		$transaction_id = rgar($entry, 'transaction_id');
+		$email_data = $this->retrieve_email_data_temporarily($entry['id']);
+		
 		$this->update_gform_inventory($entry, $form);
 
-		if (false) {
-			$email_data = $this->retrieve_email_data_temporarily($entry['id']);
-			// Send delayed email notifications
-			foreach($email_data as $email) {
-				\GFAPI::send_notifications($email['notification'], $entry, $email['notification']['form'], true, $email['message_format']);
-				// \GFCommon::send_notifications( $email['notification'], $form, $entry, true, $event, $data );
-				\GFAPI::send_notifications($form, $entry);
-			}
-			// Clear or mark email data as sent
-			$this->clear_email_data_temporarily($entry['id']);
-		} else {
+		// Send delayed email notifications
+		foreach($email_data as $email) {
+			\GFAPI::send_notifications($email['notification'], $entry, $email['notification']['form'], true, $email['message_format']);
+			// \GFCommon::send_notifications( $email['notification'], $form, $entry, true, $event, $data );
 			\GFAPI::send_notifications($form, $entry);
 		}
 
+		// Clear or mark email data as sent
+		$this->clear_email_data_temporarily($entry['id']);
 	}
 	// Store email data temporarily
 	public function store_email_data_temporarily($entry_id, $email, $message_format, $notification, $entry) {

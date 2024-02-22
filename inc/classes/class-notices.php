@@ -12,40 +12,55 @@ class Notices {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		// add_action('send_confirmation_email_cron', [$this, 'send_confirmation_email_cron'], 10, 2);
-		add_filter('gform_notification', [$this, 'gform_notification'], 10, 3);
-		add_action('gform_pre_handle_confirmation', [$this, 'gform_pre_handle_confirmation'], 10, 3);
-		// add_filter('gform_form_post_get_meta', [$this, 'gform_form_post_get_meta'], 10, 1);
+		add_action( 'admin_notices', [ $this, 'admin_notices' ], 10, 0 );
 	}
-	public function gform_notification($notification, $form = [], $entry = []) {
-		if (defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
-			\GFCommon::log_debug( "GFCommon::send_notification(): Prevent Notification to process until payment made (#{$notification['id']} - {$notification['name']})." );
-			$notification['isActive'] = false;
-			return [];
-		}
-		return $notification;
-	}
-	public function send_confirmation_email_cron($entry_id, $form_id) {
-		$entry = \GFAPI::get_entry($entry_id);
-		$form = \GFAPI::get_form($form_id);
-		\GFAPI::send_notifications($form, $entry);
-	}
-	public function gform_pre_handle_confirmation($entry, $form) {
-		if(defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL')) {
-			// $this->lastEntryStatus
-			// $is_updated = \GFAPI::update_entry_property($this->currentEntry['id'], 'status', 'pending_payment');
-
-			// print_r([$notification, $form, $entry]);wp_die();
-			// print_r($form);wp_die();
-
-			wp_redirect(GRAVITYFORMS_FLUTTERWAVE_ADDONS_REDIRECT_URL);exit;
+	public function admin_notices() {
+		// $this->notice();
+		$alert = (array) get_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
+		if( isset( $alert[ 'type' ] ) && isset( $alert[ 'message' ] ) ) {
+		  // delete_transient( 'gflutter/project/transiant/admin/' . get_current_user_id() );
+		  ?>
+		  <div class="alert alert-<?php echo esc_attr( $alert[ 'type' ] ); ?> d-flex align-items-center p-5 mb-10">
+			<span class="svg-icon svg-icon-2hx svg-icon-<?php echo esc_attr( $alert[ 'type' ] ); ?> me-4">
+			  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path opacity="0.3" d="M20.5543 4.37824L12.1798 2.02473C12.0626 1.99176 11.9376 1.99176 11.8203 2.02473L3.44572 4.37824C3.18118 4.45258 3 4.6807 3 4.93945V13.569C3 14.6914 3.48509 15.8404 4.4417 16.984C5.17231 17.8575 6.18314 18.7345 7.446 19.5909C9.56752 21.0295 11.6566 21.912 11.7445 21.9488C11.8258 21.9829 11.9129 22 12.0001 22C12.0872 22 12.1744 21.983 12.2557 21.9488C12.3435 21.912 14.4326 21.0295 16.5541 19.5909C17.8169 18.7345 18.8277 17.8575 19.5584 16.984C20.515 15.8404 21 14.6914 21 13.569V4.93945C21 4.6807 20.8189 4.45258 20.5543 4.37824Z" fill="black"></path><path d="M10.5606 11.3042L9.57283 10.3018C9.28174 10.0065 8.80522 10.0065 8.51412 10.3018C8.22897 10.5912 8.22897 11.0559 8.51412 11.3452L10.4182 13.2773C10.8099 13.6747 11.451 13.6747 11.8427 13.2773L15.4859 9.58051C15.771 9.29117 15.771 8.82648 15.4859 8.53714C15.1948 8.24176 14.7183 8.24176 14.4272 8.53714L11.7002 11.3042C11.3869 11.6221 10.874 11.6221 10.5606 11.3042Z" fill="black"></path></svg>
+			</span>
+			<div class="d-flex flex-column">
+			  <?php if( isset( $alert[ 'title' ] ) ): ?>
+				<h4 class="mb-1 text-dark"><?php echo wp_kses_post( $alert[ 'title' ] ); ?></h4>
+			  <?php endif; ?>
+			  <span><?php echo wp_kses_post( $alert[ 'message' ] ); ?></span>
+			</div>
+		  </div>
+		  <?php
 		}
 	}
-	public function gform_form_post_get_meta($form) {
-		global $GF_Gravityforms;
-		if (isset($form['notifications']) && $GF_Gravityforms->isPayable([], $form) && !is_admin()) {
-			$form['notifications'] = [];
-		}
-		return $form;
+	private function notice() {
+		$args = [
+			// 'confirm'	=> __( 'Are you sure you want to disapear this message?', 'gravitylovesflutterwave' ),
+			// 'request'	=> []
+		];
+		?>
+		<div class="notice fwp-notice fwp-notice--dismissible fwp-notice--extended">
+			<i class="fwp-notice__dismiss" role="button" aria-label="Dismiss" tabindex="0" data-delay="500" data-events="<?php echo esc_attr( json_encode( $args ) ); ?>"></i>
+			<div class="fwp-notice__aside">
+				<div class="fwp-notice__icon-wrapper">
+					<i class="eicon-elementor" aria-hidden="true"></i>
+				</div>
+			</div>
+			<div class="fwp-notice__content">
+				<h3><?php esc_html_e('Congratulations! Love using this Plugin?.', 'gravitylovesflutterwave'); ?></h3>
+				<p><?php esc_html_e('Become a super contributor by opting in to share non-sensitive plugin data and to receive periodic email updates from us.', 'gravitylovesflutterwave') ?> <a href="#!" target="_blank"><?php esc_html_e('Learn more.', 'gravitylovesflutterwave') ?></a>
+			</p>
+			<div class="fwp-notice__actions">
+				<a href="#!" class="fwp-button">
+					<span><?php esc_html_e('Sure! I\'d love to help', 'gravitylovesflutterwave') ?></span>
+				</a>
+				<a href="#!" class="fwp-button fwp-button__outline fwp-notice__cancel">
+					<span><?php esc_html_e('No thanks', 'gravitylovesflutterwave') ?></span>
+				</a>
+			</div>
+			</div>
+		</div>
+		<?php
 	}
 }

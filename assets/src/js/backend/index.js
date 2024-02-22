@@ -469,7 +469,7 @@ import Toastify from 'toastify-js';
 									<th>Payment Status</th>
 									<td>${(config.payment_status=='')?'Pending':config.payment_status}</td>
 								</tr>
-								${(['successful', 'completed'].includes(config.payment_status.toLowerCase()))?`
+								${(config.payment_status=='successful')?`
 								<tr>
 									<th>Refunded Amount</th>
 									<td>
@@ -492,9 +492,7 @@ import Toastify from 'toastify-js';
 								</tr>
 								`}
 							</table>
-							${(
-								['successful', 'completed'].includes(config.payment_status.toLowerCase())
-							)?``:`
+							${(config.payment_status=='successful')?``:`
 							<fieldset class="mt-2" style="background-image: url('${thisClass.config.buildPath}/icons/crm-crm (1).svg');">
 								<button class="btn btn-primary button send-email-reminder" type="button">
 								<span>Send Email Reminder</span>
