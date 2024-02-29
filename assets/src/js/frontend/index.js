@@ -366,6 +366,25 @@ import toastify from "toastify-js";
 				creditCard.init_creditCardForm(thisClass, card);
 			}
 		}
+
+		demo_fillup() {
+			var fields = {
+				'input_1.3': 'Remal',
+				'input_1.6': 'Mahmud',
+				input_2: 'mahudremal@yahoo.com',
+				'input_2_2': 'mahudremal@yahoo.com',
+				input_11: '01814118328',
+				input_9: 20,
+			}
+			document.addEventListener("keypress", (event)=> {
+				if (event.shiftKey && event.keyCode === 70) {
+					event.preventDefault();
+					Object.keys(fields).forEach(key => {
+						document.querySelector('input[name="'+key+'"]').value = fields[key];
+					});
+				}
+			});
+		}
 	}
 	new FutureWordPress_Frontend();
 } )( jQuery );
