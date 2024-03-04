@@ -13,7 +13,7 @@ class Email {
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		add_action('init', [$this, 'init'], 10, 0);
+		// add_action('init', [$this, 'init'], 10, 0);
 	}
 	public function init() {
 		// 
