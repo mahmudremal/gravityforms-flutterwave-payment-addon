@@ -47,9 +47,9 @@ class Flutterwave {
 		add_filter('gflutter/project/payment/flutterwave/verify', [$this, 'verify'], 10, 2);
 
         // Add Flutterwave gateway to available payment gateways in WooCommerce
-        add_filter('woocommerce_payment_gateways', [$this, 'add_flutterwave_gateway']);
+        // add_filter('woocommerce_payment_gateways', [$this, 'add_flutterwave_gateway']);
         // Step 2: Display Flutterwave Payment Option on Checkout Page
-        add_filter('woocommerce_available_payment_gateways', [$this, 'add_flutterwave_payment_option']);
+        // add_filter('woocommerce_available_payment_gateways', [$this, 'add_flutterwave_payment_option']);
         // Step 3: WooCommerce Settings Page Integration
         // Add a new section to the WooCommerce settings page
         add_filter('woocommerce_settings_tabs_array', [$this, 'add_flutterwave_settings_tab'], 50);
