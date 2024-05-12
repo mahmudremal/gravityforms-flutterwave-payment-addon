@@ -59,6 +59,17 @@ if(in_array($payment_status, ['success', 'successful'])) {
         // $is_updated = \GFAPI::update_entry_property($entry_id, 'is_approved', true);
 
         // Notification sends from Here
+        // do_action('gform_post_payment_completed', $entry, $action);
+
+        // if (class_exists('GFPaymentAddOn')) {
+            // \GFPaymentAddOn::complete_payment($entry, $payment);
+            do_action('gform_post_payment_completed', $entry, [
+                'payment_status'        => 'Paid',
+                'payment_date'          => gmdate('Y-m-d H:i:s'),
+                'type'                  => 'complete_payment'
+            ]);
+        // }
+        
         $is_updated = \GFAPI::update_entry_property($entry_id, 'payment_status', 'Completed');
         $is_updated = \GFAPI::update_entry_property($entry_id, 'status', 'active');
         $notify = \GFCommon::send_form_submission_notifications($entry, $form);
@@ -81,8 +92,13 @@ if(in_array($payment_status, ['success', 'successful'])) {
         );
     }
 }
-// else if(in_array($payment_status, ['cancelled', 'failed']) && $verify) {
-// } else {}
+else if(in_array($payment_status, ['cancelled', 'failed']) && $verify) {
+    do_action('gform_post_payment_' . $payment_status, $entry, [
+        'payment_status'        => 'Paid',
+        'payment_date'          => gmdate('Y-m-d H:i:s'),
+        'type'                  => 'fail_payment'
+    ]);
+} else {}
 ?>
 <?php if($payment_status): ?>
     <?php
