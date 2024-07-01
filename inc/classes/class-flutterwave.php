@@ -485,7 +485,12 @@ class Flutterwave {
     }
 
 	public function verify($transaction_id, $status) {
-		return ($this->paymentStatus($transaction_id) == $status);
+        $flutterWaveStatus = $this->paymentStatus($transaction_id);
+        if (!$flutterWaveStatus) {return false;}
+        if (is_array($status)) {
+            return in_array($flutterWaveStatus, (array) $status);
+        }
+        return ($flutterWaveStatus == $status);
 	}
 	
 	public function rewriteRules( $rules ) {
@@ -500,10 +505,14 @@ class Flutterwave {
     	return $query_vars;
 	}
 	public function template_include( $template ) {
-		$transaction_id		= (get_query_var('transaction_id') != '')?get_query_var('transaction_id'):get_query_var('tx_ref');
+		$transaction_id		= (get_query_var('transaction_id') != '')?get_query_var('transaction_id'):false;
 		$payment_status		= (get_query_var('payment_status') != '')?get_query_var('payment_status'):get_query_var('status');
+        $tx_ref = get_query_var('tx_ref');
+        $tx_ref_split = explode('.', $tx_ref);
+        if (!$tx_ref || empty($tx_ref) || $tx_ref_split[0] != 'gfrm') {
+            return $template;
+        }
 		$file				= GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/cards/flutterwave.php';
-        
         // return $template;
         // $payment_status&&!empty($payment_status)&&
 		if($transaction_id && file_exists($file)&&!is_dir($file)) {

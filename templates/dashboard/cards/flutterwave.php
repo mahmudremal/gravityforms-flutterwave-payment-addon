@@ -7,7 +7,7 @@
 global $fwpGravityforms;$settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 $transaction_id    = get_query_var('transaction_id'); // (get_query_var('transaction_id') != '')?get_query_var('transaction_id'):get_query_var('tx_ref');
 $payment_status    = get_query_var('status'); // (get_query_var('payment_status') != '')?get_query_var('payment_status'):get_query_var('status');
-$tx_ref = get_query_var('tx_ref');
+$tx_ref            = get_query_var('tx_ref');
 
 if(empty($payment_status) && empty($tx_ref)) {
     $request = json_decode(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', stripslashes(html_entity_decode($_GET['response']))), true);
@@ -23,7 +23,7 @@ $entry_id = end($expoldes);
 
 $entry = (\GFAPI::entry_exists((int)$entry_id))?\GFAPI::get_entry((int)$entry_id):false;
 if(!$entry || is_wp_error($entry)) {
-    wp_die(__('Something suspicious detected or it would be probably currupted your request.', 'gravitylovesflutterwave'));
+    wp_die(__('OOPs. Something suspicious detected or it would be probably currupted your request.', 'gravitylovesflutterwave'));
 }
 $form = (\GFAPI::form_id_exists((int)$entry['form_id']))?\GFAPI::get_form((int)$entry['form_id']):false;
 
@@ -45,8 +45,24 @@ if(isset($entry['source_url']) && !empty($entry['source_url'])) {
 // Here
 defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_PAYMENT_DONE', true);
 
-if(in_array($payment_status, ['success', 'successful'])) {
-    $verify = apply_filters('gflutter/project/payment/flutterwave/verify', $transaction_id, $payment_status);
+// add_action('init', function() {
+//     if (!isset($_GET['transaction_id'])) {return;}
+//     $this->api_key = $api_key = 'FLWSECK_TEST-efbcc17ffdfd40b3f431944232a2e7fc-X';
+//     $transfer_id = $_GET['transaction_id'];
+//     $amount = 350; // Amount in kobo (e.g., 1000 kobo = 10.00 NGN)
+//     $currency = 'NGN';
+//     $tx_ref = $_GET['tx_ref'];
+//     $email = 'gefafe9993@dcbin.com';
+//     // $result = $this->verifyBankTransfer($transfer_id, $amount, $currency, $tx_ref, $email, $api_key);
+//     $result = $this->info($transfer_id);
+//     print_r($result);wp_die();
+// }, 1, 0);
+
+$successStatuses = ['success', 'successful', 'completed', 'complete'];
+if(in_array($payment_status, $successStatuses)) {
+    $verify = apply_filters('gflutter/project/payment/flutterwave/verify', $transaction_id, $successStatuses);
+    // wp_die(sprintf('Status: %s', $verify));
+    // 
     if($verify) {
         // $entry = GFAPI::get_entry_by_transaction_id($transaction_id);
         // Update the entry status
@@ -117,13 +133,13 @@ else if(in_array($payment_status, ['cancelled', 'failed']) && $verify) {
                                 <div class="fltrwv__card fltrwv__d-flex fltrwv__justify-content-center mb-0">
                                     <div class="fltrwv__card-body">
                                         <h2 class="fltrwv__mt-3 fltrwv__mb-4">
-                                            <?php echo esc_html(in_array($payment_status, ['success','successful'])?__('Payment Successful', 'gravitylovesflutterwave'):__( 'Payment Failed',   'gravitylovesflutterwave')); ?>
+                                            <?php echo esc_html(in_array($payment_status, $successStatuses)?__('Payment Successful', 'gravitylovesflutterwave'):__( 'Payment Failed',   'gravitylovesflutterwave')); ?>
                                         </h2>
-                                        <p class="cnf-mail mb-1"><?php echo wp_kses_post(in_array($payment_status, ['success','successful'])?stripslashes($settings['paymentSuccess']):stripslashes($settings['paymentFailed'])); ?></p>
+                                        <p class="cnf-mail mb-1"><?php echo wp_kses_post(in_array($payment_status, $successStatuses)?stripslashes($settings['paymentSuccess']):stripslashes($settings['paymentFailed'])); ?></p>
                                         <div class="fltrwv__d-inline-block fltrwv__w-100">
                                         <a href="<?php echo esc_url($backtoLink); ?>" class="fltrwv__btn fltrwv__btn-primary fltrwv__mt-3 btn button"><?php echo esc_html($backtoText); ?></a>
 
-                                        <?php if(false && !in_array($payment_status, ['success','successful'])): ?>
+                                        <?php if(false && !in_array($payment_status, $successStatuses)): ?>
                                             <a href="<?php echo esc_url(gform_get_meta($entry['id'], '_paymentlink')); ?>" class="fltrwv__btn fltrwv__btn-primary fltrwv__mt-3 btn button"><?php esc_html_e('Try again', 'gravitylovesflutterwave'); ?></a>
                                         <?php endif; ?>
                                     </div>
