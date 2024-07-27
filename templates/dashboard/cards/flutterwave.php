@@ -84,6 +84,11 @@ if(in_array($payment_status, $successStatuses)) {
                 'payment_date'          => gmdate('Y-m-d H:i:s'),
                 'type'                  => 'complete_payment'
             ]);
+            do_action('gform_post_payment_action', $entry, [
+                'payment_status'        => 'Paid',
+                'payment_date'          => gmdate('Y-m-d H:i:s'),
+                'type'                  => 'complete_payment'
+            ]);
         // }
         
         $is_updated = \GFAPI::update_entry_property($entry_id, 'payment_status', 'Completed');

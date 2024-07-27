@@ -22,7 +22,17 @@ class Gravityforms {
 		$this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 		$this->id = 'flutterlovesgravity';
 		$this->currentEntry = false;
-		// load class.
+
+		
+		/**
+		 * Gravity form addon.
+		 */
+		// add_action( 'gform_loaded', [$this, 'load_gravityform_addon'], 5, 0 );
+		// 
+		add_action('wp_ajax_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
+		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
+
+		// init hooks.
 		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
@@ -53,11 +63,6 @@ class Gravityforms {
 		// Refund Woocommerce Order
 		// add_action('woocommerce_order_status_refunded', [$this, 'process_flutterwave_refund'], 10, 1);
 
-
-		/**
-		 * Gravity form addon.
-		 */
-		// add_action( 'gform_loaded', [$this, 'load_gravityform_addon'], 5, 0 );
 
 		/**
 		 * Gravity form custom field.
@@ -108,8 +113,6 @@ class Gravityforms {
 		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/cardtoken', [$this, 'cardToken'], 10, 0);
 		add_action('wp_ajax_gflutter/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
 		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/cardotp', [$this, 'cardOTP'], 10, 0);
-		add_action('wp_ajax_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
-		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
 

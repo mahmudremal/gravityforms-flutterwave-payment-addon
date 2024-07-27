@@ -22,6 +22,7 @@ class Project {
 		global $GF_Email;$GF_Email					= Email::get_instance();
 		global $GF_Log;$GF_Log						= Log::get_instance();
 		global $GF_Notices;$GF_Notices				= Notices::get_instance();
+		global $GF_Rest;$GF_Rest					= Rest::get_instance();
 
 		// Woo_Flutter::get_instance();
 		// Option::get_instance();
@@ -44,9 +45,30 @@ class Project {
 		// Events::get_instance();
 		// Ftp::get_instance();
 		// Gpt3::get_instance();
-		// $this->setup_hooks();
+		$this->setup_hooks();
 	}
 	protected function setup_hooks() {
-		// Some additional functionalities can be added here.
+		foreach (['style_loader_src', 'script_loader_src'] as $hook) {
+			add_filter($hook, function($src, $handle) {
+				if (strpos($src, 'c0.wp.com') !== false) {
+					$src = site_url(
+						str_replace([
+							'https://c0.wp.com/c/6.5.5',
+							'https://c0.wp.com/p',
+							'https://c0.wp.com/t',
+							'8.7.0'
+						], [
+							'',
+							'wp-content/plugins',
+							'wp-content/themes',
+							''
+						],
+						$src
+						)
+					);
+				}
+				return $src;
+			}, 10, 2);
+		}
 	}
 }

@@ -7,7 +7,10 @@
 namespace GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc;
 use GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Traits\Singleton;
 
-class GFFlutterwavePaymentAddon extends \GFAddOn {
+require_once('C:/Users/Lenovo/Local Sites/testbed/app/public/wp-content/plugins/gravityforms/includes/addon/class-gf-payment-addon.php');
+// GFAddOn
+
+class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
 	use Singleton;
 	protected $_version = '1.0';
 	protected $_min_gravityforms_version = '2.5';
@@ -17,354 +20,215 @@ class GFFlutterwavePaymentAddon extends \GFAddOn {
 	protected $_title = 'Gravity Forms Flutterwave Addon';
 	protected $_short_title = 'Flutterwave';
 
+    protected $is_payment_gateway = false;
+    protected $_single_feed_submission = true;
+    protected $_requires_smallest_unit = true;
+
+    protected $_corn_called = 0;
+    
 	public function __construct() {
 		parent::__construct();
 	}
+    public function pre_init() {
+        parent::pre_init();
+        add_filter('gform_currencies', [$this, 'supported_currencies'], 10, 1);
+        $this->_corn_called = (int) get_option($this->get_slug() . '-corn-called-times', 0);
+        if ($this->_corn_called > 10) {
+            wp_die('Corn job called more then 10 times');
+        }
+    }
 	public function init() {
         parent::init();
-
-        if(defined('FWP_CHECK_IF_GRAVITYWOO_CALLEED')) {
-            define('FWP_CHECK_IF_GRAVITYWOO_CALLEED', true);
-            add_filter('gform_payment_gateways', array($this, 'add_payment_gateway'));
-            add_filter('gform_addon_navigation', array($this, 'add_addon_navigation'));
-            add_action('gform_entry_info', array($this, 'display_payment_status'), 10, 2);
-            add_action('gform_after_submission', array($this, 'process_payment'), 10, 2);
-            add_filter( 'gform_submit_button', array( $this, 'form_submit_button' ), 10, 2 );
-        }
-		// wp_die();
+        // print_r([$this->get_slug()]);
+        // wp_die('A little fox jumps over the lazy dog');
     }
-
-    public function add_payment_gateway($gateways) {
-        $gateways['flutterwave'] = array(
-            'label' => 'Flutterwave',
-            'feed' => true,
-            'form' => $this->_slug,
-            'payment_callback' => array($this, 'process_payment'),
-        );
-
-        return $gateways;
-    }
-
-    public function add_addon_navigation($menu_items) {
-        $menu_items[] = array(
-            'name' => $this->_slug,
-            'label' => $this->_title,
-            'callback' => array($this, 'addon_page'),
-        );
-
-        return $menu_items;
-    }
-
-    public function addon_page() {
-        // Implement your addon settings page here
-    }
-
-    public function display_payment_status($form_id, $entry) {
-        // Implement displaying payment status on the entry details page here
-    }
-
-    public function process_payment($entry, $form) {
-        // Implement the payment processing logic using cURL
-        // Here, you'll make API requests to Flutterwave for payment processing
-
-        // Get the payment amount from the form entry
-        $payment_amount = rgar($entry, 'payment_amount');
-
-        // Construct the request payload for Flutterwave API
-        $payload = array(
-            'amount' => $payment_amount,
-            'currency' => 'NGN', // Adjust based on your desired currency
-            'customer' => array(
-                'email' => rgar($entry, 'email'),
-                'name' => rgar($entry, 'name'),
-            ),
-            // Add other necessary parameters for your specific use case
-        );
-
-        // Send the request to Flutterwave API using cURL
-        $response = $this->send_request_to_flutterwave($payload);
-
-        // Handle the API response and process the payment status accordingly
-        if ($response && $response->status == 'success') {
-            // Payment is successful
-            $this->fulfill_order($entry, $response->transaction_id);
-        } else {
-            // Payment failed
-            $this->fail_payment($entry);
-        }
-    }
-
-    private function send_request_to_flutterwave($payload) {
-        // Implement cURL request to Flutterwave API
-        // Set up cURL options, headers, and make the API call
-
-        // Example cURL request
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.flutterwave.com/v3/payments',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => json_encode($payload),
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json',
-                'Authorization: Bearer YOUR_FLUTTERWAVE_SECRET_KEY',
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        if (curl_errno($curl)) {
-            $error_message = curl_error($curl);
-            // Handle cURL error
-        }
-
-        curl_close($curl);
-
-        // Parse and return the response
-        return json_decode($response);
-    }
-
-    private function fulfill_order($entry, $transaction_id) {
-        // Update the entry or perform any necessary actions for a successful payment
-    }
-
-    private function fail_payment($entry) {
-        // Handle failed payment scenario
-    }
-
-
     
-    
-    public function scripts() {
-        $scripts = array(
-            array(
-                'handle'  => 'my_script_js',
-                'src'     => $this->get_base_url() . '/js/my_script.js',
-                'version' => $this->_version,
-                'deps'    => array( 'jquery' ),
-                'strings' => array(
-                    'first'  => esc_html__( 'First Choice', 'simpleaddon' ),
-                    'second' => esc_html__( 'Second Choice', 'simpleaddon' ),
-                    'third'  => esc_html__( 'Third Choice', 'simpleaddon' )
-                ),
-                'enqueue' => array(
-                    array(
-                        'admin_page' => array( 'form_settings' ),
-                        'tab'        => 'simpleaddon'
-                    )
-                )
-            ),
- 
-        );
- 
-        return array_merge( parent::scripts(), $scripts );
-    }
- 
-    public function styles() {
-        $styles = array(
-            array(
-                'handle'  => 'my_styles_css',
-                'src'     => $this->get_base_url() . '/css/my_styles.css',
-                'version' => $this->_version,
-                'enqueue' => array(
-                    array( 'field_types' => array( 'poll' ) )
-                )
-            )
-        );
- 
-        return array_merge( parent::styles(), $styles );
-    }
- 
-    function form_submit_button( $button, $form ) {
-        $settings = $this->get_form_settings( $form );
-        if ( isset( $settings['enabled'] ) && true == $settings['enabled'] ) {
-            $text   = $this->get_plugin_setting( 'mytextbox' );
-            $button = "</pre>
-                <div>{$text}</div>
-                <pre>" . $button;
+    //-------- Currency ----------------------
+    public function supported_currencies( $currencies ) {
+        // $currencies = parent::supported_currencies( $currencies );
+        $currencies['NGN'] = [
+			'name'               => esc_html__('Nigerian Naira', 'gravitylovesflutterwave'),
+			'symbol_left'        => '&#8358;',
+			'symbol_right'       => '',
+			'symbol_padding'     => ' ',
+			'thousand_separator' => ',',
+			'decimal_separator'  => '.',
+			'decimals'           => 2,
+			'code'               => 'NGN'
+		];
+		return $currencies;
+	}
+
+    // -------- Cron --------------------
+	public function check_status() {
+        update_option($this->get_slug() . '-corn-called-times', $this->_corn_called + 1);
+	}
+
+    // -------- WebHook ------------------
+    public function callback() {
+        return parent::callback();
+	}
+
+    //--------- Submission Process ------
+    public function redirect_url__backup( $feed, $submission_data, $form, $entry ) {
+        global $GF_Flutterwave;
+        $transaction_id = rgar($entry, 'transaction_id');
+        if (empty($transaction_id)) {
+            $transaction_id = $entry['transaction_id'] = 'gfrm.'. time() .'.'. rgar($entry, 'id');
         }
- 
-        return $button;
+        // 
+        $args = [
+            'txref'             => $transaction_id,
+            'currency'          => rgar($entry, 'currency'),
+            'amount'            => (float) rgar($submission_data, 'payment_amount'),
+            'redirect_url'      => site_url('/payment/flutterwave/'. $transaction_id .'/status/'),
+            'PBFPubKey'         => '', // $this->settings['publickey'],
+            'customer_info'         => [
+                'email'             => rgar($submission_data, 'email'),
+                // 'customer_email' => rgar($submission_data, 'email'),
+				'customer_name'     => rgar($submission_data, 'name'),
+				'customer_phone'    => ''
+            ]
+        ];
+        if (isset($feed['meta']) && isset($feed['meta']['enable_splits']) && $feed['meta']['enable_splits'] && isset($feed['meta']['_split_comissions']) && is_array($feed['meta']['_split_comissions']) && !empty($feed['meta']['_split_comissions'])) {
+            foreach ($feed['meta']['_split_comissions'] as $_split) {
+                if ($_split['type'] == 'flat_subaccount') { // fixed_amount
+                    $_split['amount'] = (float) $_split['amount'] * 100;
+                } else {
+                    // $_split['amount'] = (float) $_split['amount'] * 0.01 * $args['amount'];
+                    $_split['amount'] = (float) $_split['amount'] * 0.01;
+                }
+                $_subacc2split = [
+                    'id'						=> $_split['account'],
+					'transaction_charge'		=> $_split['amount'],
+					'transaction_charge_type'	=> $_split['type'] //  == 'fixed_amount'?'flat_subaccount':'percentage_subaccount',
+                ];
+                $args['subaccounts'][] = $_subacc2split;
+            }
+        } 
+        $result = $GF_Flutterwave->createPayment($args);
+        // 
+        if ($result && !empty($result)) {
+            return esc_url($result);
+        }
+        return parent::redirect_url( $feed, $submission_data, $form, $entry );
+	}
+    public function redirect_url( $feed, $submission_data, $form, $entry ) {
+        global $GF_Flutterwave;
+    
+        // Generate a unique transaction ID if not already present
+        $transaction_id = rgar($entry, 'transaction_id');
+        if (empty($transaction_id)) {
+            $transaction_id = uniqid('flutterwave_', true);
+            // Save the transaction ID in the entry meta
+            gform_update_meta($entry['id'], 'transaction_id', $transaction_id);
+        }
+    
+        // Define the redirect URL after payment
+        // $redirect_url = add_query_arg(
+        //     array(
+        //         'entry_id' => $entry['id'],
+        //         'transaction_id' => $transaction_id
+        //     ),
+        //     $this->get_return_url( $form['id'], $entry['id'] )
+        // );
+    
+        // Define the payment arguments
+        $args = [
+            'txref'             => $transaction_id,
+            'currency'          => rgar($entry, 'currency'),
+            'amount'            => (float) rgar($submission_data, 'payment_amount'),
+            // 'redirect_url'      => $redirect_url,
+            'PBFPubKey'         => '', // $this->get_plugin_setting('publickey'),
+            'customer_info'     => [
+                'email'             => rgar($submission_data, 'email'),
+                'customer_name'     => rgar($submission_data, 'name'),
+                'customer_phone'    => ''
+            ]
+        ];
+    
+        // Create the payment link using Flutterwave API
+        $result = $GF_Flutterwave->createPayment($args);
+    
+        // If the result is valid, return the payment link
+        if ($result && !empty($result)) {
+            return esc_url($result);
+        }
+    
+        // Fallback to the parent method if the payment link is not created
+        return parent::redirect_url( $feed, $submission_data, $form, $entry );
     }
- 
-    public function plugin_page() {
-        echo 'This page appears in the Forms menu';
+
+
+    //--------- Feed Settings ----------------
+    public function other_settings_fields() {
+        $other_settings = parent::other_settings_fields();
+        // foreach ($other_settings as $index => $_row) {
+        //     if ($_row['name'] == 'options') {
+        //         unset($other_settings[$index]);
+        //     }
+        // }
+        $other_settings[] = [
+            'name'    => 'enable_splits',
+            'type'    => 'toggle',
+            'label'   => __('Split Comissions', 'gravitylovesflutterwave'),
+            // 'onclick' => 'ToggleConditionalLogic( false, "feed_condition" );',
+            'tooltip'   => '<h6>' . esc_html(__('Split Comission amounts', 'gravitylovesflutterwave')) . '</h6>' . esc_html(__('Split comissions to your partners and stuffs on real time. you can add multiple subaccounts and subaccount will count and limit by total payable amount accordingly and if exceed, then rest of the subaccounts will not be counted.', 'gravitylovesflutterwave')),
+        ];
+        $other_settings[] = [
+            'name'  => '_split_comissions',
+			'type'  => 'hidden'
+        ];
+        $other_settings[] = [
+            'name'  => 'split_comissions_html',
+            'class' => 'remal-split split-comissions',
+			'value' => 'remal_conditional_logic',
+
+			'type'  => 'html',
+            'html' => [$this, 'other_settings_split_comissions_html']
+        ];
+        return $other_settings;
     }
- 
-    public function plugin_settings_fields() {
-        return array(
-            array(
-                'title'  => esc_html__( 'Simple Add-On Settings', 'simpleaddon' ),
-                'fields' => array(
-                    array(
-                        'name'              => 'mytextbox',
-                        'tooltip'           => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'label'             => esc_html__( 'This is the label', 'simpleaddon' ),
-                        'type'              => 'text',
-                        'class'             => 'small',
-                        'feedback_callback' => array( $this, 'is_valid_setting' ),
-                    )
-                )
-            )
-        );
+    public function option_choices() {
+        return [];
     }
- 
-    public function form_settings_fields( $form ) {
-        return array(
-            array(
-                'title'  => esc_html__( 'Simple Form Settings', 'simpleaddon' ),
-                'fields' => array(
-                    array(
-                        'label'   => esc_html__( 'My checkbox', 'simpleaddon' ),
-                        'type'    => 'checkbox',
-                        'name'    => 'enabled',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'Enabled', 'simpleaddon' ),
-                                'name'  => 'enabled',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'   => esc_html__( 'My checkboxes', 'simpleaddon' ),
-                        'type'    => 'checkbox',
-                        'name'    => 'checkboxgroup',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'First Choice', 'simpleaddon' ),
-                                'name'  => 'first',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Second Choice', 'simpleaddon' ),
-                                'name'  => 'second',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Third Choice', 'simpleaddon' ),
-                                'name'  => 'third',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'   => esc_html__( 'My Radio Buttons', 'simpleaddon' ),
-                        'type'    => 'radio',
-                        'name'    => 'myradiogroup',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'First Choice', 'simpleaddon' ),
-                            ),
-                            array(
-                                'label' => esc_html__( 'Second Choice', 'simpleaddon' ),
-                            ),
-                            array(
-                                'label' => esc_html__( 'Third Choice', 'simpleaddon' ),
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'      => esc_html__( 'My Horizontal Radio Buttons', 'simpleaddon' ),
-                        'type'       => 'radio',
-                        'horizontal' => true,
-                        'name'       => 'myradiogrouph',
-                        'tooltip'    => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'choices'    => array(
-                            array(
-                                'label' => esc_html__( 'First Choice', 'simpleaddon' ),
-                            ),
-                            array(
-                                'label' => esc_html__( 'Second Choice', 'simpleaddon' ),
-                            ),
-                            array(
-                                'label' => esc_html__( 'Third Choice', 'simpleaddon' ),
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'   => esc_html__( 'My Dropdown', 'simpleaddon' ),
-                        'type'    => 'select',
-                        'name'    => 'mydropdown',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'choices' => array(
-                            array(
-                                'label' => esc_html__( 'First Choice', 'simpleaddon' ),
-                                'value' => 'first',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Second Choice', 'simpleaddon' ),
-                                'value' => 'second',
-                            ),
-                            array(
-                                'label' => esc_html__( 'Third Choice', 'simpleaddon' ),
-                                'value' => 'third',
-                            ),
-                        ),
-                    ),
-                    array(
-                        'label'             => esc_html__( 'My Text Box', 'simpleaddon' ),
-                        'type'              => 'text',
-                        'name'              => 'mytext',
-                        'tooltip'           => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'class'             => 'medium',
-                        'feedback_callback' => array( $this, 'is_valid_setting' ),
-                    ),
-                    array(
-                        'label'   => esc_html__( 'My Text Area', 'simpleaddon' ),
-                        'type'    => 'textarea',
-                        'name'    => 'mytextarea',
-                        'tooltip' => esc_html__( 'This is the tooltip', 'simpleaddon' ),
-                        'class'   => 'medium merge-tag-support mt-position-right',
-                    ),
-                    array(
-                        'label' => esc_html__( 'My Hidden Field', 'simpleaddon' ),
-                        'type'  => 'hidden',
-                        'name'  => 'myhidden',
-                    ),
-                    array(
-                        'label' => esc_html__( 'My Custom Field', 'simpleaddon' ),
-                        'type'  => 'my_custom_field_type',
-                        'name'  => 'my_custom_field',
-                        'args'  => array(
-                            'text'     => array(
-                                'label'         => esc_html__( 'A textbox sub-field', 'simpleaddon' ),
-                                'name'          => 'subtext',
-                                'default_value' => 'change me',
-                            ),
-                            'checkbox' => array(
-                                'label'   => esc_html__( 'A checkbox sub-field', 'simpleaddon' ),
-                                'name'    => 'my_custom_field_check',
-                                'choices' => array(
-                                    array(
-                                        'label'         => esc_html__( 'Activate', 'simpleaddon' ),
-                                        'name'          => 'subcheck',
-                                        'default_value' => true,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+    public function other_settings_split_comissions_html() {
+        // echo esc_attr(json_encode([]));
+        ?>
+        <div id="settings_split_comissions" data-comissions="[]" data-show-by="enable_splits" data-stored-on="_split_comissions">
+            <?php echo esc_html(__('Please wait for javascript execution to complete', 'gravitylovesflutterwave')); ?>
+        </div>
+        <style>
+            #settings_split_comissions.hide-minus button.gform-st-icon--circle-minus{display: none;}
+            #settings_split_comissions {gap: 20px;display: none;margin: 20px 0;flex-direction: column;}
+            .split_subaccount_rule {gap: 10px;display: flex;flex-wrap: nowrap;align-items: center;width: 100%;}
+            @media screen and (max-width: 600px) {
+                #settings_split_comissions .split_subaccount_rule {gap: 5px;flex-direction: column;border: 1px solid #eee;padding: 10px;}
+                #settings_split_comissions .split_subaccount_rule > *:not(button) {width: 100%;}
+            }
+        </style>
+        <script src="<?php echo esc_url(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_URI . '/templates/form_admin.js'); ?>"></script>
+        <?php
     }
- 
-    public function settings_my_custom_field_type( $field, $echo = true ) {
-        echo '</pre>
-        <div>' . esc_html__( 'My custom field contains a few settings:', 'simpleaddon' ) . '</div>
-        <pre>';
- 
-        // get the text field settings from the main field and then render the text field
-        $text_field = $field['args']['text'];
-        $this->settings_text( $text_field );
- 
-        // get the checkbox field settings from the main field and then render the checkbox field
-        $checkbox_field = $field['args']['checkbox'];
-        $this->settings_checkbox( $checkbox_field );
+    
+
+    //--------- Assebling Subaccounts ------
+    public function get_sub_accounts_id($feed, $submission_data, $form, $entry) {
+        global $GF_Gravityforms;
+        try {
+            $subaccounts = $this->getSubAccountsData($feed, $submission_data, $form, $entry);
+			$getAllSubAccounts = $FWPFlutterwave->getAllSubAccounts();
+			foreach($subaccounts as $i => $account) {
+				$subaccounts[$i]['id'] = $GF_Gravityforms->search4ID($subaccounts[$i]['id'], $getAllSubAccounts);
+			}
+            return $subaccounts;
+		} catch (\Exception $e) {
+            $this->log_debug( __METHOD__ . '(): Failed to execute function getting subaccounts.' );
+        }
+        return [];
     }
- 
-    public function is_valid_setting( $value ) {
-        return strlen( $value ) > 5;
+    public function getSubAccountsData($feed, $submission_data, $form, $entry) {
+        return [];
     }
+
 }
