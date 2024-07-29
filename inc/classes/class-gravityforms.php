@@ -22,18 +22,20 @@ class Gravityforms {
 		$this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 		$this->id = 'flutterlovesgravity';
 		$this->currentEntry = false;
+		// 
+		add_filter('gform_currencies', [$this, 'gform_currencies'], 10, 1);
 
 		
 		/**
 		 * Gravity form addon.
 		 */
-		// add_action( 'gform_loaded', [$this, 'load_gravityform_addon'], 5, 0 );
+		add_action( 'gform_loaded', [$this, 'load_gravityform_addon'], 5, 0 );
 		// 
 		add_action('wp_ajax_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 
 		// init hooks.
-		$this->setup_hooks();
+		// $this->setup_hooks();
 	}
 	protected function setup_hooks() {
 		// add_action( 'init', [ $this, 'wp_init' ], 10, 0 );
@@ -104,7 +106,6 @@ class Gravityforms {
 		// add_action('gform_pre_submission', [$this, 'gform_pre_submission'], 10, 1);
 		// add_action('gform_after_submission', [$this, 'gform_after_submission'], 10, 2);
 
-		add_filter('gform_currencies', [$this, 'gform_currencies'], 10, 1);
 
 		add_action('wp_ajax_gflutter/project/mailsystem/sendreminder', [$this, 'sendReminder'], 10, 0);
 		add_action('wp_ajax_gflutter/project/payment/updatelink', [$this, 'updateLink'], 10, 0);

@@ -39,13 +39,15 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     }
 	public function init() {
         parent::init();
+        // add_action('wp_footer', array($this, 'enqueue_scripts'));
+        // add_filter('gform_submit_button', array($this, 'add_payment_button'), 10, 2);
         // print_r([$this->get_slug()]);
         // wp_die('A little fox jumps over the lazy dog');
     }
     
     //-------- Currency ----------------------
     public function supported_currencies( $currencies ) {
-        // $currencies = parent::supported_currencies( $currencies );
+        $currencies = parent::supported_currencies( $currencies );
         $currencies['NGN'] = [
 			'name'               => esc_html__('Nigerian Naira', 'gravitylovesflutterwave'),
 			'symbol_left'        => '&#8358;',
@@ -211,7 +213,6 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
         <?php
     }
     
-
     //--------- Assebling Subaccounts ------
     public function get_sub_accounts_id($feed, $submission_data, $form, $entry) {
         global $GF_Gravityforms;
@@ -229,6 +230,89 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     }
     public function getSubAccountsData($feed, $submission_data, $form, $entry) {
         return [];
+    }
+
+    //--------- Scripts ------
+    public function scripts() {
+        $scripts = [
+            [
+                'handle'  => 'flutterwave_payment',
+                'src'     => GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_URI . "/templates/form_payment.js",
+                'version' => \GFCommon::$version,
+                'strings' => [
+                    'subscriptionCancelWarning' => __( "Warning! This subscription will be canceled. This cannot be undone. 'OK' to cancel subscription, 'Cancel' to stop", 'gravityforms' ),
+                    'subscriptionCancelNonce'   => wp_create_nonce( 'flutterwave_cancel_subscription' ),
+                    'subscriptionCanceled'      => __( 'Canceled', 'gravityforms' ),
+                    'subscriptionError'         => __( 'The subscription could not be canceled. Please try again later.', 'gravityforms' )
+                ],
+                'enqueue' => [
+                    // ['admin_page' => ['form_settings'], 'tab' => $this->get_slug()],
+                    // ['admin_page' => ['entry_view']],
+                ]
+            ]
+        ];
+        // 
+        return array_merge( parent::scripts(), $scripts );
+    }
+    // 
+    public function enqueue_scripts($form = '', $is_ajax = false) {
+        parent::enqueue_scripts($form, $is_ajax);
+        ?>
+        <script src="https://checkout.flutterwave.com/v3.js"></script>
+        <script>
+            function makePayment() {
+                FlutterwaveCheckout({
+                    public_key: "FLWPUBK_TEST-SANDBOXDEMOKEY-X",
+                    tx_ref: "titanic-48981487343MDI0NzMx",
+                    amount: 54600,
+                    currency: "NGN",
+                    payment_options: "card, mobilemoneyghana, ussd",
+                    callback: function(payment) {
+                        // Send AJAX verification request to backend
+                        verifyTransactionOnBackend(payment.id);
+                    },
+                    onclose: function(incomplete) {
+                        if (incomplete || window.verified === false) {
+                            document.querySelector("#payment-failed").style.display = 'block';
+                        } else {
+                            document.querySelector("form").style.display = 'none';
+                            if (window.verified == true) {
+                                document.querySelector("#payment-success").style.display = 'block';
+                            } else {
+                                document.querySelector("#payment-pending").style.display = 'block';
+                            }
+                        }
+                    },
+                    meta: {
+                        consumer_id: 23,
+                        consumer_mac: "92a3-912ba-1192a",
+                    },
+                    customer: {
+                        email: "rose@unsinkableship.com",
+                        phone_number: "08102909304",
+                        name: "Rose DeWitt Bukater",
+                    },
+                    customizations: {
+                        title: "The Titanic Store",
+                        description: "Payment for an awesome cruise",
+                        logo: "https://www.logolynx.com/images/logolynx/22/2239ca38f5505fbfce7e55bbc0604386.jpeg",
+                    },
+                });
+            }
+
+            function verifyTransactionOnBackend(transactionId) {
+                // Let's just pretend the request was successful
+                setTimeout(function() {
+                    window.verified = true;
+                }, 200);
+            }
+        </script>
+        <?php
+    }
+    // 
+    public function add_payment_button($button, $form) {
+        $payment_button = '<button type="button" onclick="makePayment()">Pay with Flutterwave</button>';
+        return $button . $payment_button;
     }
 
 }
