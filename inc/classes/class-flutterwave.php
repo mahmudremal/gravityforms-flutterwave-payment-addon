@@ -11,7 +11,7 @@ class Flutterwave {
 	use Singleton;
 	private $theTable;
 	private $productID;
-	private $settings;
+	public $settings;
 	private $lastResult;
 	private $userInfo;
 	private $successUrl;
@@ -20,7 +20,7 @@ class Flutterwave {
 	private $encryptionKey; // Replace with your Flutterwave API key
     private $base_url = 'https://api.flutterwave.com/v3';
     private $is_test_mode;
-	
+	// 
 	protected function __construct() {
         $this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 		$this->api_key  = isset($this->settings['secretkey'])?$this->settings['secretkey']:false;

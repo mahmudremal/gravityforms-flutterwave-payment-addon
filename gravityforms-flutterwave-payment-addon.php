@@ -48,6 +48,7 @@ defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_ARCHIVE_POST_PER_PAGE') || define('GRAV
 defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_SEARCH_RESULTS_POST_PER_PAGE') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_SEARCH_RESULTS_POST_PER_PAGE',9);
 
 $options = (array) get_option('flutterwaveaddons', []);$options['paymentReminder'] = get_option('gform-flutterwave-reminder-template', '');
+// delete_option('flutterwaveaddons');print_r($options);wp_die();
 defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS', $options);
 
 defined('GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE') || define('GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE', (bool)(isset(GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['testMode']) && GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS['testMode']));

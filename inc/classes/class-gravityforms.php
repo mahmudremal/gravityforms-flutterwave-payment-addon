@@ -33,7 +33,10 @@ class Gravityforms {
 		// 
 		add_action('wp_ajax_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
 		add_action('wp_ajax_nopriv_gflutter/project/payment/flutterwave/getsubac', [$this, 'getSubAC'], 10, 0);
-
+		// 
+		add_filter('gform_tooltips', [$this, 'gform_tooltips']);
+		// 
+		
 		// init hooks.
 		// $this->setup_hooks();
 	}
@@ -58,9 +61,6 @@ class Gravityforms {
 		// add_action('gform_editor_js', [$this, 'editor_script']);
 		//Filter to add a new tooltip
 
-		add_filter('gform_tooltips', [$this, 'gform_tooltips']);
-		add_filter('gform_settings_menu', [$this, 'gform_settings_menu'], 10, 1);
-		add_action('gform_settings_flutterwaveaddons', [$this, 'gform_settings_flutterwaveaddons'], 10, 0);
 		
 		// Refund Woocommerce Order
 		// add_action('woocommerce_order_status_refunded', [$this, 'process_flutterwave_refund'], 10, 1);
@@ -328,20 +328,6 @@ class Gravityforms {
 		</script>
 		<?php
 	}
-	public function gform_settings_menu($setting_tabs) {
-		if(!current_user_can('manage_options')) {return $setting_tabs;}
-		$icon = GRAVITYFORMS_FLUTTERWAVE_ADDONS_BUILD_PATH . '/icons/money-business-and-finance-svgrepo-com.svg';
-		$icon = (file_exists($icon)&&!is_dir($icon))?file_get_contents($icon):'gform-icon gform-icon--api';
-		$tab = [
-			'name'	=> 'flutterwaveaddons',
-            'label'	=> 'Flutterwave',
-            'title'	=> 'Gravity Forms FlutterWave Payment addons.',
-            'icon'	=> $icon
-		];
-		$setting_tabs[12] = $tab;
-		// $setting_tabs = array_merge(array_slice($setting_tabs, 0, 2), [$tab], array_slice($setting_tabs, 2));
-		return $setting_tabs;
-	}
 	public function print_settings_fields($fields) {
 		$html = '';
 		foreach($fields as $field) {
@@ -350,48 +336,6 @@ class Gravityforms {
 			]);
 		}
 		return $html;
-	}
-	public function gform_settings_flutterwaveaddons() {
-		// Check if the user has permissions to access the settings page
-		if (!current_user_can('manage_options')) {
-			wp_die(__('You do not have sufficient permissions to access this page.'));
-		}
-		// Save settings if form is submitted
-		if (isset($_POST['gform_settings_flutterwaveaddons'])) {
-			// Perform validation and save the settings
-			update_option('flutterwaveaddons', $_POST['flutterwaveaddons']);
-
-			$this->changeSubaccountsPercentageonAllForms($this->settings, $_POST['flutterwaveaddons']);
-			
-			$this->settings = $_POST['flutterwaveaddons'];
-			// Add other necessary settings update code here
-			// Display a success message
-			echo '<div class="notice notice-success is-dismissible"><p>Settings saved successfully!</p></div>';
-		}
-		// Retrieve the current settings values
-		$api_key = get_option('gf_flutterwave_api_key');
-		// Render the settings page HTML
-		$settings = $this->settings_fields();
-		?>
-		<form id="gform-settings" class="gform_settings_form" action="" method="post" enctype="multipart/form-data">
-			<?php wp_nonce_field('gform_settings_flutterwaveaddons', 'gform_settings_flutterwaveaddons', true, true ); ?>
-			<fieldset class="gform-settings-panel gform-settings-panel--full gform-settings-panel--with-title">
-				<legend class="gform-settings-panel__title gform-settings-panel__title--header">
-					<?php echo esc_html($settings['title']); ?>
-				</legend>
-				<div class="gform-settings-panel__content">
-					<div class="gform-settings-description gform-kitchen-sink">
-						<?php echo wp_kses_post($settings['description']); ?>
-					</div>
-					<?php echo $this->print_settings_fields($settings['fields']); ?>
-				</div>
-			</fieldset>
-			<div class="gform-settings-save-container">
-				<button type="submit" id="gform-settings-save" name="gform-settings-save" value="save" form="gform-settings" class="primary button large">Save Settings &nbsp;→</button>
-			</div>
-			<script type="text/javascript" src="http://localhost/wordpress/wp-content/plugins/gravityforms/js/plugin_settings.js"></script>
-		</form>
-		<?php
 	}
 
 	public function process_flutterwave_refund($order_id) {
@@ -507,6 +451,52 @@ class Gravityforms {
 		return $args;
 	}
 	public function settings_fields() {
+		// print_r($this->settings);
+		$args = [
+			'title'							=> __( 'General', 'gravitylovesflutterwave' ),
+			'description'				=> sprintf(
+				__('Gravity Forms integration with FlutterWave payments will work on both Gravity Forms and WooCommerce plugins. A secret key is mostly required to connect with FlutterWave. If you don\'t have this API key, you can %sfollow this link.%s', 'gravitylovesflutterwave' ),
+				'<a href="https://app.flutterwave.com/dashboard/settings/apis/live/" target="_blank">', '</a>'
+			),
+			'fields'						=> [
+				[
+					'id' 					=> 'testMode',
+					'label'					=> __('Test mode', 'gravitylovesflutterwave'),
+					'type'					=> 'checkbox',
+					'default'				=> false,
+					'description'			=> __('Check if you want to enable test mode.', 'gravitylovesflutterwave'),
+					'help'					=> '<strong>Test mode</strong>Check if you want to enable test mode.'
+				],
+				[
+					'id' 						=> 'publickey',
+					'label'					=> __( 'Public Key', 'gravitylovesflutterwave' ),
+					'type'					=> 'text',
+					'default'				=> true,
+					// 'description'			=> __( 'Mark to enable flutterwave payment functionalities.', 'gravitylovesflutterwave' ),
+					'help'					=> '<strong>Public Key</strong>Enter your Public Key, if you do not have a key you can register for one at the provided link.'
+				],
+				[
+					'id' 					=> 'secretkey',
+					'label'					=> __( 'Secret Key', 'gravitylovesflutterwave' ),
+					'type'					=> 'text',
+					'default'				=> true,
+					// 'description'			=> __( 'Mark to enable function of this Plugin.', 'gravitylovesflutterwave' ),
+					'help'					=> '<strong>Secret Key</strong>Enter your Secret Key, if you do not have a key you can register for one at the provided link.'
+				],
+				[
+					'id' 						=> 'encryptionkey',
+					'label'					=> __( 'Encryption Key', 'gravitylovesflutterwave' ),
+					'type'					=> 'text',
+					'default'				=> true,
+					// 'description'			=> __( 'Mark to enable function of this Plugin.', 'gravitylovesflutterwave' ),
+					'help'					=> '<strong>Encryption Key</strong>Enter your Encryption Key, if you do not have a key you can register for one at the provided link.'
+				],
+
+			]
+		];
+		return $args;
+	}
+	public function settings_fields__backup() {
 		// print_r($this->settings);
 		$args = [
 			'title'							=> __( 'General', 'gravitylovesflutterwave' ),
@@ -763,26 +753,28 @@ class Gravityforms {
 
 	public function load_gravityform_addon() {
 		if(class_exists('GFForms')) {
-			if(!method_exists('GFForms','include_addon_framework')) {return;}
-			\GFForms::include_addon_framework();
+			if(!method_exists('GFForms','include_payment_addon_framework')) {return;}
+			\GFForms::include_payment_addon_framework();
+			// if(!method_exists('GFForms','include_addon_framework')) {return;}
+			// \GFForms::include_addon_framework();
+			
+			require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-payment.php'); // GFFlutterwavePaymentAddon::get_instance();
+			\GFAddOn::register( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GFFlutterwavePaymentAddon' );
+			
+			// require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-simple.php'); // GFFlutterwaveSimpleAddon::get_instance();
+			// \GFAddOn::register( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GFFlutterwaveSimpleAddon' );
 		}
-        require_once(untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/inc/widgets/widget-flutterwave-payment.php'); // GFFlutterwavePaymentAddon::get_instance();
-        \GFAddOn::register( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GFFlutterwavePaymentAddon' );
-		
-        // require_once(untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/inc/widgets/widget-flutterwave-simple.php'); // GFFlutterwaveSimpleAddon::get_instance();
-        // \GFAddOn::register( 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GFFlutterwaveSimpleAddon' );
-		
 	}
 
 
 	public function register_credit_card_field() {
 		if (class_exists('GFForms')) {
-			require_once(untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/inc/widgets/widget-flutterwave-cards.php');
+			require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-cards.php');
 			\GF_Fields::register(new GF_FlutterWave_Credit_Card_Field());
 		}
 	}
 	public function gform_field_standard_fields($fields) {
-		require_once(untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/inc/widgets/widget-flutterwave-cards.php');
+		require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-cards.php');
 		$fields['credit_card'] = 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GF_FlutterWave_Credit_Card_Field';
 		return $fields;
 	}
@@ -1077,7 +1069,7 @@ class Gravityforms {
 						<?php echo wp_kses_post($settings['description']); ?>
 					</div>
 					<?php // echo $this->print_settings_fields($settings['fields']); ?>
-					<?php include untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/templates/dashboard/admin/subaccount_settings.php'; ?>
+					<?php include GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/admin/subaccount_settings.php'; ?>
 
 				</div>
 			</fieldset>
@@ -1514,7 +1506,7 @@ class Gravityforms {
 				}
 				?>
 				<div class="flutterwave_settings_advanced">
-					<?php include untrailingslashit(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH).'/templates/dashboard/admin/field_settings.php'; ?>
+					<?php include GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/dashboard/admin/field_settings.php'; ?>
 				</div>
 				<?php
 			} else {

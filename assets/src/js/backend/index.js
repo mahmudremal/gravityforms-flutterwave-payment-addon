@@ -469,7 +469,7 @@ import Toastify from 'toastify-js';
 									<th>Payment Status</th>
 									<td>${(config.payment_status=='')?'Pending':config.payment_status}</td>
 								</tr>
-								${(['successful', 'completed'].includes(config.payment_status.toLowerCase()))?`
+								${(['successful', 'completed', 'success', 'complete', 'paid'].includes(config.payment_status.toLowerCase()))?`
 								<tr>
 									<th>Refunded Amount</th>
 									<td>
