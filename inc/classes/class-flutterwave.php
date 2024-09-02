@@ -16,14 +16,16 @@ class Flutterwave {
 	private $userInfo;
 	private $successUrl;
 	private $cancelUrl;
-	private $api_key; // Replace with your Flutterwave API key
-	private $encryptionKey; // Replace with your Flutterwave API key
+	private $public_key;
+	private $api_key;
+	private $encryptionKey;
     private $base_url = 'https://api.flutterwave.com/v3';
     private $is_test_mode;
 	// 
 	protected function __construct() {
         $this->settings = GRAVITYFORMS_FLUTTERWAVE_ADDONS_OPTIONS;
 		$this->api_key  = isset($this->settings['secretkey'])?$this->settings['secretkey']:false;
+		$this->public_key  = isset($this->settings['publickey'])?$this->settings['publickey']:false;
 		$this->encryptionKey  = isset($this->settings['encryptionkey'])?$this->settings['encryptionkey']:false;
         $this->is_test_mode = GRAVITYFORMS_FLUTTERWAVE_ADDONS_TEST_MODE;
         global $FWPFlutterwave;$FWPFlutterwave = $this;

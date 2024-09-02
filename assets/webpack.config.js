@@ -18,8 +18,8 @@ const SRC_DIR = path.resolve( __dirname, 'src' );
 const entry = {
 	frontend: JS_DIR + '/public.js',
 	backend: JS_DIR + '/admin.js',
-	// single: JS_DIR + '/single.js',
-	// editor: JS_DIR + '/editor.js',
+	gformsettings: JS_DIR + '/gformsettings.js',
+	gformflutterwave: JS_DIR + '/gformflutterwave.js',
 	// blocks: JS_DIR + '/blocks.js',
 	// author: JS_DIR + '/author.js',
 	// search: JS_DIR + '/search.js',

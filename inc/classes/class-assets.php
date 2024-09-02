@@ -107,7 +107,7 @@ class Assets {
 		wp_enqueue_script('GravityformsFlutterwaveAddons');
 		wp_localize_script('GravityformsFlutterwaveAddons', 'fwpSiteConfig', apply_filters( 'gflutter/project/javascript/siteconfig', []));
 	}
-	private function filemtime( $path ) {
+	public function filemtime( $path ) {
 		return (file_exists($path)&&!is_dir($path))?filemtime($path):false;
 		// return apply_filters( 'gflutter/project/filesystem/filemtime', false, $path );
 	}

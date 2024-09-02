@@ -7,6 +7,7 @@
 import creditCard from "../frontend/creditcard";
 import Swal from "sweetalert2"; // "success", "error", "warning", "info" or "question"
 import Toastify from 'toastify-js';
+import axios from "axios";
 // import 'selectize';
 
 ( function ( $ ) {
@@ -440,6 +441,9 @@ import Toastify from 'toastify-js';
 				el.addEventListener('click', (event) => {
 					event.preventDefault();
 					thisClass.currentEntry = config = JSON.parse(el.dataset?.config??'{}');
+					if (config.payment_status == false) {
+						config.payment_status = '';
+					}
 					html = `
 					<div class="dynamic_popup">
 						<form action="#" class="popup_body">
@@ -447,23 +451,23 @@ import Toastify from 'toastify-js';
 							<table id="invoiceInfo">
 								<tr>
 									<th>Created time</th>
-									<td>${config.date_created}</td>
+									<td>${(config.date_created)?config.date_created:''}</td>
 								</tr>
 								<tr>
 									<th>Entry ID</th>
-									<td>${config.id}</td>
+									<td>${(config.id)?config.id:''}</td>
 								</tr>
 								<tr>
 									<th>Form ID</th>
-									<td>${config.form_id}</td>
+									<td>${(config.form_id)?config.form_id:''}</td>
 								</tr>
 								<tr>
 									<th>Amount</th>
-									<td>${config.currency}${config.payment_amount}</td>
+									<td>${(config.currency)?config.currency:''}${(config.payment_amount)?config.payment_amount:''}</td>
 								</tr>
 								<tr>
 									<th>Trx ID</th>
-									<td>${config.transaction_id}</td>
+									<td>${(config.transaction_id)?config.transaction_id:''}</td>
 								</tr>
 								<tr>
 									<th>Payment Status</th>
@@ -486,7 +490,7 @@ import Toastify from 'toastify-js';
 								<tr>
 									<th>Payment link</th>
 									<td>
-										${(config.payable_link)?`<button class="btn button copy_link" type="button" data-text="${config.payable_link}" title="${config.payable_link}">Copy link</button>`:'N/A'}
+										<button class="btn button copy_link" type="button" data-text="${(config.payable_link)?config.payable_link:''}" title="${(config.payable_link)?config.payable_link:'Not available'}">Copy link</button>
 										<button class="btn button update_pay_link" type="button" data-entry="${config.id}" title="Update"><i class="dashicons-before dashicons-update-alt"></i></button>
 									</td>
 								</tr>
@@ -573,13 +577,13 @@ import Toastify from 'toastify-js';
 				el.dataset.handled = true;
 				el.addEventListener('click', (event) => {
 					event.preventDefault();
-					el.disabled = true;
 					thisClass.lastUpdateBtn = el;
 					thisClass.update_pay_link(el);
 				});
 			});
 		}
 		copyToClipboard(element) {
+			const thisClass = this;
 			const text = element.getAttribute('data-text');
 			
 			const el = document.createElement('textarea');
@@ -588,12 +592,15 @@ import Toastify from 'toastify-js';
 			el.style.position = 'absolute';
 			el.style.left = '-9999px';
 			document.body.appendChild(el);
-			
+			// 
 			el.select();
-			document.execCommand('copy');
-			document.body.removeChild(el);
-			element.innerHTML = thisClass.i18n?.copied??'Copied';
-			setTimeout(()=>{element.innerHTML=copyText;},1000);
+			if (document?.execCommand) {
+				document.execCommand('copy');
+				document.body.removeChild(el);
+				element.innerHTML = thisClass.i18n?.copied??'Copied';
+				setTimeout(()=>{element.innerHTML=copyText;},1000);
+			}
+			
 		}
 		init_settings_field() {
 			const thisClass = this;
@@ -675,14 +682,30 @@ import Toastify from 'toastify-js';
 			str = str.replace(/\\\\/g, '\\');
 			return str;
 		}
-		update_pay_link(el) {
+		update_pay_link(button) {
 			const thisClass = this;
+			button.disabled = true;
 			var formdata = new FormData();
 			formdata.append('action', 'gflutter/project/payment/updatelink');
 			formdata.append('entry', thisClass.currentEntry.id);
 			formdata.append('form_id', thisClass.currentEntry.form_id);
 			formdata.append('_nonce', thisClass.ajaxNonce);
-			thisClass.sendToServer(formdata);
+			axios.post(thisClass.ajaxUrl, formdata)
+			.then(body => body.data)
+			.then(response => {
+				button.removeAttribute('disabled');
+				console.log(response)
+				if (response?.success) {
+					button.previousElementSibling.dataset.text = response.data.payment_link;
+					button.previousElementSibling.title = `Copy: ${response.data.payment_link}`;
+					var message = "Payment intend updated successfully"
+					thisClass.toastify({text: message, duration: 3000, stopOnFocus: true, style: {background: (response.success)?"linear-gradient(to right, #00b09b, #96c93d)":"linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113))"}}).showToast();
+				}
+			})
+			.catch(error => {
+				button.removeAttribute('disabled');
+				console.error(error);
+			});
 		}
 		refund_a_payment(amount) {
 			const thisClass = this;

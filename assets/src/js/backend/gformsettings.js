@@ -1,75 +1,28 @@
-console.log("form admin loaded")
-// alert("form admin loaded")
+/**
+ * Script for individual form settings support.
+ * 
+ */
 
+import autocomplete from "autocompleter";
+import Hooks from "./hooks";
 
-
-class FlutterwaveHooks {
-    constructor() {
-        this.domLoaded = false;
-        this.scriptsLoaded = false;
-        this.hooks = {action: {}, filter: {}};
-    }
-    initializeOnLoaded(o) {
-        this.domLoaded && this.scriptsLoaded ? o() : !this.domLoaded && this.scriptsLoaded ? window.addEventListener("DOMContentLoaded", o) : document.addEventListener("gform_main_scripts_loaded", o)
-    }
-    addAction(o, n, r, t) {
-        this.addHook("action", o, n, r, t)
-    }
-    addFilter(o, n, r, t) {
-        this.addHook("filter", o, n, r, t)
-    }
-    doAction(o) {
-        this.doHook("action", o, arguments)
-    }
-    applyFilters(o) {
-        return this.doHook("filter", o, arguments)
-    }
-    removeAction(o, n) {
-        this.removeHook("action", o, n)
-    }
-    removeFilter(o, n, r) {
-        this.removeHook("filter", o, n, r)
-    }
-    addHook(o, n, r, t, i) {
-        null == this.hooks[o][n] && (this.hooks[o][n] = []);
-        var e = this.hooks[o][n];
-        null == i && (i = n + "_" + e.length),
-        this.hooks[o][n].push({
-            tag: i,
-            callable: r,
-            priority: t = null == t ? 10 : t
-        })
-    }
-    doHook(n, o, r) {
-        var t;
-        if (r = Array.prototype.slice.call(r, 1),
-        null != this.hooks[n][o] && ((o = this.hooks[n][o]).sort(function(o, n) {
-            return o.priority - n.priority
-        }),
-        o.forEach(function(o) {
-            "function" != typeof (t = o.callable) && (t = window[t]),
-            "action" == n ? t.apply(null, r) : r[0] = t.apply(null, r)
-        })),
-        "filter" == n)
-            return r[0]
-    }
-    removeHook(o, n, t, i) {
-        var r;
-        null != this.hooks[o][n] && (r = (r = this.hooks[o][n]).filter(function(o, n, r) {
-            return !!(null != i && i != o.tag || null != t && t != o.priority)
-        }),
-        this.hooks[o][n] = r)
-    }
-}
-
-class FlutterwaveSettings extends FlutterwaveHooks {
+class FlutterwaveSettings extends Hooks {
     constructor() {
         super();
-        this.init_settings_split_comissions();
+        setTimeout(() => {
+            this.init_settings_split_comissions();
+        }, 1500);
     }
     init_settings_split_comissions() {
-        this.subacid = 0;this.split_rules = [];this.live_subaccounts = false;
-        document.querySelectorAll('#settings_split_comissions').forEach(root => {
+        this.subacid = 0;this.split_rules = [];this.live_subaccounts = [];
+        // 
+        var comissionRoots = document.querySelectorAll('#settings_split_comissions');
+        // 
+        if (comissionRoots.length > 0) {
+            this.load_live_subaccounts();
+        }
+        // 
+        comissionRoots.forEach(root => {
             if (! root.dataset?.comissions) {return;}root.innerHTML = '';
             var input = document.querySelector(`#${root.dataset?.storedOn??'sxk'}`);
             if (!input) {
@@ -87,8 +40,6 @@ class FlutterwaveSettings extends FlutterwaveHooks {
             // 
             if (comissions.length <= 1) {root.classList.add('hide-minus');}
             // 
-            this.load_live_subaccounts();
-            // 
             comissions.forEach(comission => {
                 this.add_another_rule(root, comission);
             });
@@ -105,7 +56,7 @@ class FlutterwaveSettings extends FlutterwaveHooks {
         });
     }
     add_another_rule(root, comission) {
-        const currentRuleID = this.subacid;const ruleObjects = {id: currentRuleID};
+        const currentRuleID = this.subacid;const ruleObjects = {id: currentRuleID};const gformSet = this;
         // 
         var rule = document.createElement('div');rule.classList.add('split_subaccount_rule', `split_subaccount_rule${currentRuleID}`);
         // 
@@ -136,6 +87,17 @@ class FlutterwaveSettings extends FlutterwaveHooks {
             event.preventDefault();event.stopPropagation();
             ruleObjects.account = event.target.value;
             this.update_split_rules_objects(currentRuleID);
+        });
+        autocomplete({
+            input: sucacc,
+            fetch: function (text, update) {
+                text = text.toLowerCase();
+                var suggestions = gformSet.live_subaccounts.filter((n) =>n.label.toLowerCase().startsWith(text));
+                update(suggestions);
+            },
+            onSelect: function (item) {
+                sucacc.value = item.value;
+            },
         });
         rule.appendChild(sucacc);
         // 
@@ -214,10 +176,21 @@ class FlutterwaveSettings extends FlutterwaveHooks {
         // 
     }
     load_live_subaccounts() {
-        if (this?.live_subaccounts && this?.wp_ajax_interval) {clearInterval(this.wp_ajax_interval);this.wp_ajax_interval = false;}
-        if (this?.live_subaccounts) {return this.live_subaccounts;}
+        if (this.live_subaccounts && this?.wp_ajax_interval) {clearInterval(this.wp_ajax_interval);this.wp_ajax_interval = false;}
+        if (this.live_subaccounts.length >= 1) {return this.live_subaccounts;}
         if (wp?.ajax && wp.ajax?.post) {
-            wp.ajax.post('gflutter/project/payment/flutterwave/getsubac', {form_id: 86, get_all: true}).then(json => this.live_subaccounts = json?.subaccounts??[]).catch(error => console.log(error?.message??''));
+            wp.ajax.post('gflutter/project/payment/flutterwave/getsubac', {form_id: 86, get_all: true}).then(json => {
+                this.live_subaccounts = (json?.subaccounts??[]).map(subac => {
+                    return {
+                        label: subac.subaccount_id,
+                        value: subac.subaccount_id
+                    };
+                });
+                return this.live_subaccounts;
+            }).then(subaccounts => {
+                console.log(subaccounts);
+                return subaccounts;
+            }).catch(error => console.log(error?.message??''));
         } else {
             if (this?.wp_ajax_interval) {return;}
             this.wp_ajax_interval = setInterval(() => {
@@ -226,4 +199,7 @@ class FlutterwaveSettings extends FlutterwaveHooks {
         }
     }
 }
-new FlutterwaveSettings();
+
+(function($) {
+    new FlutterwaveSettings();
+})(jQuery);
