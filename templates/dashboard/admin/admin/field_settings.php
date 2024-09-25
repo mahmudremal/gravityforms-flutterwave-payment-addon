@@ -164,7 +164,7 @@ $subAccountInput = true;
 
     <div id="gform_setting_submitBtnText" class="gform-settings-field gform-settings-field__text">
       <div class="gform-settings-field__header">
-        <label class="gform-settings-label" for="submitBtnText"><?php esc_html_e('Submit text', 'gravitylovesflutterwave'); ?></label>
+        <label class="gform-settings-label" for="submitBtnText"><?php esc_html_e('Submit button text', 'gravitylovesflutterwave'); ?></label>
         <?php echo gform_tooltip('form_submittext', '', true); ?>
       </div>
       <span class="gform-settings-input__container">

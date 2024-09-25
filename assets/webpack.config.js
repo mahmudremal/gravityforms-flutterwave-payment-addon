@@ -124,5 +124,10 @@ module.exports = ( env, argv ) => ({
 	plugins: plugins( argv ),
 	externals: {
 		jquery: 'jQuery'
-	}
+	},
+    watchOptions: {
+        aggregateTimeout: 300, // Delay the rebuild after the first change (milliseconds)
+        poll: 1000, // Check for changes every second
+        ignored: /node_modules|build/, // Ignore node_modules and build directories to prevent excessive rebuilds
+    },
 });

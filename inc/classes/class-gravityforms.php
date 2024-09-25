@@ -37,6 +37,12 @@ class Gravityforms {
 		add_filter('gform_tooltips', [$this, 'gform_tooltips']);
 		// 
 		
+		/**
+		 * Gravity form custom field.
+		 */
+		add_action('gform_loaded', [$this, 'register_credit_card_field'], 5, 0);
+		add_action('gform_field_standard_settings', [$this, 'gform_field_standard_settings'], 10, 2);
+		
 		// init hooks.
 		// $this->setup_hooks();
 	}
@@ -53,7 +59,6 @@ class Gravityforms {
 		 * Handle the return URL after the Flutterwave payment
 		 */
 		add_action('template_redirect', [$this, 'handle_flutterwave_payment_return']);
-		add_action('gform_field_standard_settings', [$this, 'gform_field_standard_settings'], 10, 2);
 
 		// add_action('gform_field_content', [$this, 'gform_field_content'], 10, 5);
 		// add_filter('gform_pre_update_filter', [$this, 'gform_pre_update_filter'], 10, 2);
@@ -66,11 +71,6 @@ class Gravityforms {
 		// add_action('woocommerce_order_status_refunded', [$this, 'process_flutterwave_refund'], 10, 1);
 
 
-		/**
-		 * Gravity form custom field.
-		 */
-		add_action('gform_loaded', [$this, 'register_credit_card_field'], 5, 0);
-		
 		// add_action('gform_field_standard_fields', [$this, 'gform_field_standard_fields'], 10, 1);
 		// add_action('gform_add_field_buttons', [$this, 'gform_add_field_buttons'], 10, 1);
 		// Add a custom payment button
@@ -329,6 +329,7 @@ class Gravityforms {
 		<?php
 	}
 	public function print_settings_fields($fields) {
+		// wp_die('Remal Mahmud');
 		$html = '';
 		foreach($fields as $field) {
 			$html .= $this->display_field([
@@ -496,132 +497,6 @@ class Gravityforms {
 		];
 		return $args;
 	}
-	public function settings_fields__backup() {
-		// print_r($this->settings);
-		$args = [
-			'title'							=> __( 'General', 'gravitylovesflutterwave' ),
-			'description'				=> sprintf(
-				__('Gravity Forms integration with FlutterWave payments will work on both Gravity Forms and WooCommerce plugins. A secret key is mostly required to connect with FlutterWave. If you don\'t have this API key, you can %sfollow this link.%s', 'gravitylovesflutterwave' ),
-				'<a href="https://app.flutterwave.com/dashboard/settings/apis/live/" target="_blank">', '</a>'
-			),
-			'fields'						=> [
-				[
-					'id' 					=> 'testMode',
-					'label'					=> __('Test mode', 'gravitylovesflutterwave'),
-					'type'					=> 'checkbox',
-					'default'				=> false,
-					'description'			=> __('Check if you want to enable test mode.', 'gravitylovesflutterwave'),
-					'help'					=> '<strong>Test mode</strong>Check if you want to enable test mode.'
-				],
-				[
-					'id' 						=> 'publickey',
-					'label'					=> __( 'Public Key', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default'				=> true,
-					// 'description'			=> __( 'Mark to enable flutterwave payment functionalities.', 'gravitylovesflutterwave' ),
-					'help'					=> '<strong>Public Key</strong>Enter your Public Key, if you do not have a key you can register for one at the provided link.'
-				],
-				[
-					'id' 					=> 'secretkey',
-					'label'					=> __( 'Secret Key', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default'				=> true,
-					// 'description'			=> __( 'Mark to enable function of this Plugin.', 'gravitylovesflutterwave' ),
-					'help'					=> '<strong>Secret Key</strong>Enter your Secret Key, if you do not have a key you can register for one at the provided link.'
-				],
-				[
-					'id' 						=> 'encryptionkey',
-					'label'					=> __( 'Encryption Key', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default'				=> true,
-					// 'description'			=> __( 'Mark to enable function of this Plugin.', 'gravitylovesflutterwave' ),
-					'help'					=> '<strong>Encryption Key</strong>Enter your Encryption Key, if you do not have a key you can register for one at the provided link.'
-				],
-				[
-					'id' 					=> 'statusBtnLink',
-					'name' 					=> 'statusBtnLink',
-					'label'					=> __('Success page link', 'gravitylovesflutterwave'),
-					'type'					=> 'select',
-					'description'			=> __('Select a link for the payment returned/Success page.', 'gravitylovesflutterwave'),
-					'default'				=> 'form',
-					'help'					=> sprintf(__("%s Success page link %s Payment returned status page button link. Set homepage to setup Back to home like, site homepage link. Selecting form will set button link form entry screen link.", 'gravitylovesflutterwave'), '<strong>', '</strong>'),
-					'options'				=> [
-						'form'			=> __('Form page', 'gravitylovesflutterwave'),
-						'home'			=> __('Home page', 'gravitylovesflutterwave'),
-					]
-				],
-				[
-					'id' 						=> 'amountZeroMsg',
-					'label'					=> __( 'Amount required message', 'gravitylovesflutterwave' ),
-					'description'		=> __( 'This message will be the default message on settings field if the calculated amount is zero.', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default'				=> 'You must calculate an amount to make pay and proceed. Currently calculated amount is zero or less then zero!'
-				],
-				[
-					'id'					=> 'paymentSuccess',
-					'label'					=> __( 'Success status', 'gravitylovesflutterwave' ),
-					'description'			=> __( 'Give here a long success message that will be display on payment success page. With the confirmation message that the form submitted successfully.', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default_value'			=> "Congratulations! Your payment was successful and your form was submitted."
-				],
-				[
-					'id' 						=> 'paymentFailed',
-					'label'					=> __( 'Failed status', 'gravitylovesflutterwave' ),
-					'description'		=> __( "Give here a long error message that will be display on payment failed/cancelled/denaid status. With the confirmation message that the form didn't submitted.", 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'default_value'			=> "Your payment was not successful and your form was not submitted. Ensure  you enter the correct information and try again. If the situation persists, please contact your bank."
-				],
-				[
-					'id' 					=> 'paymentReminderSubject',
-					'label'					=> __( 'Mail reminder subject', 'gravitylovesflutterwave' ),
-					'description'		=> __( "Give here a long error message that will be display on payment failed/cancelled/denaid status. With the confirmation message that the form didn't submitted.", 'gravitylovesflutterwave' ),
-					'type'					=> 'text'
-				],
-				[
-					'id' 					=> 'paymentReminder',
-					'name' 					=> 'paymentReminder',
-					'label'					=> __( 'Payment Reminder', 'gravitylovesflutterwave' ),
-					'type'					=> 'text',
-					'description'		=> sprintf(
-						__( "Give here any html template that will be applied for payment reminder email template from Entry list screen. Following tags could be applicable on this template. %s", 'gravitylovesflutterwave' ),
-						'{{mailImagePath}}, {{customFullName}}, {{senderFullName}}, {{dateMMMMdd}}, {{dateYYYMMDD}}, {{productName}}, {{invoiceNumber}}, {{siteEmail}}, {{siteURL}}, {{siteAddress}}, {{customAddressFull}}, {{invoiceIssuedOn}}, {{invoiceUnit}}, {{invoiceTotal}}, {{invoiceTax}}, {{invoiceSubtotal}}'
-					),
-					'default_value'			=> esc_textarea(file_get_contents(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/templates/email/payment-reminder.html'))
-				],
-
-			]
-		];
-		$args['fields'][] = [
-			'id' 						=> 'title-subaccounts',
-			'label'					=> __('Default value for sub accounts commission', 'gravitylovesflutterwave'),
-			'type'					=> 'template'
-		];
-		$args['fields'][] = [
-			'id' 					=> 'enableReadOnly',
-			'label'					=> __('Enable read only', 'gravitylovesflutterwave'),
-			'type'					=> 'checkbox',
-			'default'				=> false,
-			'description'			=> false,
-			'help'					=> '<strong>Read only</strong>Enable read only on the default value for sub accounts commission. In this case, user will no longer set comission from form settings.'
-		];
-		foreach(['client', 'partner', 'staff'] as $for) {
-			$args['fields'][] = [
-				'id' 						=> 'defaultComission-'.$for,
-				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst(
-					($for == 'client')?__('Service provider', 'domain'):(
-						($for == 'staff')?__('Agent', 'domain'):$for
-					)
-				)),
-				'type'					=> 'text',
-				'default'				=> true,
-				'help'					=> '<strong>Default Comission</strong>Set a default comission for the following sub account.',
-				'attr'					=> [
-					'step'		=> '0.01'
-				]
-			];
-		}
-		return $args;
-	}
 	public function display_field( $args ) {
 		$field = wp_parse_args( $args['field'], [
 			'placeholder'	=> ''
@@ -770,12 +645,12 @@ class Gravityforms {
 	public function register_credit_card_field() {
 		if (class_exists('GFForms')) {
 			require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-cards.php');
-			\GF_Fields::register(new GF_FlutterWave_Credit_Card_Field());
+			\GF_Fields::register(new Widget_Flutterwave_Cards());
 		}
 	}
 	public function gform_field_standard_fields($fields) {
 		require_once(GRAVITYFORMS_FLUTTERWAVE_ADDONS_DIR_PATH . '/inc/widgets/widget-flutterwave-cards.php');
-		$fields['credit_card'] = 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\GF_FlutterWave_Credit_Card_Field';
+		$fields['credit_card'] = 'GRAVITYFORMS_FLUTTERWAVE_ADDONS\Inc\Widget_Flutterwave_Cards';
 		return $fields;
 	}
 	public function gform_add_field_buttons($field_groups) {
@@ -993,7 +868,7 @@ class Gravityforms {
 				[
 					'name'    => 'submitBtnText',
 					'type'    => 'text',
-					'label'   => esc_html__( 'Submit text', 'gravitylovesflutterwave' ),
+					'label'   => esc_html__( 'Submit button text', 'gravitylovesflutterwave' ),
 					'tooltip' => gform_tooltip( 'form_submittext', '', true ),
 					'default_value' => 'Submit',
 					'dependency' => [

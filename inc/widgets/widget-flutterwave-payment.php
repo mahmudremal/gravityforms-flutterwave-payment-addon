@@ -406,14 +406,14 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
         $args = [
             'currency' => '',
             'tx_ref' => time(),
-            'form_title' => $form['title'],
-            'paymentAmount' => $meta['paymentAmount'],
-            'form_description' => $form['description'],
-            'transactionType' => $meta['transactionType'],
-            'billingInformation_name' => (string) $meta['billingInformation_name'],
-            'billingInformation_email' => (string) $meta['billingInformation_email'],
-            'billingInformation_phone' => (string) $meta['billingInformation_phone'],
-            'billingInformation_address' => (string) $meta['billingInformation_address'],
+            'form_title' => rgar($form, 'title'),
+            'paymentAmount' => rgar($meta, 'paymentAmount'),
+            'form_description' => rgar($form, 'description'),
+            'transactionType' => rgar($meta, 'transactionType'),
+            'billingInformation_name' => (string) rgar($meta, 'billingInformation_name'),
+            'billingInformation_email' => (string) rgar($meta, 'billingInformation_email'),
+            'billingInformation_phone' => (string) rgar($meta, 'billingInformation_phone'),
+            'billingInformation_address' => (string) rgar($meta, 'billingInformation_address'),
         ];
         $args = $this->get_with_split_subaccounts($args, $feed, false, false, false);
         if (! is_numeric($args['paymentAmount']) && $args['paymentAmount'] == 'form_total') {

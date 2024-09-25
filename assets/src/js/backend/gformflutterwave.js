@@ -10,7 +10,9 @@ class FlutterwavePayment extends Hooks {
     constructor() {
         super();
         this.config = {
-            ajax_url: `${location.origin}/wp-admin/admin-ajax.php`
+            ajax_url: `${location.origin}/wp-admin/admin-ajax.php`,
+            test_mode: false,
+            public_key: false,
         }
         this.forms = [];
         this.init_forms();
@@ -75,7 +77,7 @@ class FlutterwavePayment extends Hooks {
     makePayment(args, elements) {
         const robject = this;
         return new Promise((resolve, reject) => {
-            elements.submit_button.disabled = true;
+            elements.submit_button.setAttribute('disabled', 'true');
             robject.get_public_key(elements).then((token_key) => {
                 args = Object.assign({
                     amount: 0,
@@ -117,8 +119,8 @@ class FlutterwavePayment extends Hooks {
     get_public_key(elements) {
         const robject = this;
         return new Promise(function(resolve, reject) {
-            if (robject?.public_key) {
-                resolve(robject.public_key);
+            if (robject.config?.public_key) {
+                resolve(robject.config.public_key);
             }
             var objData = {
                 action: 'gflutter/project/payment/get_token',
@@ -133,8 +135,9 @@ class FlutterwavePayment extends Hooks {
             .then(result => result.data)
             .then(result => {
                 if (result?.data && result.data?.token) {
-                    robject.public_key = atob(result.data.token);
-                    resolve(robject.public_key);
+                    robject.config.public_key = atob(result.data.token);
+                    robject.config.test_mode = robject.config.public_key.includes('_TEST-');
+                    resolve(robject.config.public_key);
                 }
                 reject("Failed to fetch token key");
             }).catch(err => reject(err));
@@ -190,6 +193,9 @@ class FlutterwavePayment extends Hooks {
         // 
         // 
         return true;
+    }
+    isTest() {
+        return this.config.test_mode;
     }
 }
 

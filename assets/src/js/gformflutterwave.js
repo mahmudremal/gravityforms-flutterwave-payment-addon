@@ -1,5 +1,5 @@
 // Scripts
-// import './backend/gformflutterwave';
+import './backend/gformflutterwave';
 
 // Styles
 import '../sass/gformflutterwave.scss';

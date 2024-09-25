@@ -34,6 +34,14 @@ class Flutterwave {
 
         add_filter('gflutter/project/payment/getallsubaccounts', [$this, 'getAllSubAccounts'], 10, 0);
 	}
+
+    public function isTest() {
+        if (strripos($this->api_key, '_TEST-') !== false) {
+            return true;
+        }
+        return $this->is_test_mode;
+    }
+    
 	public function setup_hooks() {
 		global $wpdb;$this->theTable				= $wpdb->prefix . 'fwp_flutterwave_subscriptions';
 		$this->productID							= 'prod_NJlPpW2S6i75vM';

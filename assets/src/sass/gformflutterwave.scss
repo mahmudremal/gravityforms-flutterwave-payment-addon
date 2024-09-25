@@ -3,4 +3,7 @@
     &:focus {
         color: #333;
     }
+    &:disabled, &:read-only {
+        cursor: progress;
+    }
 }
