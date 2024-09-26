@@ -197,16 +197,16 @@ $subAccountInput = true;
         <?php echo gform_tooltip('form_fluttercard_message', '', true); ?>
       </div>
       <span class="gform-settings-input__container">
-        <textarea allow_html="1" default="<?php esc_attr_e('You will be redirected to a secure payment page.', 'gravitylovesflutterwave'); ?>" rows="4" editor_height="200" id="fluttercardMessage" onchange="SetFieldProperty('fluttercardMessage', this.value);" onkeypress="SetFieldProperty('fluttercardMessage', this.value);"><?php echo esc_textarea(rgar($field, 'fluttercardMessage')); ?></textarea>
+        <textarea allow_html="1" placeholder="<?php esc_attr_e('You will be redirected to a secure payment page.', 'gravitylovesflutterwave'); ?>" rows="4" editor_height="200" id="fluttercardMessage" onchange="SetFieldProperty('fluttercardMessage', this.value);" onkeypress="SetFieldProperty('fluttercardMessage', this.value);"><?php echo esc_textarea(rgar($field, 'fluttercardMessage')); ?></textarea>
       </span>
     </div>
     <div id="gform_setting_requireAmountMessage" class="gform-settings-field gform-settings-field__textarea">
       <div class="gform-settings-field__header">
-        <label class="gform-settings-label" for="requireAmountMessage"><?php esc_html_e('Amount', 'gravitylovesflutterwave'); ?></label>
+        <label class="gform-settings-label" for="requireAmountMessage"><?php esc_html_e('Required Amount', 'gravitylovesflutterwave'); ?></label>
         <?php echo gform_tooltip('form_require_amount_message', '', true); ?>
       </div>
       <span class="gform-settings-input__container">
-        <textarea data-js="_gform_setting_requireAmountMessage" allow_html="1" default="<?php esc_attr_e('You must calculate an amount to make pay and proceed. Currently calculated amount is zero or less then zero!', 'gravitylovesflutterwave'); ?>" rows="4" editor_height="200" id="requireAmountMessage" onclick="SetFieldProperty('requireAmountMessage', this.checked);" onkeypress="SetFieldProperty('requireAmountMessage', this.checked);" <?php echo checked(rgar($field,'requireAmountMessage'), true); ?>><?php echo esc_textarea(__('Amount', 'gravitylovesflutterwave')); ?></textarea>
+        <textarea data-js="_gform_setting_requireAmountMessage" allow_html="1" placeholder="<?php esc_attr_e('You must calculate an amount to make pay and proceed. Currently calculated amount is zero or less then zero!', 'gravitylovesflutterwave'); ?>" rows="4" editor_height="200" id="requireAmountMessage" onclick="SetFieldProperty('requireAmountMessage', this.checked);" onkeypress="SetFieldProperty('requireAmountMessage', this.checked);" <?php echo checked(rgar($field,'requireAmountMessage'), true); ?>><?php echo esc_textarea(__('Amount', 'gravitylovesflutterwave')); ?></textarea>
       </span>
     </div>
   </div>

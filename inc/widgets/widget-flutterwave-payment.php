@@ -424,11 +424,29 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
                 }
             }
         }
-        // echo '<pre>';print_r($form);wp_die();
+        $payField = array_values(
+            array_filter(
+                is_array($form['fields']) ? $form['fields'] : [],
+                function($field) {
+                    return $field->type == 'flutterwave_credit_card';
+                }
+            )
+        );
+        $payField = ($payField && count($payField) >= 1)?$payField[0]:false;
+        // echo '<pre>';print_r($payField);wp_die();
         // 
+        if (empty(trim(rgar($payField, 'submitBtnText')))) {
+            return $button;
+        }
         ob_start();
         ?>
-        <input type="submit" class="pay-flutterwave" data-form-id="<?php echo esc_attr(rgar($form, 'id')); ?>" data-token="<?php echo esc_attr(wp_create_nonce('flutterwave_get_public_key')); ?>" value="<?php echo esc_html(__('Pay with Flutterwave', 'gravitylovesflutterwave')); ?>" data-args="<?php echo esc_attr(json_encode($args)); ?>" />
+        <input type="submit" class="pay-flutterwave" data-form-id="<?php echo esc_attr(rgar($form, 'id')); ?>" data-token="<?php echo esc_attr(wp_create_nonce('flutterwave_get_public_key')); ?>" value="<?php echo esc_html(
+            empty(rgar($payField, 'submitBtnText'))
+            ?
+            __('Pay', 'gravitylovesflutterwave')
+            :
+            rgar($payField, 'submitBtnText')
+        ); ?>" data-args="<?php echo esc_attr(json_encode($args)); ?>" />
         <?php
         $payment_button = ob_get_clean();
         return $payment_button;

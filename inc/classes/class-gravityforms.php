@@ -669,7 +669,7 @@ class Gravityforms {
 	public function gform_submit_button($button, $form) {
 		if(!isset($form['enableFlutterwave']) || !$form['enableFlutterwave']) {return $button;}
 		$payment_gateway = 'flutterwave'; // Replace with your Flutterwave payment gateway ID | 
-		$button_text = __('Pay with Flutterwave', 'gravitylovesflutterwave'); // Replace with your desired button text
+		$button_text = __('Pay', 'gravitylovesflutterwave'); // Replace with your desired button text
 
 		$has_payment = true;
 		// $has_payment = array_search('flutterwave_credit_card', array_column($form['fields'], 'type'));
@@ -1320,46 +1320,6 @@ class Gravityforms {
 		return $str;
 	}
 	public function gform_editor_js_set_default_values() {
-		?>
-		case 'flutterwave_credit_card':
-			if (!field.label)
-				var ccNumber, ccExpirationMonth, ccExpirationYear, ccSecruityCode, ccCardType, ccName, enableCardPaymentMethod, flutterwaveDefaultModeCard, enablePreviewField, statusBtnLink;
-				
-				field.label = <?php echo json_encode(esc_html__('Payment', 'gravitylovesflutterwave')); ?>;
-				var inputs = field.inputs || [];
-	
-				ccNumber = new Input(field.id + ".1", <?php echo json_encode(gf_apply_filters(array('gform_card_number', rgget('id')), esc_html__('Card Number', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				ccExpirationMonth = new Input(field.id + ".month", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Month', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				ccExpirationMonth.defaultLabel = <?php echo json_encode(esc_html__('Expiration Date', 'gravitylovesflutterwave')); ?>;
-				ccExpirationYear = new Input(field.id + ".year", <?php echo json_encode(gf_apply_filters(array('gform_card_expiration', rgget('id')), esc_html__('Expiration Year', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				ccSecruityCode = new Input(field.id + ".3", <?php echo json_encode(gf_apply_filters(array('gform_card_security_code', rgget('id')), esc_html__('Security Code', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				ccCardType = new Input(field.id + ".4", <?php echo json_encode(gf_apply_filters(array('gform_card_type', rgget('id')), __( 'Card Type', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				ccName = new Input(field.id + ".5", <?php echo json_encode(gf_apply_filters(array('gform_card_name', rgget('id')), esc_html__('Cardholder Name', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				
-				enableCardPaymentMethod = new Input(field.id + ".enableCardPaymentMethod", <?php echo json_encode(gf_apply_filters(array('gform_enable_card_payment_method', rgget('id')), esc_html__('Enable multiple payment methods', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-				flutterwaveDefaultModeCard = new Input(field.id + ".flutterwaveDefaultModeCard", <?php echo json_encode(gf_apply_filters(array('gform_flutterwave_default_mode_card', rgget('id')), esc_html__('Enable multiple payment methods', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-	
-				enablePreviewField = new Input(field.id + ".enablePreviewField", <?php echo json_encode(gf_apply_filters(array('gform_enable_preview_field', rgget('id')), esc_html__('Show preview card', 'gravitylovesflutterwave'), rgget('id'))); ?>);
-	
-				submitBtnText = new Input(field.id + ".submitBtnText", <?php echo json_encode(esc_html__('Submit', 'gravitylovesflutterwave')); ?>);
-				statusBtnLink = new Input(field.id + ".statusBtnLink", <?php echo json_encode(esc_html__('Button Link', 'gravitylovesflutterwave')); ?>);
-
-				inputs.push(ccNumber, ccExpirationMonth, ccExpirationYear, ccSecruityCode, ccCardType, ccName, enableCardPaymentMethod, flutterwaveDefaultModeCard, enablePreviewField, statusBtnLink);
-				
-				<?php foreach(['client', 'partner', 'staff'] as $type): ?>
-					var comissionAccount_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionAccount-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Sub account', 'gravitylovesflutterwave')); ?>);
-					inputs.push(comissionAccount_<?php echo esc_attr($type); ?>);
-
-					var comissionType_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionType-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html__('Comission type', 'gravitylovesflutterwave')); ?>);
-					inputs.push(comissionType_<?php echo esc_attr($type); ?>);
-
-					var comissionAmount_<?php echo esc_attr($type); ?> = new Input(field.id + ".comissionAmount-<?php echo esc_attr($type); ?>", <?php echo json_encode(esc_html(ucfirst($type).' subaccount')); ?>);
-					inputs.push(comissionAmount_<?php echo esc_attr($type); ?>);
-				<?php endforeach; ?>
-	
-				field.inputs = inputs;
-			break;
-		<?php
 	}
 	public function gform_field_standard_settings($position, $form_id) {
 		// Create settings on position 25 (right after Field Label)
