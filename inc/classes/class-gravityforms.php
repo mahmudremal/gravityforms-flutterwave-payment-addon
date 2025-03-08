@@ -24,7 +24,6 @@ class Gravityforms {
 		$this->currentEntry = false;
 		// 
 		add_filter('gform_currencies', [$this, 'gform_currencies'], 10, 1);
-
 		
 		/**
 		 * Gravity form addon.
@@ -381,7 +380,7 @@ class Gravityforms {
 
 	public function changeSubaccountsPercentageonAllForms($previous, $updated) {
 		global $wpdb;$do_update = false;
-		$subAccounts = ['client', 'partner', 'staff'];
+		$subAccounts = ['service_provider', 'affiliate', 'partner', 'staff'];
 		foreach($subAccounts as $ac) {
 			if(isset($updated['defaultComission-'.$ac]) && isset($previous['defaultComission-'.$ac]) && $previous['defaultComission-'.$ac] != $updated['defaultComission-'.$ac]) {
 				$do_update = true;
@@ -433,7 +432,7 @@ class Gravityforms {
 			),
 			'fields'						=> []
 		];
-		foreach(['client', 'partner', 'staff'] as $for) {
+		foreach(['service_provider', 'affiliate', 'partner', 'staff'] as $for) {
 			$args['fields'][] = [
 				'id' 						=> 'defaultComission-'.$for,
 				'label'					=> sprintf(__('%s percentage Commission', 'gravitylovesflutterwave'), ucfirst(
@@ -918,7 +917,7 @@ class Gravityforms {
 		$subAccountInput = true;
 		// unset($form['fields']);
 		if(isset($_POST['gform_setting_flutterwave']) && $_POST['gform_setting_flutterwave'] == 'update') {
-			foreach(['client', 'partner', 'staff'] as $type) {
+			foreach(['service_provider', 'affiliate', 'partner', 'staff'] as $type) {
 				foreach(['comissionAccount', 'comissionType', 'comissionAmount'] as $key) {
 					if(isset($_POST['_gform_setting_'.$key.'-'.$type])) {
 						gform_update_meta($form_id, $key.'-'.$type, sanitize_text_field($_POST['_gform_setting_'.$key.'-'.$type]));
@@ -1461,7 +1460,7 @@ class Gravityforms {
 						$agent = str_replace(['comissionAccount-'], [''], $key);
 						$field['comissionType-'.$agent] = (!isset($field['comissionType-'.$agent]) || empty($field['comissionType-'.$agent]))?'percentage_subaccount':$field['comissionType-'.$agent];
 						if(
-						in_array($agent, ['client', 'partner', 'staff']) &&
+						in_array($agent, ['service_provider', 'affiliate', 'partner', 'staff']) &&
 						!empty($val) && isset($field['comissionAmount-'.$agent]) && !empty($field['comissionAmount-'.$agent])
 						) {
 							$charge_type = (true)?(
@@ -1487,7 +1486,7 @@ class Gravityforms {
 	}
 	public function getSubAccountData_byForm($form) {
 		$subaccounts = [];
-		foreach(['client', 'partner', 'staff'] as $agent) {
+		foreach(['service_provider', 'affiliate', 'partner', 'staff'] as $agent) {
 			if(
 				isset($form['comissionAccount-'.$agent]) && !empty($form['comissionAccount-'.$agent]) &&
 				isset($form['comissionAmount-'.$agent]) && !empty($form['comissionAmount-'.$agent]) &&

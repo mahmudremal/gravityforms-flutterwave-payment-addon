@@ -62,12 +62,15 @@ class FlutterwaveSettings extends Hooks {
         // 
         var subacType = document.createElement('select');subacType.classList.add('split_subaccount_ac_type');
         ruleObjects.actype = comission?.actype??'';// subacType.name = `split_subaccount${currentRuleID}.actype`;
+        var acKeys = ['service_provider', 'affiliate', 'partner', 'staff'];
+        var acLevels = ['Service provider', 'Affiliate', 'Partner', 'Staff'];
         var acTypes = {
             '': this.i18n?.slctsubactype??'Select Subaccount type',
-            client: this.i18n?.client??'Client',
-            partner: this.i18n?.partner??'Partner',
-            staff: this.i18n?.staff??'Stuff',
+            // ...
         };
+        acKeys.forEach((key, index) => {
+            acTypes[key] = (this.i18n && this.i18n[key])?this.i18n[key]:acLevels[index];
+        })
         Object.keys(acTypes).forEach(key => {
             var option = document.createElement('option');option.value = key;option.innerHTML = wp.i18n.sprintf(this.i18n?.s_comisison??'%s Comission', acTypes[key]);
             if (comission?.actype == key) {option.selected = true;}
@@ -80,8 +83,20 @@ class FlutterwaveSettings extends Hooks {
         });
         rule.appendChild(subacType);
         // 
+        var subacname = document.createElement('input');subacname.type = 'text';// subacname.name = `split_subaccount${currentRuleID}.acc_holder`;
+        subacname.setAttribute('value', comission?.acc_holder??'');subacname.placeholder = this.i18n?.subacnameidtext??'Account holder';
+        ruleObjects.acc_holder = comission?.acc_holder??'';
+        subacname.addEventListener('input', (event) => {
+            event.preventDefault();event.stopPropagation();
+            ruleObjects.acc_holder = event.target.value;
+            this.update_split_rules_objects(currentRuleID);
+        });
+        rule.appendChild(subacname);
+        // 
+        
         var sucacc = document.createElement('input');sucacc.type = 'text';// sucacc.name = `split_subaccount${currentRuleID}.account`;
         sucacc.setAttribute('value', comission?.account??'');sucacc.placeholder = this.i18n?.sucaccidtext??'Enter Subaccount id';
+        // 
         ruleObjects.account = comission?.account??'';
         sucacc.addEventListener('change', (event) => {
             event.preventDefault();event.stopPropagation();
@@ -188,7 +203,7 @@ class FlutterwaveSettings extends Hooks {
                 });
                 return this.live_subaccounts;
             }).then(subaccounts => {
-                console.log(subaccounts);
+                // console.log(subaccounts);
                 return subaccounts;
             }).catch(error => console.log(error?.message??''));
         } else {

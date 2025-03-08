@@ -99,7 +99,7 @@ import axios from "axios";
 				// }
 				var fieldsAccessed = false;
 				var theInterval = setInterval(() => {
-					['partner', 'client', 'staff'].forEach((id) => {
+					['service_provider', 'affiliate', 'partner', 'staff'].forEach((id) => {
 						document.querySelectorAll('input#subaccounts-'+id).forEach((el) => {
 							if(el.value != '' && el.value.length >= 5) {thisClass.matchComissionAccount(el, el.value);}
 							fieldsAccessed = true;

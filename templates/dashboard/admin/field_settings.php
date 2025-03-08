@@ -88,7 +88,7 @@ $subAccountInput = true;
             </div>
           <?php else: ?>
             <?php if(true): ?>
-              <?php foreach(['client', 'partner', 'staff'] as $type): ?>
+              <?php foreach(['service_provider', 'affiliate', 'partner', 'staff'] as $type): ?>
                 <div class="gform-settings-tab">
                   <div class="gform-settings-tab__header">
                     <?php $typeTitle = ucfirst(

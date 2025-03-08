@@ -67,14 +67,26 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     
     // ------- Inline Entry operation -------
     public function entry_post_save($entry, $form) {
+        
+        // Check if there is an active feed
+        $feed = $this->get_payment_feed($entry, $form);
+        if (!$feed || rgars($feed, 'is_active') != true) {
+            return $entry;
+        }
+		echo '<pre>';print_r([$feed]);wp_die('Remal Mahmud');
+		
+        
 		if ( ! $this->is_payment_gateway ) {
 			return $entry;
 		}
+
+        
 		// Saving which gateway was used to process this entry.
 		gform_update_meta($entry['id'], 'payment_gateway', $this->get_slug());
 		// 
         $transaction_id = rgar($entry, 'transaction_id');
-        if (empty($transaction_id) && isset($_POST['transaction_id'])) {
+        // empty($transaction_id) && 
+        if (isset($_POST['transaction_id'])) {
             $transaction_id = $_POST['transaction_id'];
             $entry['is_fulfilled'] = '1';
             $entry['payment_status'] = 'Paid';
@@ -100,19 +112,25 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     
     // -------- Validation ------------------
     public function maybe_validate($validation_result, $context = 'api-submit') {
+        // wp_die($context);
+        if ($context == 'form-submit') {
+            return $validation_result;
+        }
+        
         $is_valid = parent::maybe_validate($validation_result, $context);
         if (! $is_valid) {
             return $is_valid;
         }
-        if (!isset($_POST['transaction_id'])) {
-            $is_valid = false;
+        if (!isset($_POST['transaction_id']) || empty($_POST['transaction_id'])) {
+            $validation_result['is_valid'] = false;
+            $validation_result['form']['validation_message'] = "Transaction ID is missing. Please retry.";
         }
-        return $is_valid;
+        return $validation_result;
     }
     
     //-------- Currency ----------------------
     public function supported_currencies( $currencies ) {
-        $currencies = parent::supported_currencies( $currencies );
+        // $currencies = parent::supported_currencies( $currencies );
         $currencies['NGN'] = [
 			'name'               => esc_html__('Nigerian Naira', 'gravitylovesflutterwave'),
 			'symbol_left'        => '&#8358;',
@@ -392,6 +410,10 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     // 
     public function add_payment_button($button, $form) {
         // 
+        if (empty(rgar($form, 'id'))) {
+            return $button;
+        }
+        
         $feed = false;
         foreach ($this->get_feeds($form['id']) as $cFeed) {
             if ($cFeed['addon_slug'] == $this->get_slug()) {
@@ -426,24 +448,20 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
         }
         $payField = array_values(
             array_filter(
-                is_array($form['fields']) ? $form['fields'] : [],
+                $form['fields'],
                 function($field) {
                     return $field->type == 'flutterwave_credit_card';
                 }
             )
-        );
-        $payField = ($payField && count($payField) >= 1)?$payField[0]:false;
+        )[0];
         // echo '<pre>';print_r($payField);wp_die();
         // 
-        if (empty(trim(rgar($payField, 'submitBtnText')))) {
-            return $button;
-        }
         ob_start();
         ?>
         <input type="submit" class="pay-flutterwave" data-form-id="<?php echo esc_attr(rgar($form, 'id')); ?>" data-token="<?php echo esc_attr(wp_create_nonce('flutterwave_get_public_key')); ?>" value="<?php echo esc_html(
             empty(rgar($payField, 'submitBtnText'))
             ?
-            __('Pay', 'gravitylovesflutterwave')
+            __('Pay with Flutterwave', 'gravitylovesflutterwave')
             :
             rgar($payField, 'submitBtnText')
         ); ?>" data-args="<?php echo esc_attr(json_encode($args)); ?>" />
@@ -795,6 +813,3 @@ class GFFlutterwavePaymentAddon extends \GFPaymentAddOn {
     }
     
 }
-
-
-

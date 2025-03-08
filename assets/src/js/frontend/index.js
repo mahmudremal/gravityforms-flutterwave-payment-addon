@@ -301,38 +301,36 @@ import toastify from "toastify-js";
 			const thisClass = this;
 			$(thisClass.PaymentWrap).hide();
 
-			if ( thisClass.allowSubmit ) {
+			if (thisClass.allowSubmit) {
 				thisClass.allowSubmit = false;
 				return true;
 			}
 
-			let $form    = $( 'form#payment-form, form#order_review' ),
-			flutterwave_txnref = $form.find( 'input.tbz_wc_flutterwave_txnref' );
-			flutterwave_txnref.val( '' );
+			let $form = $('form#payment-form, form#order_review'),
+				flutterwave_txnref = $form.find('input.tbz_wc_flutterwave_txnref');
+			flutterwave_txnref.val('');
 
-			let flutterwave_callback = function( response ) {
-
+			let flutterwave_callback = function(response) {
 				console.log(response);
-				$form.append( '<input type="hidden" class="tbz_wc_flutterwave_txnref" name="tbz_wc_flutterwave_txnref" value="' + response.transaction_id + '"/>' );
-				$form.append( '<input type="hidden" class="tbz_wc_flutterwave_order_txnref" name="tbz_wc_flutterwave_order_txnref" value="' + response.tx_ref + '"/>' );
+				$form.append('<input type="hidden" class="tbz_wc_flutterwave_txnref" name="tbz_wc_flutterwave_txnref" value="' + response.transaction_id + '"/>');
+				$form.append('<input type="hidden" class="tbz_wc_flutterwave_order_txnref" name="tbz_wc_flutterwave_order_txnref" value="' + response.tx_ref + '"/>');
 
 				thisClass.allowSubmit = true;
 
 				$form.submit();
-				$( 'body' ).block(
-					{
-						message: null,
-						overlayCSS: {
-							background: '#fff',
-							opacity: 0.6
-						},
-						css: {
-							cursor: "wait"
-						}
+				$('body').block({
+					message: null,
+					overlayCSS: {
+						background: '#fff',
+						opacity: 0.6
+					},
+					css: {
+						cursor: "wait"
 					}
-				);
+				});
 			};
 
+			console.log("Making payemnt...");
 			FlutterwaveCheckout({
 				public_key: thisClass.config.public_key,
 				tx_ref: thisClass.config.txref,
@@ -352,11 +350,9 @@ import toastify from "toastify-js";
 				callback: flutterwave_callback,
 				onclose: function() {
 					$(thisClass.PaymentWrap).show();
-					$( this.el ).unblock();
+					$(this.el).unblock();
 				}
 			});
-
-			return false;
 		}
 
 		init_creditCard() {
@@ -367,24 +363,24 @@ import toastify from "toastify-js";
 			}
 		}
 
-		demo_fillup() {
-			var fields = {
-				'input_1.3': 'Remal',
-				'input_1.6': 'Mahmud',
-				input_2: 'mahudremal@yahoo.com',
-				'input_2_2': 'mahudremal@yahoo.com',
-				input_11: '01814118328',
-				input_9: 20,
-			}
-			document.addEventListener("keypress", (event)=> {
-				if (event.shiftKey && event.keyCode === 70) {
-					event.preventDefault();
-					Object.keys(fields).forEach(key => {
-						document.querySelector('input[name="'+key+'"]').value = fields[key];
-					});
-				}
-			});
-		}
+		// demo_fillup() {
+		// 	var fields = {
+		// 		'input_1.3': 'Remal',
+		// 		'input_1.6': 'Mahmud',
+		// 		input_2: 'mahudremal@yahoo.com',
+		// 		'input_2_2': 'mahudremal@yahoo.com',
+		// 		input_11: '01814118328',
+		// 		input_9: 20,
+		// 	}
+		// 	document.addEventListener("keypress", (event)=> {
+		// 		if (event.shiftKey && event.keyCode === 70) {
+		// 			event.preventDefault();
+		// 			Object.keys(fields).forEach(key => {
+		// 				document.querySelector('input[name="'+key+'"]').value = fields[key];
+		// 			});
+		// 		}
+		// 	});
+		// }
 	}
 	new FutureWordPress_Frontend();
 } )( jQuery );

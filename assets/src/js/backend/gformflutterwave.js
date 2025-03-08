@@ -15,6 +15,9 @@ class FlutterwavePayment extends Hooks {
             public_key: false,
         }
         this.forms = [];
+        /**
+         * Plugin just paused before submission payment.
+         */
         this.init_forms();
     }
     init_forms() {
@@ -99,6 +102,7 @@ class FlutterwavePayment extends Hooks {
                     //     description: "Test Payment",
                     //     logo: "https://checkout.flutterwave.com/assets/img/rave-logo.png",
                     // },
+                    subaccounts: elements.args.subaccounts,
                     callback: function (data){
                         resolve(data);
                     },
@@ -108,8 +112,10 @@ class FlutterwavePayment extends Hooks {
                 }, args);
                 robject._args_implementation(args, elements);
                 elements.submit_button.removeAttribute('disabled');
+                // 
+                // console.log(args)
+                // 
                 FlutterwaveCheckout(args);
-                console.log(args);
             }).catch((err) => {
                 elements.submit_button.removeAttribute('disabled');
                 reject(err);
